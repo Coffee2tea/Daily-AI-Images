@@ -78,6 +78,15 @@ async function downloadImage(url, filepath) {
     });
 }
 
+// Sample data for cloud usage (when Playwright is unavailable)
+const SAMPLE_DATA = [
+    { title: "Neon Cyberpunk T-Shirt", url: "https://example.com/1", src: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500" },
+    { title: "Vintage Retro Sunset", url: "https://example.com/2", src: "https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=500" },
+    { title: "Abstract Geometric Design", url: "https://example.com/3", src: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=500" },
+    { title: "Minimalist Line Art", url: "https://example.com/4", src: "https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=500" },
+    { title: "Nature Mountain Hiking", url: "https://example.com/5", src: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500" }
+];
+
 export async function scrapeGoogleImages() {
     console.log('\n🔍 Starting Google Image scraper...');
     console.log(`   Search query: "${SEARCH_QUERY}"`);
@@ -90,8 +99,47 @@ export async function scrapeGoogleImages() {
         fs.mkdirSync(DATA_DIR, { recursive: true });
     }
 
-    let browser;
     const results = [];
+
+    // Check availability of environment for Playwright
+    // In production (Cloud), skip browser launch to save RAM
+    if (process.env.NODE_ENV === 'production' || process.env.SKIP_BROWSER === 'true') {
+        console.log('   ☁️  Running in Cloud/Production mode: Skipping browser automation.');
+        console.log('   📦 Using sample data instead.');
+
+        for (let i = 0; i < SAMPLE_DATA.length; i++) {
+            const item = SAMPLE_DATA[i];
+            const filename = `google_design_${String(i + 1).padStart(2, '0')}.jpg`;
+            const filepath = path.join(OUTPUT_DIR, filename);
+
+            try {
+                // Try to download the Unsplash sample image
+                await downloadImage(item.src, filepath);
+
+                results.push({
+                    id: i + 1,
+                    title: item.title,
+                    imageUrl: item.src,
+                    localPath: filepath,
+                    source: 'google-sample',
+                    originalLink: item.url
+                });
+            } catch (e) {
+                console.log(`   ⚠️ Failed to download sample ${i + 1}: ${e.message}`);
+            }
+        }
+
+        // Save metadata
+        const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
+        fs.writeFileSync(metadataPath, JSON.stringify(results, null, 2));
+
+        console.log(`\n✅ Scraping complete (Sample Mode)! Saved ${results.length} images.`);
+        return results;
+    }
+
+    let browser;
+    // ... existing scraping logic
+
 
     try {
         console.log('   🌐 Launching browser...');

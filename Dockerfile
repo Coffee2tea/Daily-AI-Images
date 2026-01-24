@@ -1,14 +1,24 @@
-# Use official Node.js image with Playwright pre-installed
-# This base image includes all necessary system dependencies for browsers
-FROM mcr.microsoft.com/playwright:v1.48.0-focal
+# Use lightweight Node.js image
+FROM node:18-slim
 
 # Set working directory
 WORKDIR /app
 
+# Install basic system dependencies for canvas/image processing if needed
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    libcairo2-dev \
+    libpango1.0-dev \
+    libjpeg-dev \
+    libgif-dev \
+    librsvg2-dev \
+    && rm -rf /var/lib/apt/lists/*
+
 # Copy package files first for better caching
 COPY package*.json ./
 
-# Install dependencies (including production deps)
+# Install dependencies (skip playwright browser binaries)
+ENV PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD=1
 RUN npm install
 
 # Copy source code
@@ -21,7 +31,4 @@ RUN mkdir -p generated_images downloaded_images data
 EXPOSE 3000
 
 # Start the server directly
-# Note: We use the standalone server script, not map main.js, 
-# because main.js runs a one-off workflow then starts server.
-# In production, we want the server up immediately.
 CMD ["node", "src/server/server.js"]
