@@ -5,7 +5,7 @@
 
 import dotenv from 'dotenv';
 import open from 'open';
-import scrapeEtsy from './scraper/etsyScraper.js';
+import scrapeGoogleImages from './scraper/googleScraper.js';
 import { analyzeAndGenerateIdeas } from './analyzer/imageAnalyzer.js';
 import generateImages from './generator/imageGenerator.js';
 import { sendIdeasEmail, sendConfirmationEmail } from './emailer/emailService.js';
@@ -21,9 +21,9 @@ async function main() {
     console.log('='.repeat(60));
 
     try {
-        // Step 1: Scrape Etsy for popular designs
-        console.log('\n📌 STEP 1: Scraping Etsy for T-shirt designs...');
-        const scrapedImages = await scrapeEtsy();
+        // Step 1: Scrape Google Images for popular designs
+        console.log('\n📌 STEP 1: Scraping Google Images for T-shirt designs...');
+        const scrapedImages = await scrapeGoogleImages();
         console.log(`   Found ${scrapedImages.length} designs`);
 
         // Step 2: Analyze images and generate ideas
@@ -31,16 +31,15 @@ async function main() {
         const ideas = await analyzeAndGenerateIdeas();
         console.log(`   Generated ${ideas.length} unique design ideas`);
 
-        // Step 3 & 4: Run in parallel - Send ideas email AND generate images
-        console.log('\n📌 STEP 3 & 4: Sending emails and generating images (parallel)...');
-
-        const [emailResult, generatedImages] = await Promise.all([
-            sendIdeasEmail(ideas),
-            generateImages()
-        ]);
-
-        console.log(`   📧 Ideas email: ${emailResult.success ? 'Sent' : 'Skipped'}`);
+        // Step 3: Generate images first
+        console.log('\n📌 STEP 3: Generating images...');
+        const generatedImages = await generateImages();
         console.log(`   🖼️ Generated: ${generatedImages.length} images`);
+
+        // Step 4: Send ideas email with the generated images
+        console.log('\n📌 STEP 4: Sending ideas email...');
+        const emailResult = await sendIdeasEmail(ideas);
+        console.log(`   📧 Ideas email: ${emailResult.success ? 'Sent' : 'Skipped'}`);
 
         // Step 5: Start server and send confirmation email
         console.log('\n📌 STEP 5: Starting server and sending confirmation...');

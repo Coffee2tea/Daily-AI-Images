@@ -5,7 +5,7 @@
 
 import dotenv from 'dotenv';
 import open from 'open';
-import scrapeEtsy from './scraper/etsyScraper.js';
+import scrapeGoogleImages from './scraper/googleScraper.js';
 import { analyzeAndGenerateIdeas } from './analyzer/imageAnalyzer.js';
 import generateImages from './generator/imageGenerator.js';
 import { startServer } from './server/server.js';
@@ -18,9 +18,9 @@ async function runSimplified() {
     console.log('='.repeat(50));
 
     try {
-        // Step 1: Scrape Etsy
-        console.log('\n📌 STEP 1: Scraping Etsy...');
-        await scrapeEtsy();
+        // Step 1: Scrape Google Images
+        console.log('\n📌 STEP 1: Scraping Google Images...');
+        await scrapeGoogleImages();
 
         // Step 2: Generate Ideas
         console.log('\n📌 STEP 2: Generating design ideas...');

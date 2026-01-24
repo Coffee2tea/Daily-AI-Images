@@ -82,11 +82,19 @@ export async function scrapeEtsy() {
     let browser;
     const results = [];
 
+    // Check availability of environment for Playwright
+    // In production (Cloud), skip browser launch to save RAM
+    if (process.env.NODE_ENV === 'production' || process.env.SKIP_BROWSER === 'true') {
+        console.log('   ☁️  Running in Cloud/Production mode: Skipping browser automation.');
+        console.log('   📦 Using sample data instead.');
+        return await createSampleData();
+    }
+
     try {
         // Launch browser
         console.log('   🌐 Launching browser...');
         browser = await chromium.launch({
-            headless: false,
+            headless: process.env.HEADLESS !== 'false', // Default to headless in non-dev envs if possible
             args: ['--no-sandbox', '--disable-setuid-sandbox']
         });
 

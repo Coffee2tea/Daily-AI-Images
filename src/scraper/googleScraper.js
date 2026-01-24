@@ -144,7 +144,7 @@ export async function scrapeGoogleImages() {
     try {
         console.log('   🌐 Launching browser...');
         browser = await chromium.launch({
-            headless: false, // Use visible browser to avoid some bot detection
+            headless: false,
             args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-blink-features=AutomationControlled']
         });
 
@@ -159,9 +159,9 @@ export async function scrapeGoogleImages() {
         const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(SEARCH_QUERY)}&tbm=isch`;
         console.log(`   📄 Navigating to Google Images...`);
 
-        await page.goto(searchUrl, { waitUntil: 'domcontentloaded' });
+        await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 60000 }); // Increased timeout
 
-        // Accept cookies if pop-up appears (simple check)
+        // Accept cookies if pop-up appears
         try {
             const button = await page.getByRole('button', { name: /accept|agree|consent/i }).first();
             if (await button.isVisible()) {
@@ -201,7 +201,7 @@ export async function scrapeGoogleImages() {
             });
         }, MAX_IMAGES * 2);
 
-        // Selector 2: Direct image class (rg_i) if first failed
+        // Selector 2: Direct image class (rg_i)
         if (images.length === 0) {
             console.log('   ⚠️ Selector 1 failed. Trying selector 2 (img.rg_i)...');
             images = await page.$$eval('img.rg_i', (elements, max) => {
@@ -215,12 +215,12 @@ export async function scrapeGoogleImages() {
             }, MAX_IMAGES * 2);
         }
 
-        // Selector 3: Generic images in main content if others fail
+        // Selector 3: Generic images
         if (images.length === 0) {
             console.log('   ⚠️ Selector 2 failed. Trying selector 3 (generic images)...');
             images = await page.$$eval('img', (elements, max) => {
                 return elements
-                    .filter(img => img.width > 100 && img.height > 100) // Filter small icons
+                    .filter(img => img.width > 100 && img.height > 100)
                     .slice(0, max)
                     .map(img => ({
                         src: img.src,
@@ -241,14 +241,13 @@ export async function scrapeGoogleImages() {
                 const filename = `google_design_${String(count + 1).padStart(2, '0')}.jpg`;
                 const filepath = path.join(OUTPUT_DIR, filename);
 
-                // Google thumbnails are often base64 or https
                 console.log(`   ⬇️ Downloading image ${count + 1}...`);
                 await downloadImage(item.src, filepath);
 
                 results.push({
                     id: count + 1,
                     title: item.alt,
-                    imageUrl: item.src.substring(0, 50) + '...', // Truncate very long base64 for display
+                    imageUrl: item.src.substring(0, 50) + '...',
                     localPath: filepath,
                     source: 'google',
                     originalLink: item.href || searchUrl
@@ -263,10 +262,31 @@ export async function scrapeGoogleImages() {
 
     } catch (error) {
         console.error(`   ❌ Scraping error: ${error.message}`);
+        console.log('   ⚠️ Falling back to sample data due to network error...');
+
         if (browser) await browser.close();
 
-        // Return empty results or handle error gracefully
-        // Ideally we might want to fallback to demo data here too if strictly required
+        // Fallback to sample data
+        for (let i = 0; i < SAMPLE_DATA.length; i++) {
+            const item = SAMPLE_DATA[i];
+            const filename = `fallback_design_${String(i + 1).padStart(2, '0')}.jpg`;
+            const filepath = path.join(OUTPUT_DIR, filename);
+
+            try {
+                // Try to download sample or use placeholder
+                await downloadImage(item.src, filepath);
+                results.push({
+                    id: i + 1,
+                    title: item.title,
+                    imageUrl: item.src,
+                    localPath: filepath,
+                    source: 'google-sample-fallback',
+                    originalLink: item.url
+                });
+            } catch (e) {
+                console.log(`   ⚠️ Failed to download fallback ${i + 1}: ${e.message}`);
+            }
+        }
     }
 
     // Save metadata
