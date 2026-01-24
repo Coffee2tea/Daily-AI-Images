@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - T-Shirt Design App</title>
+    <meta name="description" content="T-Shirt Design Workflow Dashboard">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <script src="/nav-component.js"></script>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav-menu></nav-menu>
+
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+
+    <!-- Main Content -->
+    <div class="container" style="padding-top: 80px;">
+        <header class="gallery-header">
+            <h1 class="gallery-title"><span class="material-symbols-outlined icon-gradient"
+                    style="font-size: 1.2em;">palette</span> Design Workflow Dashboard</h1>
+            <p class="gallery-subtitle">One-click to trigger the complete T-Shirt design generation process</p>
+        </header>
+
+        <!-- Workflow Card -->
+        <div class="confirm-card" style="max-width: 600px; margin: 2rem auto;">
+            <!-- Status Display -->
+            <div id="status-display" style="margin-bottom: 2rem;">
+                <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
+                    <div class="status-item">
+                        <div id="step1-icon" class="status-icon material-symbols-outlined">pause_circle</div>
+                        <div class="status-label">Scrape Images</div>
+                    </div>
+                    <div class="status-item">
+                        <div id="step2-icon" class="status-icon material-symbols-outlined">pause_circle</div>
+                        <div class="status-label">Analyze & Generate Ideas</div>
+                    </div>
+                    <div class="status-item">
+                        <div id="step3-icon" class="status-icon material-symbols-outlined">pause_circle</div>
+                        <div class="status-label">Generate Images</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div id="progress-container" style="display: none; margin-bottom: 2rem;">
+                <div class="progress-bar">
+                    <div id="progress-fill" class="progress-fill" style="width: 0%"></div>
+                </div>
+                <p id="progress-text" style="text-align: center; color: #6b7280; margin-top: 0.5rem;">
+                    Preparing...</p>
+            </div>
+
+            <!-- Start Button -->
+            <div style="text-align: center;">
+                <button id="start-btn" class="confirm-btn" onclick="startWorkflow()">
+                    <span class="material-symbols-outlined">rocket_launch</span>
+                    <span>Start Design Generation</span>
+                </button>
+            </div>
+
+            <!-- Log Output -->
+            <div id="log-container" style="display: none; margin-top: 2rem;">
+                <h3 style="color: #4b5563; margin-bottom: 1rem;">📋 Execution Log</h3>
+                <div id="log-output" class="log-output"></div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .status-item {
+            text-align: center;
+        }
+
+        .status-icon {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .status-label {
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: var(--surface-container-highest);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+
+        .log-output {
+            background: #f3f4f6;
+            /* Gray 100 */
+            border-radius: 8px;
+            padding: 1rem;
+            max-height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.85rem;
+            color: #374151;
+            /* Gray 700 */
+        }
+
+        .log-output p {
+            margin: 0.25rem 0;
+        }
+
+        .log-success {
+            color: #10b981;
+        }
+
+        .log-error {
+            color: #ef4444;
+        }
+
+        .log-info {
+            color: #667eea;
+        }
+    </style>
+
+    <script>
+        let isRunning = false;
+
+        async function startWorkflow() {
+            if (isRunning) return;
+            isRunning = true;
+
+            const btn = document.getElementById('start-btn');
+            const progressContainer = document.getElementById('progress-container');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+            const logContainer = document.getElementById('log-container');
+            const logOutput = document.getElementById('log-output');
+
+            // Update UI
+            btn.disabled = true;
+            btn.innerHTML = '<span class="material-symbols-outlined spin-icon">hourglass_empty</span><span>Running...</span>';
+            progressContainer.style.display = 'block';
+            logContainer.style.display = 'block';
+            logOutput.innerHTML = '';
+
+            const steps = [
+                { id: 'step1', name: 'Scraping Images', progress: 33 },
+                { id: 'step2', name: 'Analyzing & Generating Ideas', progress: 66 },
+                { id: 'step3', name: 'Generating AI Images', progress: 100 }
+            ];
+
+            try {
+                addLog('🚀 Starting workflow...', 'info');
+
+                const response = await fetch('/api/run-workflow', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' }
+                });
+
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+
+                while (true) {
+                    const { done, value } = await reader.read();
+                    if (done) break;
+
+                    const text = decoder.decode(value);
+                    const lines = text.split('\n').filter(line => line.startsWith('data: '));
+
+                    for (const line of lines) {
+                        try {
+                            const data = JSON.parse(line.slice(6));
+                            handleEvent(data, steps, progressFill, progressText);
+                        } catch (e) { }
+                    }
+                }
+
+                addLog('✅ Workflow Completed!', 'success');
+                btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span><span>Done! View Results</span>';
+                btn.onclick = () => window.location.href = '/gallery';
+                btn.disabled = false;
+
+            } catch (error) {
+                addLog(`❌ Error: ${error.message}`, 'error');
+                btn.innerHTML = '<span class="material-symbols-outlined">refresh</span><span>Retry</span>';
+                btn.disabled = false;
+            }
+
+            isRunning = false;
+        }
+
+        function handleEvent(data, steps, progressFill, progressText) {
+            if (data.step) {
+                const stepIndex = parseInt(data.step) - 1;
+                if (stepIndex >= 0 && stepIndex < steps.length) {
+                    // Update icons
+                    for (let i = 0; i <= stepIndex; i++) {
+                        const icon = document.getElementById(`step${i + 1}-icon`);
+                        if (i < stepIndex) {
+                            icon.textContent = 'check_circle';
+                            icon.classList.add('text-success');
+                        } else if (i === stepIndex) {
+                            icon.textContent = 'sync';
+                            icon.classList.add('spin-icon');
+                        }
+                    }
+
+                    // Update progress
+                    progressFill.style.width = `${steps[stepIndex].progress}%`;
+                    progressText.textContent = steps[stepIndex].name;
+                }
+            }
+
+            if (data.message) {
+                addLog(data.message, data.type || 'info');
+            }
+
+            if (data.complete) {
+                for (let i = 0; i < 3; i++) {
+                    const icon = document.getElementById(`step${i + 1}-icon`);
+                    icon.textContent = 'check_circle';
+                    icon.classList.remove('spin-icon');
+                    icon.classList.add('text-success');
+                }
+                progressFill.style.width = '100%';
+                progressText.textContent = 'Completed!';
+            }
+        }
+
+        function addLog(message, type = 'info') {
+            const logOutput = document.getElementById('log-output');
+            const p = document.createElement('p');
+            p.className = `log-${type}`;
+            p.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            logOutput.appendChild(p);
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+    </script>
+</body>
+
+</html>

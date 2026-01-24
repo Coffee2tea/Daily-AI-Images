@@ -1,0 +1,8 @@
+node_modules
+.env
+deploy-config.json
+generated_images
+downloaded_images
+data/ideas.json
+data/scraped_metadata.json
+data/manifest.json

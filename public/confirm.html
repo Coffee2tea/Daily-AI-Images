@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Send Email - T-Shirt Design App</title>
+  <meta name="description" content="Send AI generated designs to email">
+  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+  <script src="/nav-component.js"></script>
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav-menu></nav-menu>
+
+  <!-- Animated Background -->
+  <div class="bg-animation"></div>
+
+  <!-- Main Content -->
+  <div class="confirm-wrapper" style="padding-top: 60px;">
+    <div class="confirm-card">
+      <!-- Icon -->
+      <div class="confirm-icon material-symbols-outlined" style="display: flex;">
+        mark_email_unread
+      </div>
+
+      <!-- Title -->
+      <h1 class="confirm-title">Send Designs to Email</h1>
+
+      <!-- Subtitle -->
+      <p class="confirm-subtitle">
+        Send 10 AI generated designs to your email inbox
+      </p>
+
+      <!-- Email Input Form -->
+      <div class="form-group">
+        <label for="email-input" class="form-label">Recipient Email</label>
+        <input type="email" id="email-input" class="form-input" placeholder="name@example.com">
+        <div id="email-error" class="error-message">
+          <span class="material-symbols-outlined" style="font-size: 1rem;">error</span>
+          <span>Please enter a valid email address</span>
+        </div>
+      </div>
+
+      <!-- Stats -->
+      <div style="display: flex; justify-content: center; gap: 2rem; margin-bottom: 2rem;">
+        <div style="text-align: center;">
+          <div style="font-size: 2rem; font-weight: 700; color: #667eea;">10</div>
+          <div style="color: var(--text-secondary); font-size: 0.85rem;">Designs</div>
+        </div>
+        <div style="text-align: center;">
+          <div style="font-size: 2rem; font-weight: 700; color: #764ba2;">AI</div>
+          <div style="color: var(--text-secondary); font-size: 0.85rem;">Generated</div>
+        </div>
+      </div>
+
+      <!-- Send Email Button -->
+      <button id="send-btn" class="confirm-btn" onclick="sendEmail()">
+        <span class="material-symbols-outlined">send</span>
+        <span>Send to Email</span>
+      </button>
+
+      <!-- Status Message -->
+      <div id="status-message" style="display: none; margin-top: 1.5rem; padding: 1rem; border-radius: 10px;">
+      </div>
+
+      <!-- Footer Note -->
+      <p style="margin-top: 1.5rem; color: var(--text-secondary); font-size: 0.85rem;">
+        Click button above to receive design details in your inbox
+      </p>
+
+      <!-- View Gallery Link -->
+      <a href="/gallery" class="btn btn-secondary" style="margin-top: 1rem; display: inline-block;">
+        <span class="material-symbols-outlined">photo_library</span> View Gallery
+      </a>
+    </div>
+  </div>
+
+  <script>
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    async function sendEmail() {
+      const btn = document.getElementById('send-btn');
+      const emailInput = document.getElementById('email-input');
+      const emailError = document.getElementById('email-error');
+      const statusMessage = document.getElementById('status-message');
+
+      const email = emailInput.value.trim();
+
+      // Reset error state
+      emailInput.classList.remove('error');
+      emailError.style.display = 'none';
+
+      // Validate email
+      if (!email || !validateEmail(email)) {
+        emailInput.classList.add('error');
+        emailError.style.display = 'flex';
+        emailInput.focus();
+        return;
+      }
+
+      // Disable button and input
+      btn.disabled = true;
+      emailInput.disabled = true;
+      btn.innerHTML = '<span class="material-symbols-outlined spin-icon">hourglass_empty</span><span>Sending...</span>';
+      statusMessage.style.display = 'none';
+
+      try {
+        const response = await fetch('/api/send-email', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            recipient: email,
+            includeIdeas: true,
+            includeGalleryLink: true
+          })
+        });
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Success state
+          btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span><span>Sent Successfully!</span>';
+          btn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+
+          statusMessage.style.display = 'block';
+          statusMessage.style.background = 'rgba(16, 185, 129, 0.1)';
+          statusMessage.style.border = '1px solid rgba(16, 185, 129, 0.3)';
+          statusMessage.innerHTML = `
+            <p style="color: #10b981; margin: 0;">
+              <span class="material-symbols-outlined" style="vertical-align: middle;">check_circle</span> Email sent successfully to <strong>${email}</strong>
+            </p>
+          `;
+        } else {
+          throw new Error(data.error || 'Send Failed');
+        }
+      } catch (error) {
+        // Error state
+        console.error('Error:', error);
+        btn.innerHTML = '<span class="material-symbols-outlined">error</span><span>Send Failed</span>';
+        btn.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+
+        statusMessage.style.display = 'block';
+        statusMessage.style.background = 'rgba(239, 68, 68, 0.1)';
+        statusMessage.style.border = '1px solid rgba(239, 68, 68, 0.3)';
+        statusMessage.innerHTML = `
+          <p style="color: #ef4444; margin: 0;">
+            <span class="material-symbols-outlined" style="vertical-align: middle;">error</span> Send Failed: ${error.message}
+          </p>
+          <p style="color: rgba(0,0,0,0.5); margin: 0.5rem 0 0 0; font-size: 0.85rem;">
+            Please check if EMAIL_USER and EMAIL_PASS are configured in .env
+          </p>
+        `;
+
+        // Reset button after 3 seconds
+        setTimeout(() => {
+          btn.innerHTML = '<span class="material-symbols-outlined">send</span><span>Send to Email</span>';
+          btn.style.background = '';
+          btn.disabled = false;
+          emailInput.disabled = false;
+        }, 3000);
+      }
+    }
+  </script>
+</body>
+
+</html>

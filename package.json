@@ -1,0 +1,37 @@
+{
+  "name": "daily-ai-images",
+  "version": "1.0.0",
+  "description": "T-Shirt Design App - Agentic workflow for design inspiration and generation",
+  "main": "src/main.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/main.js",
+    "simple": "node src/runSimple.js",
+    "server": "node src/server/server.js",
+    "scrape": "node src/scraper/googleScraper.js",
+    "analyze": "node src/analyzer/imageAnalyzer.js",
+    "generate": "node src/generator/imageGenerator.js",
+    "share": "ngrok http 3000"
+  },
+  "keywords": [
+    "t-shirt",
+    "design",
+    "ai",
+    "gemini",
+    "etsy",
+    "automation"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@google/generative-ai": "^0.21.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "nodemailer": "^6.9.15",
+    "open": "^10.1.0",
+    "playwright": "^1.48.0"
+  },
+  "devDependencies": {
+    "ngrok": "^5.0.0-beta.2"
+  }
+}

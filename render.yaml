@@ -1,0 +1,24 @@
+services:
+  - type: web
+    name: daily-ai-images
+    env: docker
+    plan: free # Note: Free plan might sleep, paid plan recommended for persistent availability
+    
+    # Environment variables
+    encVars:
+      - key: PORT
+        value: 3000
+      - key: GEMINI_API_KEY
+        sync: false # User must enter this manually in dashboard
+      - key: EMAIL_USER
+        sync: false
+      - key: EMAIL_PASS
+        sync: false
+      - key: RECIPIENT_EMAIL
+        sync: false
+
+    # Persistent Disk (Optional but recommended to keep generated images)
+    # disk:
+    #   name: generated_images
+    #   mountPath: /app/generated_images
+    #   sizeGB: 1
