@@ -179,7 +179,9 @@ app.post('/api/run-workflow', async (req, res) => {
       await scrapeGoogleImages();
       sendEvent({ step: 1, message: '✅ Google scraping completed', type: 'success' });
     } catch (e) {
-      sendEvent({ step: 1, message: `⚠️ Scraping error: ${e.message}`, type: 'error' });
+      console.log(`Scraper module error: ${e.message}`);
+      sendEvent({ step: 1, message: `⚠️ Scraper issue detected (using fallback): ${e.message}`, type: 'warning' });
+      // Continue to step 2 despite error
     }
 
     // Step 2: Analyze and generate ideas
