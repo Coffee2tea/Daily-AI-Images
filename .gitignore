@@ -6,3 +6,4 @@ downloaded_images
 data/ideas.json
 data/scraped_metadata.json
 data/manifest.json
+deployment_payload.json
