@@ -15,7 +15,7 @@ dotenv.config();
 
 async function main() {
     console.log('\n' + '='.repeat(60));
-    console.log('  🎨 T-SHIRT DESIGN AUTOMATION WORKFLOW');
+    console.log('  🤖 YOUR AI EMPLOYEE - T-SHIRT DESIGN');
     console.log('='.repeat(60));
     console.log(`  Started: ${new Date().toLocaleString()}`);
     console.log('='.repeat(60));

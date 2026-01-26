@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - T-Shirt Design App</title>
+    <title>Your AI Employee - T-Shirt Design</title>
     <meta name="description" content="T-Shirt Design Workflow Dashboard">
     <link rel="stylesheet" href="/styles.css">
     <link rel="stylesheet"
@@ -23,7 +23,7 @@
     <div class="container" style="padding-top: 80px;">
         <header class="gallery-header">
             <h1 class="gallery-title"><span class="material-symbols-outlined icon-gradient"
-                    style="font-size: 1.2em;">palette</span> Design Workflow Dashboard</h1>
+                    style="font-size: 1.2em;">palette</span> Your AI Employee - T-Shirt Design</h1>
             <p class="gallery-subtitle">One-click to trigger the complete T-Shirt design generation process</p>
         </header>
 
@@ -34,7 +34,7 @@
                 <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
                     <div class="status-item">
                         <div id="step1-icon" class="status-icon material-symbols-outlined">pause_circle</div>
-                        <div class="status-label">Scrape Images</div>
+                        <div class="status-label">Scrape Online Images</div>
                     </div>
                     <div class="status-item">
                         <div id="step2-icon" class="status-icon material-symbols-outlined">pause_circle</div>
@@ -60,7 +60,7 @@
             <div style="text-align: center;">
                 <button id="start-btn" class="confirm-btn" onclick="startWorkflow()">
                     <span class="material-symbols-outlined">rocket_launch</span>
-                    <span>Start Design Generation</span>
+                    <span>Now, it's time to work!</span>
                 </button>
             </div>
 
@@ -153,7 +153,7 @@
             logOutput.innerHTML = '';
 
             const steps = [
-                { id: 'step1', name: 'Scraping Images', progress: 33 },
+                { id: 'step1', name: 'Scraping Online Images', progress: 33 },
                 { id: 'step2', name: 'Analyzing & Generating Ideas', progress: 66 },
                 { id: 'step3', name: 'Generating AI Images', progress: 100 }
             ];

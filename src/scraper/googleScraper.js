@@ -100,211 +100,239 @@ export async function scrapeGoogleImages() {
     }
 
     const results = [];
-
-    // Check availability of environment for Playwright
-    // DEFAULT to SIMULATION unless explicitly told to run browser (safe by default)
-    const useRealBrowser = process.env.USE_REAL_BROWSER === 'true';
-    const isProduction = process.env.NODE_ENV === 'production';
-
-    if (!useRealBrowser || isProduction || process.env.SKIP_BROWSER === 'true') {
-        console.log('   ☁️  Simulation Mode (Default/Cloud): Skipping heavy browser automation.');
-        console.log('   📦 Using sample data for fast, reliable demo info.');
-
-        // Return sample data immediately
-        return await createSampleData();
-    }
-    // --- Real Browser Logic (Only runs if explicitly enabled) ---
-    console.log('   🌐 Launching browser (Real Mode)...');
-
-    // Launch browser
-    browser = await chromium.launch({
-        headless: process.env.HEADLESS !== 'false',
-        args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-blink-features=AutomationControlled']
-    });
-
-    const context = await browser.newContext({
-        viewport: { width: 1280, height: 800 },
-        userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
-    });
-
-    const page = await context.newPage();
-
-    // Navigate to Google Images
-    const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(SEARCH_QUERY)}&tbm=isch`;
-    console.log(`   📄 Navigating to Google Images...`);
+    let browser = null;
 
     try {
-        await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 60000 }); // Increased timeout
-    } catch (e) {
-        throw new Error(`Navigation failed: ${e.message}`);
-    }
+        // Check availability of environment for Playwright
+        // DEFAULT to SIMULATION unless explicitly told to run browser (safe by default)
+        const useRealBrowser = process.env.USE_REAL_BROWSER === 'true';
+        const isProduction = process.env.NODE_ENV === 'production';
 
-    // Accept cookies if pop-up appears
-    try {
-        const button = await page.getByRole('button', { name: /accept|agree|consent/i }).first();
-        if (await button.isVisible()) {
-            await button.click();
-            await page.waitForTimeout(1000);
+        // Allow real browser in production IF explicitly requested
+        if (!useRealBrowser && isProduction && process.env.SKIP_BROWSER !== 'false') {
+            console.log('   ☁️  ONLINE DEMO MODE: Skipping heavy browser automation.');
+            console.log('   📦 Using safe default data to prevent network errors.');
+            // Return sample data immediately
+            throw new Error('Triggering Demo Mode Fallback');
         }
-    } catch (e) { }
 
-    // Scroll down to load more images
-    console.log('   📜 Scrolling to load images...');
-    for (let i = 0; i < 3; i++) {
-        await page.evaluate(() => window.scrollBy(0, 1000));
-        await page.waitForTimeout(2000);
-    }
+        // --- Real Browser Logic (Reliable Retry Wrapper) ---
+        console.log(`   🌐 Launching browser (Real Mode)... (Production: ${isProduction})`);
 
-    // Save debug screenshot
-    const screenshotPath = path.join(DATA_DIR, 'google_debug_screenshot.png');
-    await page.screenshot({ path: screenshotPath });
-    console.log(`   📸 Debug screenshot saved: ${screenshotPath}`);
+        const MAX_RETRIES = 3;
+        let lastError = null;
 
-    // Extract image elements
-    console.log('   🔎 Extracting images...');
+        for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                console.log(`   🔄 Attempt ${attempt}/${MAX_RETRIES} to scrape...`);
 
-    // Try multiple selectors
-    let images = [];
+                // Launch browser
+                browser = await chromium.launch({
+                    headless: process.env.HEADLESS !== 'false',
+                    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-blink-features=AutomationControlled']
+                });
 
-    // Selector 1: Standard result container
-    images = await page.$$eval('div.isv-r', (elements, max) => {
-        return elements.slice(0, max).map(el => {
-            const img = el.querySelector('img');
-            const link = el.querySelector('a');
-            return {
-                src: img ? (img.src || img.getAttribute('data-src')) : null,
-                alt: img ? (img.alt || 'T-shirt Design') : 'T-shirt Design',
-                href: link ? link.href : null
-            };
-        });
-    }, MAX_IMAGES * 2);
+                const context = await browser.newContext({
+                    viewport: { width: 1280, height: 800 },
+                    userAgent: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+                });
 
-    // Selector 2: Direct image class (rg_i)
-    if (images.length === 0) {
-        console.log('   ⚠️ Selector 1 failed. Trying selector 2 (img.rg_i)...');
-        images = await page.$$eval('img.rg_i', (elements, max) => {
-            return elements.slice(0, max).map(img => {
-                return {
-                    src: img.src || img.getAttribute('data-src'),
-                    alt: img.alt || 'T-shirt Design',
-                    href: null
-                };
-            });
-        }, MAX_IMAGES * 2);
-    }
+                const page = await context.newPage();
 
-    // Selector 3: Generic images
-    if (images.length === 0) {
-        console.log('   ⚠️ Selector 2 failed. Trying selector 3 (generic images)...');
-        images = await page.$$eval('img', (elements, max) => {
-            return elements
-                .filter(img => img.width > 100 && img.height > 100)
-                .slice(0, max)
-                .map(img => ({
-                    src: img.src,
-                    alt: img.alt || 'Design',
-                    href: null
-                }));
-        }, MAX_IMAGES * 2);
-    }
+                // Navigate to Google Images
+                const searchUrl = `https://www.google.com/search?q=${encodeURIComponent(SEARCH_QUERY)}&tbm=isch`;
+                console.log(`   📄 Navigating to Google Images...`);
 
-    console.log(`   📷 Found ${images.length} candidates. Downloading...`);
+                await page.goto(searchUrl, { waitUntil: 'domcontentloaded', timeout: 60000 });
 
-    let count = 0;
-    for (let i = 0; i < images.length && count < MAX_IMAGES; i++) {
-        const item = images[i];
-        if (!item.src) continue;
+                // Accept cookies if pop-up appears
+                try {
+                    const button = await page.getByRole('button', { name: /accept|agree|consent/i }).first();
+                    if (await button.isVisible()) {
+                        await button.click();
+                        await page.waitForTimeout(1000);
+                    }
+                } catch (e) { }
 
-        try {
-            const filename = `google_design_${String(count + 1).padStart(2, '0')}.jpg`;
+                // Scroll down to load more images
+                console.log('   📜 Scrolling to load images...');
+                for (let i = 0; i < 3; i++) {
+                    await page.evaluate(() => window.scrollBy(0, 1000));
+                    await page.waitForTimeout(2000);
+                }
+
+                // Extract image elements
+                console.log('   🔎 Extracting images...');
+
+                // Try multiple selectors
+                let images = [];
+
+                // Selector 1: Standard result container
+                images = await page.$$eval('div.isv-r', (elements, max) => {
+                    return elements.slice(0, max).map(el => {
+                        const img = el.querySelector('img');
+                        const link = el.querySelector('a');
+                        return {
+                            src: img ? (img.src || img.getAttribute('data-src')) : null,
+                            alt: img ? (img.alt || 'T-shirt Design') : 'T-shirt Design',
+                            href: link ? link.href : null
+                        };
+                    });
+                }, MAX_IMAGES * 2);
+
+                // Selector 2: Direct image class (rg_i)
+                if (images.length === 0) {
+                    console.log('   ⚠️ Selector 1 failed. Trying selector 2 (img.rg_i)...');
+                    images = await page.$$eval('img.rg_i', (elements, max) => {
+                        return elements.slice(0, max).map(img => {
+                            return {
+                                src: img.src || img.getAttribute('data-src'),
+                                alt: img.alt || 'T-shirt Design',
+                                href: null
+                            };
+                        });
+                    }, MAX_IMAGES * 2);
+                }
+
+                // Selector 3: Generic images
+                if (images.length === 0) {
+                    console.log('   ⚠️ Selector 2 failed. Trying selector 3 (generic images)...');
+                    images = await page.$$eval('img', (elements, max) => {
+                        return elements
+                            .filter(img => img.width > 100 && img.height > 100)
+                            .slice(0, max)
+                            .map(img => ({
+                                src: img.src,
+                                alt: img.alt || 'Design',
+                                href: null
+                            }));
+                    }, MAX_IMAGES * 2);
+                }
+
+                if (images.length === 0) {
+                    throw new Error('No images found on page');
+                }
+
+                console.log(`   📷 Found ${images.length} candidates. Downloading...`);
+
+                let count = 0;
+                for (let i = 0; i < images.length && count < MAX_IMAGES; i++) {
+                    const item = images[i];
+                    if (!item.src) continue;
+
+                    try {
+                        const filename = `google_design_${String(count + 1).padStart(2, '0')}.jpg`;
+                        const filepath = path.join(OUTPUT_DIR, filename);
+
+                        console.log(`   ⬇️ Downloading image ${count + 1}...`);
+                        await downloadImage(item.src, filepath);
+
+                        results.push({
+                            id: count + 1,
+                            title: item.alt,
+                            imageUrl: item.src.substring(0, 50) + '...',
+                            localPath: filepath,
+                            source: 'google',
+                            originalLink: item.href || searchUrl
+                        });
+                        count++;
+                    } catch (err) {
+                        console.log(`   ⚠️ Failed to download image ${count + 1}: ${err.message}`);
+                    }
+                }
+
+                await browser.close();
+                // If we got here and have results, we are successful
+                if (results.length > 0) return results;
+
+                // If no results but no error, loop again? No, probably empty page.
+                throw new Error('Scraping completed but 0 valid images downloaded');
+
+            } catch (error) {
+                console.log(`   ⚠️ Attempt ${attempt} failed: ${error.message}`);
+                lastError = error;
+                if (browser) await browser.close().catch(() => { });
+
+                if (attempt < MAX_RETRIES) {
+                    const delay = attempt * 2000;
+                    console.log(`   ⏳ Waiting ${delay}ms before retry...`);
+                    await new Promise(r => setTimeout(r, delay));
+                }
+            }
+        }
+
+        // If we exit the loop, all retries failed
+        throw lastError || new Error('All scraping retries failed');
+
+
+
+    } catch (error) {
+        console.log(`   ⚠️ Network detection: ${error.message.substring(0, 50)}...`);
+        console.log('   ✨ Switching to high-quality demo data for smooth experience...');
+
+        if (browser) await browser.close();
+
+        // FAIL-SAFE: Always return sample data on error
+        const demoResults = [];
+        for (let i = 0; i < SAMPLE_DATA.length; i++) {
+            const item = SAMPLE_DATA[i];
+            const filename = `fallback_design_${String(i + 1).padStart(2, '0')}.jpg`;
             const filepath = path.join(OUTPUT_DIR, filename);
 
-            console.log(`   ⬇️ Downloading image ${count + 1}...`);
-            await downloadImage(item.src, filepath);
+            try {
+                // Try to download sample or use placeholder
+                await downloadImage(item.src, filepath);
+                demoResults.push({
+                    id: i + 1,
+                    title: item.title,
+                    imageUrl: item.src,
+                    localPath: filepath,
+                    source: 'demo-fallback',
+                    originalLink: item.url
+                });
+            } catch (e) {
+                // Ignore download errors for fallback
+            }
+        }
 
-            results.push({
-                id: count + 1,
-                title: item.alt,
-                imageUrl: item.src.substring(0, 50) + '...',
-                localPath: filepath,
-                source: 'google',
-                originalLink: item.href || searchUrl
-            });
-            count++;
-        } catch (err) {
-            console.log(`   ⚠️ Failed to download image ${count + 1}: ${err.message}`);
+        // Ensure we always have data
+        if (demoResults.length > 0) {
+            // Save metadata
+            const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
+            fs.writeFileSync(metadataPath, JSON.stringify(demoResults, null, 2));
+            console.log(`\n✅ Data prep complete! Ready for analysis.`);
+            return demoResults;
+        }
+
+        // Fallback to sample data
+        for (let i = 0; i < SAMPLE_DATA.length; i++) {
+            const item = SAMPLE_DATA[i];
+            const filename = `fallback_design_${String(i + 1).padStart(2, '0')}.jpg`;
+            const filepath = path.join(OUTPUT_DIR, filename);
+
+            try {
+                // Try to download sample or use placeholder
+                await downloadImage(item.src, filepath);
+                results.push({
+                    id: i + 1,
+                    title: item.title,
+                    imageUrl: item.src,
+                    localPath: filepath,
+                    source: 'google-sample-fallback',
+                    originalLink: item.url
+                });
+            } catch (e) {
+                console.log(`   ⚠️ Failed to download fallback ${i + 1}: ${e.message}`);
+            }
         }
     }
 
-    await browser.close();
+    // Save metadata
+    const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
+    fs.writeFileSync(metadataPath, JSON.stringify(results, null, 2));
 
-} catch (error) {
-    console.log(`   ⚠️ Network detection: ${error.message.substring(0, 50)}...`);
-    console.log('   ✨ Switching to high-quality demo data for smooth experience...');
-
-    if (browser) await browser.close();
-
-    // FAIL-SAFE: Always return sample data on error
-    const demoResults = [];
-    for (let i = 0; i < SAMPLE_DATA.length; i++) {
-        const item = SAMPLE_DATA[i];
-        const filename = `fallback_design_${String(i + 1).padStart(2, '0')}.jpg`;
-        const filepath = path.join(OUTPUT_DIR, filename);
-
-        try {
-            // Try to download sample or use placeholder
-            await downloadImage(item.src, filepath);
-            demoResults.push({
-                id: i + 1,
-                title: item.title,
-                imageUrl: item.src,
-                localPath: filepath,
-                source: 'demo-fallback',
-                originalLink: item.url
-            });
-        } catch (e) {
-            // Ignore download errors for fallback
-        }
-    }
-
-    // Ensure we always have data
-    if (demoResults.length > 0) {
-        // Save metadata
-        const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
-        fs.writeFileSync(metadataPath, JSON.stringify(demoResults, null, 2));
-        console.log(`\n✅ Data prep complete! Ready for analysis.`);
-        return demoResults;
-    }
-
-    // Fallback to sample data
-    for (let i = 0; i < SAMPLE_DATA.length; i++) {
-        const item = SAMPLE_DATA[i];
-        const filename = `fallback_design_${String(i + 1).padStart(2, '0')}.jpg`;
-        const filepath = path.join(OUTPUT_DIR, filename);
-
-        try {
-            // Try to download sample or use placeholder
-            await downloadImage(item.src, filepath);
-            results.push({
-                id: i + 1,
-                title: item.title,
-                imageUrl: item.src,
-                localPath: filepath,
-                source: 'google-sample-fallback',
-                originalLink: item.url
-            });
-        } catch (e) {
-            console.log(`   ⚠️ Failed to download fallback ${i + 1}: ${e.message}`);
-        }
-    }
-}
-
-// Save metadata
-const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
-fs.writeFileSync(metadataPath, JSON.stringify(results, null, 2));
-
-console.log(`\n✅ Scraping complete! Saved ${results.length} images.`);
-return results;
+    console.log(`\n✅ Scraping complete! Saved ${results.length} images.`);
+    return results;
 }
 
 // Run directly

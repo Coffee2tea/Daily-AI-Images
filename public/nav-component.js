@@ -128,8 +128,8 @@ class NavMenu extends HTMLElement {
       <nav>
         <div class="nav-container">
           <a href="/dashboard" class="nav-brand">
-            <span class="material-symbols-outlined">palette</span>
-            T-Shirt Design
+            <span class="material-symbols-outlined">smart_toy</span>
+            Your AI Employee
           </a>
           <div class="nav-links">
             <a href="/dashboard" class="nav-link ${currentPath === '/dashboard' || currentPath === '/' ? 'active' : ''}">
@@ -138,7 +138,7 @@ class NavMenu extends HTMLElement {
             </a>
             <a href="/scraped" class="nav-link ${currentPath === '/scraped' ? 'active' : ''}">
               <span class="nav-icon material-symbols-outlined">image_search</span>
-              <span>Network Images</span>
+              <span>Online Images</span>
             </a>
             <a href="/ideas" class="nav-link ${currentPath === '/ideas' ? 'active' : ''}">
               <span class="nav-icon material-symbols-outlined">lightbulb</span>

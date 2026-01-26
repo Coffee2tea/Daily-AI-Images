@@ -47,24 +47,44 @@ export async function generateImages() {
 
         console.log(`   🖼️ Generating ${i + 1}/${ideas.length}: ${idea.title}...`);
 
-        try {
-            const result = await model.generateContent({
-                contents: [{ role: 'user', parts: [{ text: `T-shirt design: ${idea.aiPrompt}` }] }],
-                generationConfig: { responseModalities: ['image', 'text'] }
-            });
+        const MAX_RETRIES = 3;
+        let generationSuccess = false;
 
-            let saved = false;
-            const parts = result.response.candidates?.[0]?.content?.parts || [];
-            for (const part of parts) {
-                if (part.inlineData?.data) {
-                    fs.writeFileSync(filepath, Buffer.from(part.inlineData.data, 'base64'));
-                    saved = true;
-                    break;
+        for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+            try {
+                if (attempt > 1) console.log(`   🔄 Retry ${attempt}/${MAX_RETRIES}...`);
+
+                const result = await model.generateContent({
+                    contents: [{ role: 'user', parts: [{ text: `T-shirt design: ${idea.aiPrompt}` }] }],
+                    generationConfig: { responseModalities: ['image', 'text'] }
+                });
+
+                let saved = false;
+                const parts = result.response.candidates?.[0]?.content?.parts || [];
+                for (const part of parts) {
+                    if (part.inlineData?.data) {
+                        fs.writeFileSync(filepath, Buffer.from(part.inlineData.data, 'base64'));
+                        saved = true;
+                        break;
+                    }
+                }
+
+                if (saved) {
+                    generationSuccess = true;
+                    break; // Success, exit retry loop
+                } else {
+                    throw new Error('No image data in response');
+                }
+            } catch (e) {
+                console.log(`   ⚠️ Error (Attempt ${attempt}): ${e.message}`);
+                if (attempt < MAX_RETRIES) {
+                    await new Promise(r => setTimeout(r, attempt * 2000));
                 }
             }
-            if (!saved) createSvgPlaceholder(idea, filepath, i + 1);
-        } catch (e) {
-            console.log(`   ⚠️ Error: ${e.message}`);
+        }
+
+        if (!generationSuccess) {
+            console.log(`   ❌ All retries failed for ${idea.title}. Creating placeholder.`);
             createSvgPlaceholder(idea, filepath, i + 1);
         }
 
