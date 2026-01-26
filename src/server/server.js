@@ -24,6 +24,10 @@ app.use(express.static(path.join(rootDir, 'public')));
 app.use('/generated_images', express.static(path.join(rootDir, 'generated_images')));
 app.use('/downloaded_images', express.static(path.join(rootDir, 'downloaded_images')));
 
+app.get('/health', (req, res) => {
+  res.status(200).send('OK');
+});
+
 // Routes
 app.get('/', (req, res) => {
   res.redirect('/dashboard');
@@ -218,7 +222,7 @@ app.post('/api/run-workflow', async (req, res) => {
 // Start server
 export function startServer() {
   return new Promise((resolve) => {
-    const server = app.listen(PORT, () => {
+    const server = app.listen(PORT, '0.0.0.0', () => {
       console.log(`\n🚀 Server running at http://localhost:${PORT}`);
       console.log(`   🏠 Dashboard: http://localhost:${PORT}/dashboard`);
       console.log(`   📷 Scraped: http://localhost:${PORT}/scraped`);
