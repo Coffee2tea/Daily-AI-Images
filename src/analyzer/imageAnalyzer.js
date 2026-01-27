@@ -84,11 +84,12 @@ export async function analyzeAndGenerateIdeas() {
 
     // If we have actual images, analyze them
     if (imageFiles.length > 0) {
-        console.log(`   🖼️ Analyzing ${imageFiles.length} images...`);
+        console.log(`   🖼️ Analyzing images to generate 10 unique ideas...`);
 
-        for (let i = 0; i < imageFiles.length; i++) {
-            const imagePath = imageFiles[i];
-            console.log(`   📊 Analyzing image ${i + 1}/${imageFiles.length}...`);
+        for (let i = 0; i < 10; i++) {
+            // Cycle through images if we have fewer than 10
+            const imagePath = imageFiles[i % imageFiles.length];
+            console.log(`   📊 Analyzing image ${i + 1}/10 (Source: ${path.basename(imagePath)})...`);
 
             try {
                 const imageData = imageToBase64(imagePath);
