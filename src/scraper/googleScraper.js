@@ -36,7 +36,7 @@ function saveBase64Image(base64Data, filepath) {
 /**
  * Download image from URL
  */
-async function downloadImage(url, filepath) {
+async function downloadImage(url, filepath, timeout = 30000) {
     // Handle base64 directly
     if (url.startsWith('data:image')) {
         return saveBase64Image(url, filepath);
@@ -53,7 +53,7 @@ async function downloadImage(url, filepath) {
 
         const request = protocol.get(url, options, (response) => {
             if (response.statusCode === 301 || response.statusCode === 302) {
-                downloadImage(response.headers.location, filepath)
+                downloadImage(response.headers.location, filepath, timeout)
                     .then(resolve)
                     .catch(reject);
                 return;
@@ -71,7 +71,7 @@ async function downloadImage(url, filepath) {
             fileStream.on('error', reject);
         });
         request.on('error', reject);
-        request.setTimeout(30000, () => {
+        request.setTimeout(timeout, () => {
             request.destroy();
             reject(new Error('Download timeout'));
         });
@@ -279,32 +279,35 @@ export async function scrapeGoogleImages() {
 
         // FAIL-SAFE: Always return sample data on error
         const demoResults = [];
-        for (let i = 0; i < SAMPLE_DATA.length; i++) {
-            const item = SAMPLE_DATA[i];
+
+        // Parallelize downloads to avoid timeout
+        // Create an array of promises
+        const downloadPromises = SAMPLE_DATA.map(async (item, i) => {
             const filename = `fallback_design_${String(i + 1).padStart(2, '0')}.jpg`;
             const filepath = path.join(OUTPUT_DIR, filename);
 
             let localPath = null;
             try {
-                // Try to download sample or use placeholder
-                await downloadImage(item.src, filepath);
+                // Try to download sample with SHORT 4s timeout
+                // 4 seconds max per image, running in parallel should take max 4s total
+                await downloadImage(item.src, filepath, 4000);
                 localPath = filepath;
             } catch (e) {
-                // Ignore download errors for fallback
-                console.log(`   ⚠️ Could not download sample image (Firewall?): ${e.message}`);
+                // Ignore download errors
             }
 
-            // ALWAYS push the result, even if download failed. 
-            // The frontend can load the remote URL if local file is missing.
-            demoResults.push({
+            return {
                 id: i + 1,
                 title: item.title,
                 imageUrl: item.src,
                 localPath: localPath,
                 source: 'demo-fallback',
                 originalLink: item.url
-            });
-        }
+            };
+        });
+
+        const results = await Promise.all(downloadPromises);
+        demoResults.push(...results);
 
         // Ensure we always have data
         if (demoResults.length > 0) {
@@ -315,7 +318,7 @@ export async function scrapeGoogleImages() {
             return demoResults;
         }
 
-        // Fallback to sample data
+        // Fallback to sample data for real browser failure cases (unreachable code if logic holds, but kept for safety)
         for (let i = 0; i < SAMPLE_DATA.length; i++) {
             const item = SAMPLE_DATA[i];
             const filename = `fallback_design_${String(i + 1).padStart(2, '0')}.jpg`;
