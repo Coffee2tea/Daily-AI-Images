@@ -2,7 +2,7 @@ import json
 import requests
 import time
 
-url = "https://www.superlinear.academy/ai-builders/v1/deployments"
+url = "https://space.ai-builders.com/backend/v1/deployments"
 token = "sk_e954e069_055cfe5e1e0e13a0e5cd1aaa141412afb110"
 
 print("Reading deploy-config.json...")
@@ -35,7 +35,7 @@ except Exception as e:
 
 # Now post
 try:
-    response = s.post(url, json=data, headers=headers, timeout=30)
+    response = s.post(url, json=data, headers=headers, timeout=120)
     print(f"Status: {response.status_code}")
     print("Response:", response.text)
 except Exception as e:

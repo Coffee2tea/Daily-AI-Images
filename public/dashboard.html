@@ -166,6 +166,10 @@
                     headers: { 'Content-Type': 'application/json' }
                 });
 
+                if (!response.ok) {
+                    throw new Error(`Server returned ${response.status} ${response.statusText}`);
+                }
+
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
 
@@ -199,6 +203,8 @@
         }
 
         function handleEvent(data, steps, progressFill, progressText) {
+            if (data.type === 'ping') return;
+
             if (data.step) {
                 const stepIndex = parseInt(data.step) - 1;
                 if (stepIndex >= 0 && stepIndex < steps.length) {

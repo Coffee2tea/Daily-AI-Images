@@ -104,20 +104,25 @@ export async function scrapeGoogleImages() {
 
     try {
         // Check availability of environment for Playwright
-        // DEFAULT to SIMULATION unless explicitly told to run browser (safe by default)
-        const useRealBrowser = process.env.USE_REAL_BROWSER === 'true';
+        // Smart Defaults:
+        // - In Production (Server): Default to DEMO/SAFE mode (no browser)
+        // - In Development (Local): Default to REAL BROWSER (for development)
         const isProduction = process.env.NODE_ENV === 'production';
+        const explicitRealBrowser = process.env.USE_REAL_BROWSER === 'true';
 
-        // Allow real browser in production IF explicitly requested
-        if (!useRealBrowser && isProduction && process.env.SKIP_BROWSER !== 'false') {
-            console.log('   ☁️  ONLINE DEMO MODE: Skipping heavy browser automation.');
-            console.log('   📦 Using safe default data to prevent network errors.');
+        // Use real browser if explicitly requested OR if we are in development mode (local)
+        // In Production (Docker), we default to FALSE (Demo Mode) to be safe
+        const useRealBrowser = explicitRealBrowser || (!isProduction && process.env.USE_REAL_BROWSER !== 'false');
+
+        if (!useRealBrowser) {
+            console.log('   ☁️  SERVER/DEMO MODE: Skipping heavy browser automation.');
+            console.log('   📦 Using safe default data to ensure smooth experience.');
             // Return sample data immediately
             throw new Error('Triggering Demo Mode Fallback');
         }
 
         // --- Real Browser Logic (Reliable Retry Wrapper) ---
-        console.log(`   🌐 Launching browser (Real Mode)... (Production: ${isProduction})`);
+        console.log(`   🌐 Launching browser (Real Mode)...`);
 
         const MAX_RETRIES = 3;
         let lastError = null;

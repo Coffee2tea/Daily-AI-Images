@@ -143,6 +143,7 @@ app.get('/api/scraped', (req, res) => {
 // API: Send email with designs
 app.post('/api/send-email', async (req, res) => {
   try {
+    const { recipient } = req.body;
     const { sendIdeasEmail } = await import('../emailer/emailService.js');
     const ideasPath = path.join(rootDir, 'data', 'ideas.json');
 
@@ -151,7 +152,7 @@ app.post('/api/send-email', async (req, res) => {
     }
 
     const ideas = JSON.parse(fs.readFileSync(ideasPath, 'utf-8'));
-    const result = await sendIdeasEmail(ideas);
+    const result = await sendIdeasEmail(ideas, recipient);
 
     if (result.success) {
       res.json({ success: true, message: 'Email sent successfully' });
@@ -173,6 +174,16 @@ app.post('/api/run-workflow', async (req, res) => {
   const sendEvent = (data) => {
     res.write(`data: ${JSON.stringify(data)}\n\n`);
   };
+
+  // Keep-alive ping to prevent timeouts
+  const keepAliveInterval = setInterval(() => {
+    sendEvent({ type: 'ping', message: 'ping' });
+  }, 15000);
+
+  // Clean up interval on close
+  req.on('close', () => {
+    clearInterval(keepAliveInterval);
+  });
 
   try {
     // Step 1: Scrape Google Images

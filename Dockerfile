@@ -2,7 +2,11 @@
 FROM node:18-slim
 
 # Set working directory
+# Set working directory
 WORKDIR /app
+
+# Set production environment
+ENV NODE_ENV=production
 
 # Install basic system dependencies for canvas/image processing if needed
 RUN apt-get update && apt-get install -y \
