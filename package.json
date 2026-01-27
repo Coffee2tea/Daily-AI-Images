@@ -1,6 +1,6 @@
 {
   "name": "daily-ai-images",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "T-Shirt Design App - Agentic workflow for design inspiration and generation",
   "main": "src/main.js",
   "type": "module",
