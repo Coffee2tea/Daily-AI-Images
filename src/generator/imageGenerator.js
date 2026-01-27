@@ -56,7 +56,7 @@ export async function generateImages() {
 
                 const result = await model.generateContent({
                     contents: [{ role: 'user', parts: [{ text: `T-shirt design: ${idea.aiPrompt}` }] }],
-                    generationConfig: { responseModalities: ['image', 'text'] }
+                    // Removed experimental responseModalities to ensure stability
                 });
 
                 let saved = false;

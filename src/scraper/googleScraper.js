@@ -284,20 +284,26 @@ export async function scrapeGoogleImages() {
             const filename = `fallback_design_${String(i + 1).padStart(2, '0')}.jpg`;
             const filepath = path.join(OUTPUT_DIR, filename);
 
+            let localPath = null;
             try {
                 // Try to download sample or use placeholder
                 await downloadImage(item.src, filepath);
-                demoResults.push({
-                    id: i + 1,
-                    title: item.title,
-                    imageUrl: item.src,
-                    localPath: filepath,
-                    source: 'demo-fallback',
-                    originalLink: item.url
-                });
+                localPath = filepath;
             } catch (e) {
                 // Ignore download errors for fallback
+                console.log(`   ⚠️ Could not download sample image (Firewall?): ${e.message}`);
             }
+
+            // ALWAYS push the result, even if download failed. 
+            // The frontend can load the remote URL if local file is missing.
+            demoResults.push({
+                id: i + 1,
+                title: item.title,
+                imageUrl: item.src,
+                localPath: localPath,
+                source: 'demo-fallback',
+                originalLink: item.url
+            });
         }
 
         // Ensure we always have data
