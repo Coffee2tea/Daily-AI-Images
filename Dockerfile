@@ -28,8 +28,9 @@ RUN npm install
 # Copy source code
 COPY . .
 
-# Create necessary directories for persistence
-RUN mkdir -p generated_images downloaded_images data
+# Create necessary directories for persistence and grant permissions
+RUN mkdir -p generated_images downloaded_images data && \
+    chmod -R 777 generated_images downloaded_images data
 
 # Expose the port
 EXPOSE 3000

@@ -28,6 +28,15 @@ app.get('/health', (req, res) => {
   res.status(200).send('OK');
 });
 
+// Version check to verify deployment
+app.get('/version', (req, res) => {
+  res.json({
+    version: '1.2.0',
+    desc: 'Fix permissions + Demo Mode Fallback',
+    timestamp: new Date().toISOString()
+  });
+});
+
 // Routes
 app.get('/', (req, res) => {
   res.redirect('/dashboard');
