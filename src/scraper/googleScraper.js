@@ -89,16 +89,16 @@ const SAMPLE_DATA = [
 
 // Pure static fallback - no network required at all (used when even demo downloads fail)
 const STATIC_FALLBACK_DATA = [
-    { id: 1, title: "Modern Abstract Design", imageUrl: "/downloaded_images/google_design_01.jpg", localPath: "downloaded_images/google_design_01.jpg", source: 'offline-demo', originalLink: "#" },
-    { id: 2, title: "Retro Typography", imageUrl: "/downloaded_images/google_design_02.jpg", localPath: "downloaded_images/google_design_02.jpg", source: 'offline-demo', originalLink: "#" },
-    { id: 3, title: "Geometric Patterns", imageUrl: "/downloaded_images/google_design_03.jpg", localPath: "downloaded_images/google_design_03.jpg", source: 'offline-demo', originalLink: "#" },
-    { id: 4, title: "Street Art Graffiti", imageUrl: "/downloaded_images/google_design_04.jpg", localPath: "downloaded_images/google_design_04.jpg", source: 'offline-demo', originalLink: "#" },
-    { id: 5, title: "Vintage Illustration", imageUrl: "/downloaded_images/google_design_05.jpg", localPath: "downloaded_images/google_design_05.jpg", source: 'offline-demo', originalLink: "#" },
-    { id: 6, title: "Minimalist Line Art", imageUrl: "/downloaded_images/google_design_06.jpg", localPath: "downloaded_images/google_design_06.jpg", source: 'offline-demo', originalLink: "#" },
-    { id: 7, title: "Pop Art Culture", imageUrl: "/downloaded_images/google_design_07.jpg", localPath: "downloaded_images/google_design_07.jpg", source: 'offline-demo', originalLink: "#" },
-    { id: 8, title: "Nature & Outdoors", imageUrl: "/downloaded_images/google_design_08.jpg", localPath: "downloaded_images/google_design_08.jpg", source: 'offline-demo', originalLink: "#" },
-    { id: 9, title: "Cyberpunk Aesthetics", imageUrl: "/downloaded_images/google_design_09.jpg", localPath: "downloaded_images/google_design_09.jpg", source: 'offline-demo', originalLink: "#" },
-    { id: 10, title: "Abstract Watercolor", imageUrl: "/downloaded_images/google_design_10.jpg", localPath: "downloaded_images/google_design_10.jpg", source: 'offline-demo', originalLink: "#" }
+    { id: 1, title: "Modern Abstract Design", imageUrl: "/downloaded_images/google_design_01.jpg", localPath: "/downloaded_images/google_design_01.jpg", source: 'offline-demo', originalLink: "#" },
+    { id: 2, title: "Retro Typography", imageUrl: "/downloaded_images/google_design_02.jpg", localPath: "/downloaded_images/google_design_02.jpg", source: 'offline-demo', originalLink: "#" },
+    { id: 3, title: "Geometric Patterns", imageUrl: "/downloaded_images/google_design_03.jpg", localPath: "/downloaded_images/google_design_03.jpg", source: 'offline-demo', originalLink: "#" },
+    { id: 4, title: "Street Art Graffiti", imageUrl: "/downloaded_images/google_design_04.jpg", localPath: "/downloaded_images/google_design_04.jpg", source: 'offline-demo', originalLink: "#" },
+    { id: 5, title: "Vintage Illustration", imageUrl: "/downloaded_images/google_design_05.jpg", localPath: "/downloaded_images/google_design_05.jpg", source: 'offline-demo', originalLink: "#" },
+    { id: 6, title: "Minimalist Line Art", imageUrl: "/downloaded_images/google_design_06.jpg", localPath: "/downloaded_images/google_design_06.jpg", source: 'offline-demo', originalLink: "#" },
+    { id: 7, title: "Pop Art Culture", imageUrl: "/downloaded_images/google_design_07.jpg", localPath: "/downloaded_images/google_design_07.jpg", source: 'offline-demo', originalLink: "#" },
+    { id: 8, title: "Nature & Outdoors", imageUrl: "/downloaded_images/google_design_08.jpg", localPath: "/downloaded_images/google_design_08.jpg", source: 'offline-demo', originalLink: "#" },
+    { id: 9, title: "Cyberpunk Aesthetics", imageUrl: "/downloaded_images/google_design_09.jpg", localPath: "/downloaded_images/google_design_09.jpg", source: 'offline-demo', originalLink: "#" },
+    { id: 10, title: "Abstract Watercolor", imageUrl: "/downloaded_images/google_design_10.jpg", localPath: "/downloaded_images/google_design_10.jpg", source: 'offline-demo', originalLink: "#" }
 ];
 
 export async function scrapeGoogleImages() {
