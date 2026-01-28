@@ -19,50 +19,51 @@ const OUTPUT_DIR = path.join(rootDir, 'generated_images');
 export async function generateImages() {
     console.log('\n🎨 Starting AI image generation (PNG Mode)...');
 
-    if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+    try {
+        if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-    const ideasPath = path.join(DATA_DIR, 'ideas.json');
-    if (!fs.existsSync(ideasPath)) {
-        console.log('   ❌ No ideas found.');
-        return [];
-    }
-
-    const ideas = JSON.parse(fs.readFileSync(ideasPath, 'utf-8'));
-    console.log(`   📝 Loaded ${ideas.length} ideas`);
-
-    if (!process.env.GEMINI_API_KEY) {
-        console.log('   ⚠️ No API key. Creating placeholders...');
-        return createPlaceholders(ideas);
-    }
-
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-    // Use Gemini 2.0 Flash with native image generation
-    const model = genAI.getGenerativeModel({
-        model: 'gemini-2.0-flash-exp',
-        generationConfig: {
-            responseModalities: ['IMAGE']
+        const ideasPath = path.join(DATA_DIR, 'ideas.json');
+        if (!fs.existsSync(ideasPath)) {
+            console.log('   ❌ No ideas found.');
+            return [];
         }
-    });
 
-    const manifest = { generatedAt: new Date().toISOString(), images: [] };
+        const ideas = JSON.parse(fs.readFileSync(ideasPath, 'utf-8'));
+        console.log(`   📝 Loaded ${ideas.length} ideas`);
 
-    for (let i = 0; i < ideas.length; i++) {
-        const idea = ideas[i];
-        const filename = `design_${String(i + 1).padStart(2, '0')}.png`;
-        const filepath = path.join(OUTPUT_DIR, filename);
+        if (!process.env.GEMINI_API_KEY) {
+            console.log('   ⚠️ No API key. Creating placeholders...');
+            return createPlaceholders(ideas);
+        }
 
-        console.log(`   🖼️ Generating ${i + 1}/${ideas.length}: ${idea.title}...`);
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-        const MAX_RETRIES = 3;
-        let generationSuccess = false;
+        // Use Gemini 2.0 Flash with native image generation
+        const model = genAI.getGenerativeModel({
+            model: 'gemini-2.0-flash-exp',
+            generationConfig: {
+                responseModalities: ['IMAGE']
+            }
+        });
 
-        for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-            try {
-                if (attempt > 1) console.log(`   🔄 Retry ${attempt}/${MAX_RETRIES}...`);
+        const manifest = { generatedAt: new Date().toISOString(), images: [] };
 
-                // Detailed prompt for high-quality T-shirt design generation
-                const prompt = `Create a professional, print-ready t-shirt design illustration:
+        for (let i = 0; i < ideas.length; i++) {
+            const idea = ideas[i];
+            const filename = `design_${String(i + 1).padStart(2, '0')}.png`;
+            const filepath = path.join(OUTPUT_DIR, filename);
+
+            console.log(`   🖼️ Generating ${i + 1}/${ideas.length}: ${idea.title}...`);
+
+            const MAX_RETRIES = 3;
+            let generationSuccess = false;
+
+            for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+                try {
+                    if (attempt > 1) console.log(`   🔄 Retry ${attempt}/${MAX_RETRIES}...`);
+
+                    // Detailed prompt for high-quality T-shirt design generation
+                    const prompt = `Create a professional, print-ready t-shirt design illustration:
 
 DESIGN CONCEPT:
 - Title: "${idea.title}"
@@ -79,73 +80,84 @@ REQUIREMENTS:
 - Professional quality that could sell on platforms like Etsy or Redbubble
 - Clean edges, suitable for print production`;
 
-                const result = await model.generateContent(prompt);
-                const response = result.response;
+                    const result = await model.generateContent(prompt);
+                    const response = result.response;
 
-                // Extract image data from response
-                if (response.candidates &&
-                    response.candidates[0] &&
-                    response.candidates[0].content &&
-                    response.candidates[0].content.parts) {
+                    // Extract image data from response
+                    if (response.candidates &&
+                        response.candidates[0] &&
+                        response.candidates[0].content &&
+                        response.candidates[0].content.parts) {
 
-                    for (const part of response.candidates[0].content.parts) {
-                        if (part.inlineData && part.inlineData.data) {
-                            // Decode Base64 and save as PNG
-                            const imageBuffer = Buffer.from(part.inlineData.data, 'base64');
-                            fs.writeFileSync(filepath, imageBuffer);
-                            console.log(`   ✅ Saved: ${filename}`);
-                            generationSuccess = true;
-                            break;
+                        for (const part of response.candidates[0].content.parts) {
+                            if (part.inlineData && part.inlineData.data) {
+                                // Decode Base64 and save as PNG
+                                const imageBuffer = Buffer.from(part.inlineData.data, 'base64');
+                                fs.writeFileSync(filepath, imageBuffer);
+                                console.log(`   ✅ Saved: ${filename}`);
+                                generationSuccess = true;
+                                break;
+                            }
                         }
                     }
-                }
 
-                if (generationSuccess) break;
+                    if (generationSuccess) break;
 
-                // If we got here without success, the response format was unexpected
-                throw new Error('No image data found in response');
+                    // If we got here without success, the response format was unexpected
+                    throw new Error('No image data found in response');
 
-            } catch (e) {
-                const isNetworkError = e.message.toLowerCase().includes('network') ||
-                    e.message.toLowerCase().includes('fetch') ||
-                    e.message.toLowerCase().includes('econnreset') ||
-                    e.message.toLowerCase().includes('etimedout') ||
-                    e.message.toLowerCase().includes('socket');
-                console.log(`   ⚠️ Error (Attempt ${attempt}): ${e.message}`);
+                } catch (e) {
+                    const isNetworkError = e.message.toLowerCase().includes('network') ||
+                        e.message.toLowerCase().includes('fetch') ||
+                        e.message.toLowerCase().includes('econnreset') ||
+                        e.message.toLowerCase().includes('etimedout') ||
+                        e.message.toLowerCase().includes('socket');
+                    console.log(`   ⚠️ Error (Attempt ${attempt}): ${e.message}`);
 
-                if (isNetworkError && attempt >= MAX_RETRIES) {
-                    console.log(`   ⚠️ Network error detected. Continuing with placeholder...`);
-                    break;
-                }
+                    if (isNetworkError && attempt >= MAX_RETRIES) {
+                        console.log(`   ⚠️ Network error detected. Continuing with placeholder...`);
+                        break;
+                    }
 
-                if (attempt < MAX_RETRIES) {
-                    const delay = isNetworkError ? attempt * 3000 : attempt * 2000;
-                    console.log(`   ⏳ Waiting ${delay / 1000}s before retry...`);
-                    await new Promise(r => setTimeout(r, delay));
+                    if (attempt < MAX_RETRIES) {
+                        const delay = isNetworkError ? attempt * 3000 : attempt * 2000;
+                        console.log(`   ⏳ Waiting ${delay / 1000}s before retry...`);
+                        await new Promise(r => setTimeout(r, delay));
+                    }
                 }
             }
+
+            if (!generationSuccess) {
+                console.log(`   ❌ All retries failed for ${idea.title}. Creating placeholder.`);
+                createPngPlaceholder(idea, filepath, i + 1);
+            }
+
+            manifest.images.push({
+                id: i + 1,
+                title: idea.title,
+                description: idea.theme,
+                style: idea.style,
+                imagePath: `/generated_images/${filename}`
+            });
+
+            // Delay to avoid rate limits
+            await new Promise(r => setTimeout(r, 1500));
         }
 
-        if (!generationSuccess) {
-            console.log(`   ❌ All retries failed for ${idea.title}. Creating placeholder.`);
-            createPngPlaceholder(idea, filepath, i + 1);
+        fs.writeFileSync(path.join(DATA_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
+        console.log(`\n✅ Generated ${manifest.images.length} images!`);
+        return manifest.images;
+
+    } catch (fatalError) {
+        console.log(`\n❌ Fatal error in Generator: ${fatalError.message}`);
+        console.log(`   ⚠️ Switching to fallback: Creating placeholders...`);
+        const ideasPath = path.join(DATA_DIR, 'ideas.json');
+        if (fs.existsSync(ideasPath)) {
+            const ideas = JSON.parse(fs.readFileSync(ideasPath, 'utf-8'));
+            return createPlaceholders(ideas);
         }
-
-        manifest.images.push({
-            id: i + 1,
-            title: idea.title,
-            description: idea.theme,
-            style: idea.style,
-            imagePath: `/generated_images/${filename}`
-        });
-
-        // Delay to avoid rate limits
-        await new Promise(r => setTimeout(r, 1500));
+        return [];
     }
-
-    fs.writeFileSync(path.join(DATA_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
-    console.log(`\n✅ Generated ${manifest.images.length} images!`);
-    return manifest.images;
 }
 
 function createPlaceholders(ideas) {
