@@ -1,74 +1,74 @@
 {
-  "generatedAt": "2026-01-28T22:32:52.661Z",
+  "generatedAt": "2026-01-28T22:58:43.066Z",
   "images": [
     {
       "id": 1,
-      "title": "Cyberpunk Neko",
-      "description": "Futuristic Japanese Lucky Cat",
-      "style": "Cyberpunk, techwear",
+      "title": "Glitch Cat",
+      "description": "Cyberpunk, Glitch Art",
+      "style": "Modern, edgy, techwear",
       "imagePath": "/generated_images/design_01.png"
     },
     {
       "id": 2,
       "title": "Cyberpunk Glitch Hand",
-      "description": "Cyberpunk, Technology, Glitch Art",
-      "style": "Modern, Futuristic",
+      "description": "Cyberpunk, technology, glitch art",
+      "style": "Futuristic, edgy, digital art",
       "imagePath": "/generated_images/design_02.png"
     },
     {
       "id": 3,
-      "title": "Celestial Bubbles",
-      "description": "Space, Planets, Abstract",
-      "style": "Modern, Graphic, Minimalist",
+      "title": "Cosmic Jellyfish",
+      "description": "Ocean/Space",
+      "style": "Surreal, Digital Art",
       "imagePath": "/generated_images/design_03.png"
     },
     {
       "id": 4,
-      "title": "Airport Code Tee",
-      "description": "Travel/Airports",
-      "style": "Minimalist, Modern",
+      "title": "Parentheses Series: (Beach)",
+      "description": "Travel/Location",
+      "style": "Minimalist, clean",
       "imagePath": "/generated_images/design_04.png"
     },
     {
       "id": 5,
-      "title": "Mountain Majesty Silhouette",
-      "description": "Nature, Wildlife, Mountain Adventure",
-      "style": "Minimalist, graphic, with vintage elements",
+      "title": "Bear Peak Explorer",
+      "description": "Adventure, Wilderness, Wildlife, Mountain Exploration",
+      "style": "Illustrative, Vintage Travel Poster",
       "imagePath": "/generated_images/design_05.png"
     },
     {
       "id": 6,
-      "title": "Cosmic Librarian",
-      "description": "Education, Space, Retro-futurism",
-      "style": "Vintage, Graphic, Illustrated",
+      "title": "Retro Arcade High Score",
+      "description": "Gaming, Nostalgia, Achievement",
+      "style": "Retro, Pixel Art, Graphic",
       "imagePath": "/generated_images/design_06.png"
     },
     {
       "id": 7,
-      "title": "Retro Robotics Team",
-      "description": "STEM, Robotics Competition, School Spirit",
-      "style": "Retro, Distressed, Collegiate",
+      "title": "Retro Space Explorer Club",
+      "description": "Sci-Fi, Retro Futurism, Space Exploration",
+      "style": "Vintage, Distressed",
       "imagePath": "/generated_images/design_07.png"
     },
     {
       "id": 8,
-      "title": "Bloom Where You're Planted",
-      "description": "Resilience, Personal Growth, Nature",
-      "style": "Bohemian, Hand-lettered, Botanical",
+      "title": "Bloom Where You Are Planted",
+      "description": "Resilience, Personal Growth, Acceptance",
+      "style": "Vintage, Botanical, Slightly distressed",
       "imagePath": "/generated_images/design_08.png"
     },
     {
       "id": 9,
-      "title": "Sustainable Futures Club",
-      "description": "Environmental Awareness, Club Identity",
-      "style": "Modern, Minimalist, Earthy",
+      "title": "Hiking Club Retro Badge Tee",
+      "description": "Outdoors, Hiking, Club Affiliation",
+      "style": "Vintage, Badge-style, Illustrated",
       "imagePath": "/generated_images/design_09.png"
     },
     {
       "id": 10,
-      "title": "Fractured Landscape",
-      "description": "Nature meets Technology",
-      "style": "Abstract, Geometric, Urban",
+      "title": "Fractured Galaxy",
+      "description": "Space, Abstract",
+      "style": "Futuristic, Edgy",
       "imagePath": "/generated_images/design_10.png"
     }
   ]

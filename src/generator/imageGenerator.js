@@ -180,8 +180,8 @@ REQUIREMENTS:
  * Main Export - With Timeout Wrapper
  */
 export async function generateImages() {
-    // 5 Minute Timeout for generation too
-    const timeoutMs = 300000;
+    // 10 Minute Timeout for generation to allow for slow server/rate limits
+    const timeoutMs = 600000;
 
     const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error(`Timeout of ${timeoutMs}ms exceeded`)), timeoutMs);
@@ -195,7 +195,7 @@ export async function generateImages() {
         ]);
     } catch (error) {
         console.log(`\n❌ Generator Failed or Timed Out: ${error.message}`);
-        console.log('   ⚠️ Triggering safety fallback...');
+        console.log('   ⚠️ Triggering safety fallback (preserving valid images)...');
 
         // Load ideas to create placeholders
         const ideasPath = path.join(DATA_DIR, 'ideas.json');
@@ -209,14 +209,30 @@ export async function generateImages() {
 
 function createPlaceholders(ideas) {
     const manifest = { generatedAt: new Date().toISOString(), images: [] };
+
     ideas.forEach((idea, i) => {
         const filename = `design_${String(i + 1).padStart(2, '0')}.png`;
-        createPngPlaceholder(idea, path.join(OUTPUT_DIR, filename), i + 1);
+        const filepath = path.join(OUTPUT_DIR, filename);
+        let usedPlaceholder = false;
+
+        // CHECK: If a valid image (> 500 bytes) already exists, KEEP IT.
+        if (fs.existsSync(filepath) && fs.statSync(filepath).size > 500) {
+            console.log(`   ✅ Preserving existing valid image: ${filename}`);
+        } else {
+            // Only overwrite if missing or it's a tiny placeholder
+            createPngPlaceholder(idea, filepath, i + 1);
+            usedPlaceholder = true;
+        }
+
         manifest.images.push({
-            id: i + 1, title: idea.title, description: idea.theme,
-            style: idea.style, imagePath: `/generated_images/${filename}`
+            id: i + 1,
+            title: idea.title,
+            description: usedPlaceholder ? "Draft Concept" : idea.theme,
+            style: idea.style,
+            imagePath: `/generated_images/${filename}`
         });
     });
+
     fs.writeFileSync(path.join(DATA_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
     return manifest.images;
 }

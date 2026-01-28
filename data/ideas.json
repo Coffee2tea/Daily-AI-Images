@@ -2,22 +2,22 @@
   {
     "id": 1,
     "inspirationSource": "fallback_design_01.jpg",
-    "title": "Cyberpunk Neko",
-    "theme": "Futuristic Japanese Lucky Cat",
-    "style": "Cyberpunk, techwear",
-    "colorScheme": "Neon pink and electric blue on black background",
-    "targetAudience": "Gamers, anime fans, cyberpunk enthusiasts, tech-savvy individuals",
-    "designElements": "A stylized, pixelated Maneki Neko (lucky cat) wearing a cyberpunk headset. Glitch effects around the edges. Binary code as background noise. Futuristic Japanese characters incorporated into the design. Neon glowing details.",
-    "mood": "Edgy, futuristic, playful",
-    "aiPrompt": "Create a cyberpunk style pixel art illustration of a Maneki Neko wearing a gaming headset with neon glowing details, glitch effects, and binary code background. Use neon pink and electric blue on a black background. Include futuristic Japanese characters.",
+    "title": "Glitch Cat",
+    "theme": "Cyberpunk, Glitch Art",
+    "style": "Modern, edgy, techwear",
+    "colorScheme": "Black shirt, neon green and purple accents, white text",
+    "targetAudience": "Gamers, programmers, digital artists, cyberpunk fans",
+    "designElements": "A pixelated and glitched-out version of the Maneki Neko cat, with neon green and purple static effects. Binary code raining down in the background. The phrase 'Error 404: Fortune Not Found' written in a futuristic font below the cat.",
+    "mood": "Humorous, ironic, tech-savvy",
+    "aiPrompt": "Create a pixel art Maneki Neko cat design with glitch effects, neon green and purple colors, and binary code background for a t-shirt. The text should read 'Error 404: Fortune Not Found' in a futuristic font.",
     "originalAnalysis": {
       "colorPalette": [
         "Beige",
         "Blue"
       ],
       "style": "Streetwear",
-      "theme": "Japanese Lucky Cat",
-      "targetAudience": "Young adults, streetwear enthusiasts, people interested in Japanese culture",
+      "theme": "Japanese Lucky Cat / Maneki Neko",
+      "targetAudience": "Young adults, fans of Japanese culture, streetwear enthusiasts",
       "technique": "Screen printing"
     }
   },
@@ -25,83 +25,83 @@
     "id": 2,
     "inspirationSource": "fallback_design_02.jpg",
     "title": "Cyberpunk Glitch Hand",
-    "theme": "Cyberpunk, Technology, Glitch Art",
-    "style": "Modern, Futuristic",
-    "colorScheme": "Neon green, Electric blue, Black, White",
-    "targetAudience": "Gamers, Tech enthusiasts, Science fiction fans, Urban dwellers",
-    "designElements": "A stylized hand made of digital glitches and geometric shapes, circuitry patterns, binary code, holographic effect",
-    "mood": "Energetic, Futuristic, Technological",
-    "aiPrompt": "Create a cyberpunk-style T-shirt design featuring a hand composed of digital glitches and circuit patterns. Use neon green, electric blue, black, and white colors. Incorporate elements of binary code and holographic effects to give it a futuristic and technological feel. The overall mood should be energetic and dynamic.",
+    "theme": "Cyberpunk, technology, glitch art",
+    "style": "Futuristic, edgy, digital art",
+    "colorScheme": "Neon green, black, dark grey with glitching white highlights",
+    "targetAudience": "Tech-savvy individuals, gamers, cyberpunk enthusiasts, young adults",
+    "designElements": "A robotic hand (or stylized human hand) composed of glitching polygons and circuit board patterns, with neon green glowing lines emanating from the fingertips. Overlay the hand with digital noise and code snippets. The background could have a subtle texture resembling a corrupted screen.",
+    "mood": "Technological, dystopian, edgy, futuristic",
+    "aiPrompt": "Design a t-shirt featuring a robotic hand made of glitching polygons and circuit board patterns, with neon green glowing lines. The background has a corrupted screen texture. Cyberpunk style.",
     "originalAnalysis": {
       "colorPalette": [
-        "Black",
-        "White"
+        "black",
+        "white",
+        "gray"
       ],
-      "style": "Edgy, Streetwear",
-      "theme": "Occult, Gothic",
-      "targetAudience": "Teenagers, Young adults, Alternative fashion enthusiasts",
-      "technique": "Screen printing"
+      "style": "streetwear, edgy",
+      "theme": "skeletal hands",
+      "targetAudience": "teens, young adults, alternative fashion enthusiasts",
+      "technique": "screen printing"
     }
   },
   {
     "id": 3,
     "inspirationSource": "fallback_design_03.jpg",
-    "title": "Celestial Bubbles",
-    "theme": "Space, Planets, Abstract",
-    "style": "Modern, Graphic, Minimalist",
-    "colorScheme": "Deep blues and purples as a background, with lighter pastel shades of pink, yellow, and orange for the bubbles to mimic planets.",
-    "targetAudience": "Space enthusiasts, science lovers, those who appreciate abstract art, and people who like unique designs.",
-    "designElements": "Stylized, simplified planetary orbs and smaller water droplets, against a deep space background gradient. The bubbles could have subtle textures resembling planetary surfaces.",
-    "mood": "Calm, Serene, Wonder, Awe",
-    "aiPrompt": "Create a graphic design of stylized planetary orbs resembling bubbles, set against a deep blue and purple space gradient background with subtle textures and highlights.",
+    "title": "Cosmic Jellyfish",
+    "theme": "Ocean/Space",
+    "style": "Surreal, Digital Art",
+    "colorScheme": "Deep blues and purples with pops of neon pink, teal, and gold to mimic bioluminescence",
+    "targetAudience": "Teenagers and young adults who like fantasy and science fiction",
+    "designElements": "Jellyfish silhouettes filled with swirling nebulas and galaxies, transparent bubbles scattered around like stars. Incorporate subtle geometric patterns in the background.",
+    "mood": "Mysterious, Ethereal, Dreamy",
+    "aiPrompt": "Create a surreal image of jellyfish swimming through a nebula. The jellyfish bodies should be filled with swirling galaxies and stars. Use a color palette of deep blues, purples, neon pink, teal, and gold to create a bioluminescent effect. Add transparent bubbles scattered around like stars, and subtle geometric patterns in the background. The style should be digital art with a dreamy, ethereal mood.",
     "originalAnalysis": {
       "colorPalette": [
         "Pink",
-        "Orange",
-        "Yellow",
         "Blue",
-        "Purple",
-        "White"
+        "Yellow",
+        "Orange",
+        "Purple"
       ],
-      "style": "Abstract, Macro",
-      "theme": "Water Droplets, Fluid Art, Science",
-      "targetAudience": "People interested in art, science, or unique patterns; possibly children or young adults.",
-      "technique": "Photography, Possibly oil and water mixture"
+      "style": "Abstract",
+      "theme": "Water droplets and oil mixture",
+      "targetAudience": "People who like abstract art and bright colors",
+      "technique": "Photograph of oil and water"
     }
   },
   {
     "id": 4,
     "inspirationSource": "fallback_design_04.jpg",
-    "title": "Airport Code Tee",
-    "theme": "Travel/Airports",
-    "style": "Minimalist, Modern",
-    "colorScheme": "White T-shirt with Navy or Dark Grey Text, or Black T-shirt with white Text",
-    "targetAudience": "Adults, travelers, aviation enthusiasts, those with a sense of humor",
-    "designElements": "Airport Code (e.g., JFK, LAX, LHR) inside parentheses, positioned where the original 'HOTEL' text is. Use a clean, sans-serif font like Helvetica or Arial. Optionally, subtle line drawing of an airplane taking off could be included above the code.",
-    "mood": "Subtle, sophisticated, travel-oriented, understated",
-    "aiPrompt": "Create a minimalist t-shirt design. The design features a white or black short-sleeve t-shirt. The graphic element is the three-letter airport code 'JFK' inside parentheses, rendered in a clean, sans-serif font like Helvetica or Arial. The text should be Navy Blue or Dark Grey if the shirt is white, and white if the shirt is black. Place the text on the upper chest.",
+    "title": "Parentheses Series: (Beach)",
+    "theme": "Travel/Location",
+    "style": "Minimalist, clean",
+    "colorScheme": "Light blue or sand-colored t-shirt with navy blue text",
+    "targetAudience": "Beach lovers, travelers, minimalist fashion enthusiasts",
+    "designElements": "The word 'BEACH' in parentheses, centered on the chest, using a clean, sans-serif font, potentially with a small wave graphic underneath",
+    "mood": "Relaxed, casual, summery",
+    "aiPrompt": "Create a minimalist t-shirt design featuring the word 'BEACH' in parentheses, using a sans-serif font. The t-shirt is light blue or sand colored and the text is navy blue. A small wave graphic may be added below the text.",
     "originalAnalysis": {
       "colorPalette": [
         "White",
         "Black"
       ],
       "style": "Minimalist",
-      "theme": "Travel/Lifestyle",
-      "targetAudience": "Adults, travelers, minimalist style lovers",
-      "technique": "Screen printing, embroidery"
+      "theme": "Wordplay/Text-based",
+      "targetAudience": "Fashion-conscious individuals, minimalists, travelers",
+      "technique": "Screen printing/Embroidery (simple text)"
     }
   },
   {
     "id": 5,
     "inspirationSource": "fallback_design_05.jpg",
-    "title": "Mountain Majesty Silhouette",
-    "theme": "Nature, Wildlife, Mountain Adventure",
-    "style": "Minimalist, graphic, with vintage elements",
-    "colorScheme": "Monochromatic or duotone -  a dark color such as navy or black for the mountain silhouette and a lighter color such as cream or white for the background/sky.",
-    "targetAudience": "Hikers, climbers, nature lovers, people who appreciate minimalist design.",
-    "designElements": "A stylized silhouette of a mountain range similar to the one in the image, with a stylized eagle or mountain goat silhouette incorporated into the design or placed above the mountain. A subtle vintage texture overlay can add character.",
-    "mood": "Serene, adventurous, inspiring, strong",
-    "aiPrompt": "Create a minimalist, graphic T-shirt design. Feature a silhouetted mountain range with a stylized eagle flying above. Use a duotone color scheme of dark navy and cream. Add a subtle vintage texture overlay.",
+    "title": "Bear Peak Explorer",
+    "theme": "Adventure, Wilderness, Wildlife, Mountain Exploration",
+    "style": "Illustrative, Vintage Travel Poster",
+    "colorScheme": "Earthy tones: shades of brown, green, beige, and a pop of sunset orange for the sky. Accents of white for snow-capped peaks and highlights.",
+    "targetAudience": "Hikers, campers, adventurers, national park visitors, people who love bears and mountains.",
+    "designElements": "Stylized mountain range with snow-capped peaks inspired by the original image. A silhouetted bear figure standing on a prominent peak, looking out at the landscape. Vintage-style typography with the words \"Bear Peak Explorer\". Possibly a small compass or directional arrow element. Textured background mimicking old paper or canvas.",
+    "mood": "Adventurous, nostalgic, awe-inspiring, peaceful, rugged.",
+    "aiPrompt": "Create a vintage travel poster style illustration of a mountain range with snow-capped peaks. A silhouetted bear stands on the highest peak, looking out at the landscape. Include vintage-style typography that reads \"Bear Peak Explorer.\" Use earthy tones and a textured background to mimic old paper.",
     "originalAnalysis": {
       "colorPalette": [
         "Blue",
@@ -111,133 +111,131 @@
         "Brown"
       ],
       "style": "Photorealistic",
-      "theme": "Nature, Mountains, Landscape",
-      "targetAudience": "Outdoor enthusiasts, hikers, nature lovers",
-      "technique": "Photography, potentially layered with digital effects"
+      "theme": "Nature, Mountains, Wilderness, Landscape",
+      "targetAudience": "Outdoor enthusiasts, hikers, nature lovers, travelers",
+      "technique": "Direct image print"
     }
   },
   {
     "id": 6,
     "inspirationSource": "google_design_01.jpg",
-    "title": "Cosmic Librarian",
-    "theme": "Education, Space, Retro-futurism",
-    "style": "Vintage, Graphic, Illustrated",
-    "colorScheme": "Navy blue, Cream, Gold accents, Purple nebula background",
-    "targetAudience": "Students, Teachers, Book lovers, Sci-fi fans",
-    "designElements": "Stack of books forming a rocket, Stars, Planets, Reading glasses, Quill pen, Nebula background",
-    "mood": "Intelligent, Whimsical, Adventurous, Nostalgic",
-    "aiPrompt": "Create a T-shirt design featuring a stack of books arranged as a rocket ship blasting off into a nebula. The rocket is adorned with reading glasses and a quill pen. Use a vintage, graphic illustration style with a navy blue, cream, gold, and purple color scheme. The design should evoke a sense of adventure and intellectual curiosity, targeting book lovers and sci-fi fans.",
+    "title": "Retro Arcade High Score",
+    "theme": "Gaming, Nostalgia, Achievement",
+    "style": "Retro, Pixel Art, Graphic",
+    "colorScheme": "Neon colors (pink, blue, green, yellow) on a dark grey or black background.",
+    "targetAudience": "Gamers, Retro Enthusiasts, People who enjoy pixel art",
+    "designElements": "Pixelated arcade machine with the text 'HIGH SCORE' displayed. Below that, pixelated text showing a very high score (e.g., '999999'). Small pixelated trophies or stars surrounding the score.",
+    "mood": "Fun, Nostalgic, Achievment, Energetic",
+    "aiPrompt": "Create a retro pixel art T-shirt design featuring an arcade machine with 'HIGH SCORE' displayed. Below, include a very high numerical score in pixelated font, surrounded by pixelated trophies and stars. Use neon colors (pink, blue, green, yellow) on a dark grey background.",
     "originalAnalysis": {
       "colorPalette": [
         "Yellow",
         "Green",
+        "Blue",
         "Pink",
         "Orange",
-        "Blue",
-        "White",
-        "Brown"
+        "White"
       ],
-      "style": "Graphic, Collegiate, Retro",
-      "theme": "School, Summer, Travel, Nostalgia, Sports",
-      "targetAudience": "Students, Campers, Athletes, Travelers, Gamers",
-      "technique": "Screen Printing, Direct-to-Garment"
+      "style": "Graphic, Text-based",
+      "theme": "School, Summer, Travel, Gaming, Golf, Sorority",
+      "targetAudience": "Students, Campers, Travelers, Gamers, Golfers, Sorority Members",
+      "technique": "Digital Printing"
     }
   },
   {
     "id": 7,
     "inspirationSource": "google_design_02.jpg",
-    "title": "Retro Robotics Team",
-    "theme": "STEM, Robotics Competition, School Spirit",
-    "style": "Retro, Distressed, Collegiate",
-    "colorScheme": "Navy Blue, Gold, Off-White (for distressed look)",
-    "targetAudience": "Robotics team members, STEM students, School community",
-    "designElements": "A stylized robot head composed of geometric shapes, banner with the team name \"Cyber Titans\" in a retro font, year of establishment (e.g., \"Est. 2024\"), circuit board patterns subtly incorporated, distressed texture.",
-    "mood": "Proud, Intellectual, Energetic, Nostalgic",
-    "aiPrompt": "Create a vintage-style T-shirt design for a high school robotics team called \"Cyber Titans.\" The design should feature a geometric robot head, the team name in a retro font, and the year of establishment. Use a navy blue and gold color scheme with a distressed texture.",
+    "title": "Retro Space Explorer Club",
+    "theme": "Sci-Fi, Retro Futurism, Space Exploration",
+    "style": "Vintage, Distressed",
+    "colorScheme": "Navy blue, Mustard Yellow, White, Burnt Orange",
+    "targetAudience": "Sci-fi enthusiasts, Nostalgia lovers, Vintage style fans",
+    "designElements": "A stylized retro astronaut graphic riding a rocket like a bucking bronco. Wording 'Space Explorer Club 2077' in a rounded, vintage font.",
+    "mood": "Adventurous, Nostalgic, Humorous",
+    "aiPrompt": "Create a vintage t-shirt design featuring a retro-futuristic astronaut riding a rocket like a bucking bronco. The design should be distressed and incorporate a circular badge with the text 'Space Explorer Club 2077' in a rounded vintage font. Use a color palette of navy blue, mustard yellow, white and burnt orange.",
     "originalAnalysis": {
       "colorPalette": [
         "White",
-        "Red",
+        "Red-Brown",
         "Black",
         "Green"
       ],
-      "style": "Vintage, Collegiate, Sports",
-      "theme": "Sports, School Spirit, Achievement",
+      "style": "Simple",
+      "theme": "Sports, Team Spirit, Year-Specific",
       "targetAudience": "Students, Alumni, Sports Fans",
-      "technique": "Screen Printing, Direct-to-Garment (DTG)"
+      "technique": "Screen Printing"
     }
   },
   {
     "id": 8,
     "inspirationSource": "google_design_03.jpg",
-    "title": "Bloom Where You're Planted",
-    "theme": "Resilience, Personal Growth, Nature",
-    "style": "Bohemian, Hand-lettered, Botanical",
-    "colorScheme": "Earthy tones like olive green, burnt orange, and cream or beige. Alternatively, a dark background with pastel colors for contrast.",
-    "targetAudience": "Young adults and adults interested in mindfulness, gardening, and personal development. Also, for those who appreciate bohemian and nature-inspired aesthetics.",
-    "designElements": "Hand-lettered font with floral accents (leaves, small stylized flowers) incorporated within or around the text. A small potted plant graphic could be used to emphasize the 'planted' aspect. Text arranged in a circular or organic flowing pattern.",
-    "mood": "Hopeful, Peaceful, Encouraging, Natural",
-    "aiPrompt": "Create a T-shirt design with the phrase 'Bloom Where You're Planted' using a hand-lettered font. Incorporate botanical elements such as leaves and small stylized flowers. Use earthy tones like olive green, burnt orange, and cream. The design should evoke feelings of resilience and personal growth. Arrange the text in a flowing, organic pattern.",
+    "title": "Bloom Where You Are Planted",
+    "theme": "Resilience, Personal Growth, Acceptance",
+    "style": "Vintage, Botanical, Slightly distressed",
+    "colorScheme": "Earthy tones (muted greens, browns, creams) with a pop of a vibrant flower color (e.g., burnt orange or mustard yellow). Background color can be dark green or cream.",
+    "targetAudience": "Individuals seeking inner peace, Gardeners, Nature lovers, People dealing with challenges.",
+    "designElements": "A stylized flower (e.g., a wildflower or a simple daisy) integrated with hand-lettered typography. Subtle distressed texture to give a vintage feel. Roots of the plant can also be visible.",
+    "mood": "Hopeful, Grounded, Calm, Encouraging",
+    "aiPrompt": "Vintage style T-shirt design with the phrase \"Bloom Where You Are Planted\". Features a stylized wildflower with visible roots. Muted earthy tones with a pop of vibrant color in the flower. Subtle distressed texture.",
     "originalAnalysis": {
       "colorPalette": [
         "Black",
         "White",
         "Orange",
-        "Yellow"
+        "Beige"
       ],
-      "style": "Typography-based, Motivational",
-      "theme": "Inspirational Quotes, Self-Help",
-      "targetAudience": "Adults, Individuals seeking motivation and positive affirmation",
-      "technique": "Screen printing or Direct-to-garment printing, Text layout design"
+      "style": "Typography-based, Inspirational",
+      "theme": "Motivation, Positive Affirmations",
+      "targetAudience": "General public, Individuals seeking motivation, People interested in self-improvement",
+      "technique": "Screen printing or DTG (Direct-to-Garment) printing"
     }
   },
   {
     "id": 9,
     "inspirationSource": "google_design_04.jpg",
-    "title": "Sustainable Futures Club",
-    "theme": "Environmental Awareness, Club Identity",
-    "style": "Modern, Minimalist, Earthy",
-    "colorScheme": "Earthy greens, browns, creams, with a pop of bright blue (representing water). Use muted tones.",
-    "targetAudience": "University students, Environmental clubs, eco-conscious individuals",
-    "designElements": "Stylized illustration of a hand holding a seedling sprouting from the earth, surrounded by a circular geometric pattern representing interconnectedness and sustainability. The club name integrated into the design in a clean, sans-serif font.",
-    "mood": "Hopeful, Sustainable, Collaborative, Responsible",
-    "aiPrompt": "Create a minimalist T-shirt design featuring a hand holding a seedling sprouting from the earth. Surround the image with a circular geometric pattern in muted earth tones (greens, browns, creams) with a pop of bright blue. Include the text 'Sustainable Futures Club' in a clean, sans-serif font below the image. The overall style should be modern and convey a message of environmental awareness.",
+    "title": "Hiking Club Retro Badge Tee",
+    "theme": "Outdoors, Hiking, Club Affiliation",
+    "style": "Vintage, Badge-style, Illustrated",
+    "colorScheme": "Earthy tones: Forest green, burnt orange, cream, with a touch of mustard yellow.",
+    "targetAudience": "Hiking club members, outdoor enthusiasts, nature lovers",
+    "designElements": "A circular badge featuring stylized mountains, a hiking boot, pine trees, and a compass. The club name and year are incorporated within the badge design in a retro font. Subtle distressing effects for a vintage feel.",
+    "mood": "Adventurous, nostalgic, connected to nature",
+    "aiPrompt": "Create a vintage-style circular badge design for a hiking club t-shirt. The design should include stylized mountains, a hiking boot, pine trees, a compass, and the text \"[Club Name] Since [Year]\". Use earthy tones like forest green, burnt orange, cream, and mustard yellow. Add subtle distressing effects to give it a vintage feel.",
     "originalAnalysis": {
       "colorPalette": [
         "Peach",
         "Lavender",
-        "Baby Blue",
+        "Light Blue",
         "Black",
         "White",
-        "Various pastel colors"
+        "Various muted shades within each design"
       ],
-      "style": "Retro, Cartoonish, Collegiate",
-      "theme": "Team/Group Identity, Activity Based, Event Focused",
-      "targetAudience": "Students, Sororities/Fraternities, Bowling Leagues",
-      "technique": "Screen printing or Direct-to-Garment printing, featuring vector graphics"
+      "style": "Retro, Collegiate",
+      "theme": "Customized Group Affiliation (Bowling League, Sorority, Class Year)",
+      "targetAudience": "Members of organizations, students, groups, teams",
+      "technique": "Screen Printing or DTG (Direct-to-Garment)"
     }
   },
   {
     "id": 10,
     "inspirationSource": "google_design_05.jpg",
-    "title": "Fractured Landscape",
-    "theme": "Nature meets Technology",
-    "style": "Abstract, Geometric, Urban",
-    "colorScheme": "Deep teal, burnt orange, charcoal gray, with a touch of neon green as an accent.",
-    "targetAudience": "Outdoor enthusiasts, tech-savvy individuals, artists",
-    "designElements": "A fractured landscape design on the front, resembling mountains and rivers. The geometric shapes are formed by pixelated patterns, creating a glitch effect. Incorporate small, stylized icons of nature elements (trees, birds) within the geometric shapes. The back of the shirt features a subtle, repeating pattern of binary code.",
-    "mood": "Energetic, adventurous, futuristic, eco-conscious",
-    "aiPrompt": "Generate a T-shirt design with a fractured landscape pattern using geometric shapes and pixelated effects. The color scheme should be deep teal, burnt orange, and charcoal gray with a touch of neon green. Incorporate small, stylized icons of nature elements (trees, birds) within the geometric shapes. The back should feature a repeating pattern of binary code.",
+    "title": "Fractured Galaxy",
+    "theme": "Space, Abstract",
+    "style": "Futuristic, Edgy",
+    "colorScheme": "Deep blues, purples, and pinks with pops of silver and white for a galactic effect.",
+    "targetAudience": "Young adults, Science fiction fans, Trendsetters",
+    "designElements": "A fractured, shattered glass effect design that reveals a vibrant galactic nebula behind it. The shattered pieces are asymmetrical and dynamic. Include subtle star patterns within the nebula.",
+    "mood": "Mysterious, Energetic, Futuristic",
+    "aiPrompt": "Create a T-shirt design featuring a shattered glass effect revealing a vibrant nebula galaxy behind it. The shattered pieces should be asymmetrical and dynamic, with a color palette of deep blues, purples, and pinks. Incorporate subtle star patterns within the nebula. The overall style should be futuristic and edgy.",
     "originalAnalysis": {
       "colorPalette": [
         "Black",
-        "Hot Pink/Magenta",
-        "Gray"
+        "Pink"
       ],
-      "style": "Abstract, Modern, Sporty",
-      "theme": "Geometric Pattern, Asymmetrical Design",
-      "targetAudience": "Athletes, Gamers, People who like bold designs",
-      "technique": "Sublimation Printing (likely)"
+      "style": "Modern, Abstract",
+      "theme": "Geometric, Sportswear",
+      "targetAudience": "Athletes, Fitness enthusiasts, Gamers",
+      "technique": "Digital Printing, Sublimation"
     }
   }
 ]
