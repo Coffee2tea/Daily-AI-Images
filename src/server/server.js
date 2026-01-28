@@ -32,8 +32,8 @@ app.get('/health', (req, res) => {
 // Version check to verify deployment
 app.get('/version', (req, res) => {
   res.json({
-    version: '1.3.3',
-    desc: 'Fixed missing images (SVG/PNG mismatch) & Strict 60s Timeout',
+    version: '1.3.4',
+    desc: 'Switched to PNG placeholders (No SVG) & Strict 60s Timeout',
     timestamp: new Date().toISOString()
   });
 });

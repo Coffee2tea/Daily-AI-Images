@@ -127,12 +127,9 @@ REQUIREMENTS:
                 }
             }
 
-            let finalFilename = filename;
-
             if (!generationSuccess) {
                 console.log(`   ❌ All retries failed for ${idea.title}. Creating placeholder.`);
                 createPngPlaceholder(idea, filepath, i + 1);
-                finalFilename = filename.replace('.png', '.svg');
             }
 
             manifest.images.push({
@@ -140,7 +137,7 @@ REQUIREMENTS:
                 title: idea.title,
                 description: idea.theme,
                 style: idea.style,
-                imagePath: `/generated_images/${finalFilename}`
+                imagePath: `/generated_images/${filename}`
             });
 
             // Delay to avoid rate limits
@@ -199,42 +196,30 @@ function createPlaceholders(ideas) {
     ideas.forEach((idea, i) => {
         const filename = `design_${String(i + 1).padStart(2, '0')}.png`;
         createPngPlaceholder(idea, path.join(OUTPUT_DIR, filename), i + 1);
-
-        // createPngPlaceholder saves as .svg, so we must update manifest to match
-        const svgFilename = filename.replace('.png', '.svg');
-
         manifest.images.push({
             id: i + 1, title: idea.title, description: idea.theme,
-            style: idea.style, imagePath: `/generated_images/${svgFilename}`
+            style: idea.style, imagePath: `/generated_images/${filename}`
         });
     });
     fs.writeFileSync(path.join(DATA_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
     return manifest.images;
 }
 
-// Create a simple PNG placeholder using an SVG-to-PNG approach
-// Since we don't have canvas, we'll create a minimal valid PNG or use SVG fallback
+// Create a simple PNG placeholder using Base64 encoded 1x1 pixel images
 function createPngPlaceholder(idea, filepath, idx) {
-    // Create an SVG that will be saved with .png extension but browsers will still display it
-    // In a production environment, you'd use sharp or canvas to create actual PNGs
-    const colors = [['#667eea', '#764ba2'], ['#f093fb', '#f5576c'], ['#4facfe', '#00f2fe'], ['#43e97b', '#38f9d7'], ['#fa709a', '#fee140']];
-    const [c1, c2] = colors[idx % colors.length];
+    // 1x1 Pixel PNGs in Base64 (Red, Green, Blue, Yellow, Purple, Cyan, Orange, Pink)
+    const placeholders = [
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', // Red
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', // Green
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==', // Blue
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8/5+hHgAHggJ/PchI7wAAAABJRU5ErkJggg==', // Purple
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mPk+M/AAAD0AQQA7tSCIQAAAABJRU5ErkJggg==', // Yellow
+    ];
 
-    // For now, we'll save as SVG with same name pattern but note this is a fallback
-    // The actual Gemini image generation will produce real PNGs
-    const svgPath = filepath.replace('.png', '.svg');
-    const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="0 0 500 500">
-  <rect width="500" height="500" fill="#1a1a2e"/>
-  <defs><linearGradient id="g" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="${c1}"/><stop offset="100%" stop-color="${c2}"/></linearGradient></defs>
-  <rect x="50" y="50" width="400" height="400" rx="20" fill="url(#g)"/>
-  <text x="250" y="220" font-family="Arial, sans-serif" font-size="24" fill="white" text-anchor="middle" font-weight="bold">PLACEHOLDER</text>
-  <text x="250" y="260" font-family="Arial, sans-serif" font-size="60" fill="white" text-anchor="middle" font-weight="bold">${String(idx).padStart(2, '0')}</text>
-  <text x="250" y="320" font-family="Arial, sans-serif" font-size="18" fill="white" text-anchor="middle">${idea.style || 'Design'}</text>
-</svg>`;
-
-    // Save as SVG since we can't generate actual PNG without additional libraries
-    fs.writeFileSync(svgPath, svg);
-    console.log(`   📋 Placeholder saved as SVG: ${path.basename(svgPath)}`);
+    const b64 = placeholders[idx % placeholders.length];
+    const buffer = Buffer.from(b64, 'base64');
+    fs.writeFileSync(filepath, buffer);
+    console.log(`   📋 Placeholder saved as PNG: ${path.basename(filepath)}`);
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) generateImages();
