@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea"/>
+      <stop offset="100%" style="stop-color:#764ba2"/>
+    </linearGradient>
+    <linearGradient id="shirt" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#f8f9fa"/>
+      <stop offset="100%" style="stop-color:#e9ecef"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Background -->
+  <rect width="400" height="400" fill="url(#bg)" rx="20"/>
+  
+  <!-- T-Shirt Shape -->
+  <g transform="translate(100, 80)">
+    <!-- Left sleeve -->
+    <path d="M0 0 L50 0 L50 60 L0 40 Z" fill="url(#shirt)" stroke="#dee2e6" stroke-width="2"/>
+    <!-- Right sleeve -->
+    <path d="M200 0 L150 0 L150 60 L200 40 Z" fill="url(#shirt)" stroke="#dee2e6" stroke-width="2"/>
+    <!-- Body -->
+    <path d="M50 0 L50 180 L150 180 L150 0 L120 0 L100 20 L80 0 Z" fill="url(#shirt)" stroke="#dee2e6" stroke-width="2"/>
+    
+    <!-- Design icon on shirt -->
+    <circle cx="100" cy="100" r="30" fill="rgba(102, 126, 234, 0.3)" stroke="#667eea" stroke-width="2"/>
+    <text x="100" y="108" text-anchor="middle" fill="#667eea" font-family="Arial, sans-serif" font-size="28" font-weight="bold">?</text>
+  </g>
+  
+  <!-- Demo Mode Label -->
+  <rect x="110" y="300" width="180" height="40" rx="20" fill="rgba(255,255,255,0.2)"/>
+  <text x="200" y="327" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="16" font-weight="bold">Demo Mode</text>
+</svg>

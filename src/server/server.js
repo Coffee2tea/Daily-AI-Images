@@ -23,6 +23,7 @@ app.use(express.json());
 app.use(express.static(path.join(rootDir, 'public')));
 app.use('/generated_images', express.static(path.join(rootDir, 'generated_images')));
 app.use('/downloaded_images', express.static(path.join(rootDir, 'downloaded_images')));
+app.use('/demo', express.static(path.join(rootDir, 'public', 'demo')));
 
 app.get('/health', (req, res) => {
   res.status(200).send('OK');
@@ -31,8 +32,8 @@ app.get('/health', (req, res) => {
 // Version check to verify deployment
 app.get('/version', (req, res) => {
   res.json({
-    version: '1.2.0',
-    desc: 'Fix permissions + Demo Mode Fallback',
+    version: '1.3.0',
+    desc: 'Graceful fallback - No errors on network issues',
     timestamp: new Date().toISOString()
   });
 });

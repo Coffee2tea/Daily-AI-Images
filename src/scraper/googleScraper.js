@@ -87,6 +87,15 @@ const SAMPLE_DATA = [
     { title: "Nature Mountain Hiking", url: "https://example.com/5", src: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500" }
 ];
 
+// Pure static fallback - no network required at all (used when even demo downloads fail)
+const STATIC_FALLBACK_DATA = [
+    { id: 1, title: "Neon Cyberpunk T-Shirt", imageUrl: "/demo/placeholder.svg", localPath: null, source: 'offline-demo', originalLink: "#" },
+    { id: 2, title: "Vintage Retro Sunset", imageUrl: "/demo/placeholder.svg", localPath: null, source: 'offline-demo', originalLink: "#" },
+    { id: 3, title: "Abstract Geometric Design", imageUrl: "/demo/placeholder.svg", localPath: null, source: 'offline-demo', originalLink: "#" },
+    { id: 4, title: "Minimalist Line Art", imageUrl: "/demo/placeholder.svg", localPath: null, source: 'offline-demo', originalLink: "#" },
+    { id: 5, title: "Nature Mountain Hiking", imageUrl: "/demo/placeholder.svg", localPath: null, source: 'offline-demo', originalLink: "#" }
+];
+
 export async function scrapeGoogleImages() {
     console.log('\n🔍 Starting Google Image scraper...');
     console.log(`   Search query: "${SEARCH_QUERY}"`);
@@ -272,73 +281,57 @@ export async function scrapeGoogleImages() {
 
 
     } catch (error) {
-        console.log(`   ⚠️ Network detection: ${error.message.substring(0, 50)}...`);
-        console.log('   ✨ Switching to high-quality demo data for smooth experience...');
+        console.log(`   ⚠️ Network issue detected: ${error.message.substring(0, 50)}...`);
+        console.log('   ✨ Using existing local images for demo...');
 
-        if (browser) await browser.close();
+        if (browser) await browser.close().catch(() => { });
 
-        // FAIL-SAFE: Always return sample data on error
-        const demoResults = [];
+        // FAIL-SAFE: Use existing images in downloaded_images folder
+        const localResults = [];
 
-        // Parallelize downloads to avoid timeout
-        // Create an array of promises
-        const downloadPromises = SAMPLE_DATA.map(async (item, i) => {
-            const filename = `fallback_design_${String(i + 1).padStart(2, '0')}.jpg`;
-            const filepath = path.join(OUTPUT_DIR, filename);
+        try {
+            // Scan downloaded_images folder for existing images
+            const existingFiles = fs.readdirSync(OUTPUT_DIR)
+                .filter(f => f.endsWith('.jpg') || f.endsWith('.png') || f.endsWith('.webp'))
+                .sort()
+                .slice(0, MAX_IMAGES);
 
-            let localPath = null;
-            try {
-                // Try to download sample with SHORT 4s timeout
-                // 4 seconds max per image, running in parallel should take max 4s total
-                await downloadImage(item.src, filepath, 4000);
-                localPath = filepath;
-            } catch (e) {
-                // Ignore download errors
-            }
+            const designTitles = [
+                "Trendy Graphic Design", "Modern Street Style", "Creative Pattern Art",
+                "Urban Fashion Design", "Artistic T-Shirt Print", "Contemporary Design",
+                "Stylish Graphic Tee", "Designer Pattern", "Cool Street Art", "Fashion Forward"
+            ];
 
-            return {
-                id: i + 1,
-                title: item.title,
-                imageUrl: item.src,
-                localPath: localPath,
-                source: 'demo-fallback',
-                originalLink: item.url
-            };
-        });
+            for (let i = 0; i < existingFiles.length; i++) {
+                const file = existingFiles[i];
+                const filepath = path.join(OUTPUT_DIR, file);
 
-        const results = await Promise.all(downloadPromises);
-        demoResults.push(...results);
-
-        // Ensure we always have data
-        if (demoResults.length > 0) {
-            // Save metadata
-            const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
-            fs.writeFileSync(metadataPath, JSON.stringify(demoResults, null, 2));
-            console.log(`\n✅ Data prep complete! Ready for analysis.`);
-            return demoResults;
-        }
-
-        // Fallback to sample data for real browser failure cases (unreachable code if logic holds, but kept for safety)
-        for (let i = 0; i < SAMPLE_DATA.length; i++) {
-            const item = SAMPLE_DATA[i];
-            const filename = `fallback_design_${String(i + 1).padStart(2, '0')}.jpg`;
-            const filepath = path.join(OUTPUT_DIR, filename);
-
-            try {
-                // Try to download sample or use placeholder
-                await downloadImage(item.src, filepath);
-                results.push({
+                localResults.push({
                     id: i + 1,
-                    title: item.title,
-                    imageUrl: item.src,
+                    title: designTitles[i] || `Design ${i + 1}`,
+                    imageUrl: `/downloaded_images/${file}`,
                     localPath: filepath,
-                    source: 'google-sample-fallback',
-                    originalLink: item.url
+                    source: 'local-cache',
+                    originalLink: '#'
                 });
-            } catch (e) {
-                console.log(`   ⚠️ Failed to download fallback ${i + 1}: ${e.message}`);
             }
+
+            if (localResults.length > 0) {
+                const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
+                fs.writeFileSync(metadataPath, JSON.stringify(localResults, null, 2));
+                console.log(`\n✅ Demo mode active! Using ${localResults.length} cached local images.`);
+                return localResults;
+            }
+        } catch (scanError) {
+            console.log(`   ⚠️ Could not scan local images: ${scanError.message}`);
         }
+
+        // Ultimate fallback: use static placeholder data
+        console.log('   📦 Using placeholder data...');
+        const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
+        fs.writeFileSync(metadataPath, JSON.stringify(STATIC_FALLBACK_DATA, null, 2));
+        console.log(`\n✅ Offline demo mode! Using ${STATIC_FALLBACK_DATA.length} placeholder designs.`);
+        return STATIC_FALLBACK_DATA;
     }
 
     // Save metadata
