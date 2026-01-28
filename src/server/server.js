@@ -82,35 +82,24 @@ app.get('/api/debug/logs', (req, res) => {
 // Debug: Test Image Generation directly
 app.get('/api/debug/test-gen', async (req, res) => {
   try {
-    const { GoogleGenerativeAI } = await import('@google/generative-ai');
-
     if (!process.env.GEMINI_API_KEY) {
       return res.json({ success: false, error: 'No GEMINI_API_KEY found in env' });
     }
 
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash-exp',
-      generationConfig: { responseModalities: ['IMAGE'] }
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${process.env.GEMINI_API_KEY}`);
+    const data = await response.json();
+
+    res.json({
+      success: true,
+      models: data,
+      message: 'Listing available models to find one that supports image generation'
     });
-
-    const prompt = "A simple red circle on white background";
-    const result = await model.generateContent(prompt);
-
-    // Check if we got image data
-    const response = result.response;
-    if (response.candidates && response.candidates[0]?.content?.parts?.[0]?.inlineData) {
-      return res.json({ success: true, message: 'Image generated successfully' });
-    }
-
-    res.json({ success: false, error: 'No image data in response', response: response });
 
   } catch (error) {
     res.json({
       success: false,
       error: error.message,
-      stack: error.stack,
-      env_key_exists: !!process.env.GEMINI_API_KEY
+      stack: error.stack
     });
   }
 });
