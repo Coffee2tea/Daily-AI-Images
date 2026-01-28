@@ -48,6 +48,14 @@ async function analyzeAndGenerateIdeasInternal() {
     console.log('\n🧠 Starting image analysis and idea generation (Internal)...');
 
     try {
+        // DEMO MODE CHECK
+        if (process.env.NODE_ENV === 'production') {
+            console.log('   ☁️  SERVER/DEMO MODE: Using high-quality preset ideas.');
+            console.log('   ⏳ Analyzing design trends (Simulated)...');
+            await new Promise(r => setTimeout(r, 2000));
+            return restoreDemoIdeas();
+        }
+
         // Check API key
         if (!process.env.GEMINI_API_KEY) {
             console.log('   ⚠️ GEMINI_API_KEY not found. Using sample ideas...');
@@ -258,6 +266,26 @@ export async function analyzeAndGenerateIdeas() {
         console.log('   ⚠️ Triggering safety fallback...');
         return generateSampleIdeas();
     }
+}
+
+/**
+ * Restore demo ideas from preset assets
+ */
+function restoreDemoIdeas() {
+    const demoIdeasPath = path.join(DATA_DIR, 'demo_assets', 'ideas.json');
+    if (fs.existsSync(demoIdeasPath)) {
+        const ideas = JSON.parse(fs.readFileSync(demoIdeasPath, 'utf-8'));
+
+        // Ensure we write it to the main ideas.json so the generator can find it
+        const ideasPath = path.join(DATA_DIR, 'ideas.json');
+        fs.writeFileSync(ideasPath, JSON.stringify(ideas, null, 2));
+
+        console.log(`\n✅ Demo analysis complete! Loaded ${ideas.length} preset ideas.`);
+        return ideas;
+    }
+
+    console.log('   ⚠️ Demo ideas not found. Generating samples...');
+    return generateSampleIdeas();
 }
 
 /**

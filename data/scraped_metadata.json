@@ -1,82 +1,82 @@
 [
   {
     "id": 1,
-    "title": "Trendy Graphic Design",
+    "title": "Trending Design #1",
     "imageUrl": "/downloaded_images/fallback_design_01.jpg",
     "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\fallback_design_01.jpg",
-    "source": "local-cache",
+    "source": "demo-preset",
     "originalLink": "#"
   },
   {
     "id": 2,
-    "title": "Modern Street Style",
+    "title": "Trending Design #2",
     "imageUrl": "/downloaded_images/fallback_design_02.jpg",
     "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\fallback_design_02.jpg",
-    "source": "local-cache",
+    "source": "demo-preset",
     "originalLink": "#"
   },
   {
     "id": 3,
-    "title": "Creative Pattern Art",
+    "title": "Trending Design #3",
     "imageUrl": "/downloaded_images/fallback_design_03.jpg",
     "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\fallback_design_03.jpg",
-    "source": "local-cache",
+    "source": "demo-preset",
     "originalLink": "#"
   },
   {
     "id": 4,
-    "title": "Urban Fashion Design",
+    "title": "Trending Design #4",
     "imageUrl": "/downloaded_images/fallback_design_04.jpg",
     "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\fallback_design_04.jpg",
-    "source": "local-cache",
+    "source": "demo-preset",
     "originalLink": "#"
   },
   {
     "id": 5,
-    "title": "Artistic T-Shirt Print",
+    "title": "Trending Design #5",
     "imageUrl": "/downloaded_images/fallback_design_05.jpg",
     "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\fallback_design_05.jpg",
-    "source": "local-cache",
+    "source": "demo-preset",
     "originalLink": "#"
   },
   {
     "id": 6,
-    "title": "Contemporary Design",
+    "title": "Trending Design #6",
     "imageUrl": "/downloaded_images/google_design_01.jpg",
     "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\google_design_01.jpg",
-    "source": "local-cache",
+    "source": "demo-preset",
     "originalLink": "#"
   },
   {
     "id": 7,
-    "title": "Stylish Graphic Tee",
+    "title": "Trending Design #7",
     "imageUrl": "/downloaded_images/google_design_02.jpg",
     "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\google_design_02.jpg",
-    "source": "local-cache",
+    "source": "demo-preset",
     "originalLink": "#"
   },
   {
     "id": 8,
-    "title": "Designer Pattern",
+    "title": "Trending Design #8",
     "imageUrl": "/downloaded_images/google_design_03.jpg",
     "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\google_design_03.jpg",
-    "source": "local-cache",
+    "source": "demo-preset",
     "originalLink": "#"
   },
   {
     "id": 9,
-    "title": "Cool Street Art",
+    "title": "Trending Design #9",
     "imageUrl": "/downloaded_images/google_design_04.jpg",
     "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\google_design_04.jpg",
-    "source": "local-cache",
+    "source": "demo-preset",
     "originalLink": "#"
   },
   {
     "id": 10,
-    "title": "Fashion Forward",
+    "title": "Trending Design #10",
     "imageUrl": "/downloaded_images/google_design_05.jpg",
     "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\google_design_05.jpg",
-    "source": "local-cache",
+    "source": "demo-preset",
     "originalLink": "#"
   }
 ]
