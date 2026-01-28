@@ -23,6 +23,15 @@ async function deploy() {
         process.exit(1);
     }
 
+    // Inject GEMINI_API_KEY from environment to ensure it's valid
+    if (process.env.GEMINI_API_KEY) {
+        if (!config.env_vars) config.env_vars = {};
+        config.env_vars.GEMINI_API_KEY = process.env.GEMINI_API_KEY;
+        console.log('✅ Injected GEMINI_API_KEY from local environment');
+    } else {
+        console.warn('⚠️ GEMINI_API_KEY not found in local environment!');
+    }
+
     // Create API Context with SSL verification disabled
     const apiContext = await request.newContext({
         ignoreHTTPSErrors: true,

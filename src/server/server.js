@@ -32,8 +32,8 @@ app.get('/health', (req, res) => {
 // Version check to verify deployment
 app.get('/version', (req, res) => {
   res.json({
-    version: '1.3.5',
-    desc: 'Included local data (images & JSON) in deployment',
+    version: '1.3.6',
+    desc: 'Injected GEMINI_API_KEY into env_vars for deployment',
     timestamp: new Date().toISOString()
   });
 });
