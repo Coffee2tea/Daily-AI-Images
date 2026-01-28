@@ -85,12 +85,12 @@ async function analyzeAndGenerateIdeasInternal() {
 
         // If we have actual images, analyze them
         if (imageFiles.length > 0) {
-            console.log(`   🖼️ Analyzing images to generate 4 unique ideas...`);
+            console.log(`   🖼️ Analyzing images to generate 10 unique ideas...`);
 
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 10; i++) {
                 // Cycle through images if we have fewer than 4
                 const imagePath = imageFiles[i % imageFiles.length];
-                console.log(`   📊 Analyzing image ${i + 1}/4 (Source: ${path.basename(imagePath)})...`);
+                console.log(`   📊 Analyzing image ${i + 1}/10 (Source: ${path.basename(imagePath)})...`);
 
                 try {
                     const imageData = imageToBase64(imagePath);
@@ -152,7 +152,7 @@ Return your response in this exact JSON format (no markdown, just pure JSON):
             // No images available, generate ideas based on scraped metadata or samples
             console.log('   📝 Generating ideas from metadata...');
 
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 10; i++) {
                 const sourceData = scrapedData[i] || { title: `Design ${i + 1}`, style: 'Modern' };
 
                 try {
@@ -214,8 +214,8 @@ Create a unique NEW design idea. Return your response in this exact JSON format 
  * Main Export - With Timeout Wrapper
  */
 export async function analyzeAndGenerateIdeas() {
-    // 60 Second Timeout to prevent platform 504 errors
-    const timeoutMs = 60000;
+    // 5 Minute Timeout to prevent platform 504 errors
+    const timeoutMs = 300000;
 
     const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error(`Timeout of ${timeoutMs}ms exceeded`)), timeoutMs);
@@ -341,8 +341,8 @@ function generateSampleIdeas() {
         }
     ];
 
-    // Generate 4 sample ideas
-    const ideas = sampleIdeas.slice(0, 4).map((idea, index) => ({
+    // Generate 10 sample ideas
+    const ideas = sampleIdeas.slice(0, 10).map((idea, index) => ({
         id: index + 1,
         inspirationSource: 'Sample Design Library',
         ...idea
