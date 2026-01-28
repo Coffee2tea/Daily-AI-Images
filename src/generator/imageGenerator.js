@@ -16,8 +16,8 @@ const rootDir = path.join(__dirname, '..', '..');
 const DATA_DIR = path.join(rootDir, 'data');
 const OUTPUT_DIR = path.join(rootDir, 'generated_images');
 
-export async function generateImages() {
-    console.log('\n🎨 Starting AI image generation (PNG Mode)...');
+async function generateImagesInternal() {
+    console.log('\n🎨 Starting AI image generation (Internal)...');
 
     try {
         if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
@@ -151,6 +151,37 @@ REQUIREMENTS:
     } catch (fatalError) {
         console.log(`\n❌ Fatal error in Generator: ${fatalError.message}`);
         console.log(`   ⚠️ Switching to fallback: Creating placeholders...`);
+        const ideasPath = path.join(DATA_DIR, 'ideas.json');
+        if (fs.existsSync(ideasPath)) {
+            const ideas = JSON.parse(fs.readFileSync(ideasPath, 'utf-8'));
+            return createPlaceholders(ideas);
+        }
+        return [];
+    }
+}
+
+/**
+ * Main Export - With Timeout Wrapper
+ */
+export async function generateImages() {
+    // 60 Second Timeout for generation too
+    const timeoutMs = 60000;
+
+    const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error(`Timeout of ${timeoutMs}ms exceeded`)), timeoutMs);
+    });
+
+    try {
+        console.log(`\n⏱️ Starting Generation with ${timeoutMs / 1000}s timeout...`);
+        return await Promise.race([
+            generateImagesInternal(),
+            timeoutPromise
+        ]);
+    } catch (error) {
+        console.log(`\n❌ Generator Failed or Timed Out: ${error.message}`);
+        console.log('   ⚠️ Triggering safety fallback...');
+
+        // Load ideas to create placeholders
         const ideasPath = path.join(DATA_DIR, 'ideas.json');
         if (fs.existsSync(ideasPath)) {
             const ideas = JSON.parse(fs.readFileSync(ideasPath, 'utf-8'));

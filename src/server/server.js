@@ -32,8 +32,8 @@ app.get('/health', (req, res) => {
 // Version check to verify deployment
 app.get('/version', (req, res) => {
   res.json({
-    version: '1.3.1',
-    desc: 'Graceful fallback - No errors on network issues (Fixes Applied)',
+    version: '1.3.2',
+    desc: 'Strict 60s Timeout implementation to prevent platform 504s',
     timestamp: new Date().toISOString()
   });
 });

@@ -44,8 +44,8 @@ function getMimeType(filepath) {
 /**
  * Analyze images and generate design ideas
  */
-export async function analyzeAndGenerateIdeas() {
-    console.log('\n🧠 Starting image analysis and idea generation...');
+async function analyzeAndGenerateIdeasInternal() {
+    console.log('\n🧠 Starting image analysis and idea generation (Internal)...');
 
     try {
         // Check API key
@@ -206,6 +206,30 @@ Create a unique NEW design idea. Return your response in this exact JSON format 
     } catch (fatalError) {
         console.log(`\n❌ Fatal error in Analyzer: ${fatalError.message}`);
         console.log(`   ⚠️ Switching to fallback: Generating sample ideas...`);
+        return generateSampleIdeas();
+    }
+}
+
+/**
+ * Main Export - With Timeout Wrapper
+ */
+export async function analyzeAndGenerateIdeas() {
+    // 60 Second Timeout to prevent platform 504 errors
+    const timeoutMs = 60000;
+
+    const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error(`Timeout of ${timeoutMs}ms exceeded`)), timeoutMs);
+    });
+
+    try {
+        console.log(`\n⏱️ Starting Analysis with ${timeoutMs / 1000}s timeout...`);
+        return await Promise.race([
+            analyzeAndGenerateIdeasInternal(),
+            timeoutPromise
+        ]);
+    } catch (error) {
+        console.log(`\n❌ Analyzer Failed or Timed Out: ${error.message}`);
+        console.log('   ⚠️ Triggering safety fallback...');
         return generateSampleIdeas();
     }
 }
