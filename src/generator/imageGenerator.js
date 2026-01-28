@@ -78,7 +78,7 @@ async function generateImagesInternal() {
             return results;
         };
 
-        const results = await processInBatches(ideas, 1, (idea, index) => generateSingleImage(model, idea, index));
+        const results = await processInBatches(ideas, 2, (idea, index) => generateSingleImage(model, idea, index));
         manifest.images = results;
 
         fs.writeFileSync(path.join(DATA_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
