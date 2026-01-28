@@ -126,8 +126,9 @@ export async function scrapeGoogleImages() {
         if (!useRealBrowser) {
             console.log('   ☁️  SERVER/DEMO MODE: Skipping heavy browser automation.');
             console.log('   📦 Using safe default data to ensure smooth experience.');
-            // Return sample data immediately
-            throw new Error('Triggering Demo Mode Fallback');
+
+            // DIRECT RETURN: Don't throw error, just use the fallback logic cleanly
+            return await getFallbackData();
         }
 
         // --- Real Browser Logic (Reliable Retry Wrapper) ---
@@ -278,19 +279,30 @@ export async function scrapeGoogleImages() {
         // If we exit the loop, all retries failed
         throw lastError || new Error('All scraping retries failed');
 
-
-
     } catch (error) {
         console.log(`   ⚠️ Network issue detected: ${error.message.substring(0, 50)}...`);
         console.log('   ✨ Using existing local images for demo...');
 
         if (browser) await browser.close().catch(() => { });
 
-        // FAIL-SAFE: Use existing images in downloaded_images folder
-        const localResults = [];
+        return await getFallbackData();
+    }
 
-        try {
-            // Scan downloaded_images folder for existing images
+    // Save metadata
+    const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
+    fs.writeFileSync(metadataPath, JSON.stringify(results, null, 2));
+
+    console.log(`\n✅ Scraping complete! Saved ${results.length} images.`);
+    return results;
+}
+
+async function getFallbackData() {
+    // FAIL-SAFE: Use existing images in downloaded_images folder
+    const localResults = [];
+
+    try {
+        // Scan downloaded_images folder for existing images
+        if (fs.existsSync(OUTPUT_DIR)) {
             const existingFiles = fs.readdirSync(OUTPUT_DIR)
                 .filter(f => f.endsWith('.jpg') || f.endsWith('.png') || f.endsWith('.webp'))
                 .sort()
@@ -315,31 +327,24 @@ export async function scrapeGoogleImages() {
                     originalLink: '#'
                 });
             }
-
-            if (localResults.length > 0) {
-                const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
-                fs.writeFileSync(metadataPath, JSON.stringify(localResults, null, 2));
-                console.log(`\n✅ Demo mode active! Using ${localResults.length} cached local images.`);
-                return localResults;
-            }
-        } catch (scanError) {
-            console.log(`   ⚠️ Could not scan local images: ${scanError.message}`);
         }
 
-        // Ultimate fallback: use static placeholder data
-        console.log('   📦 Using placeholder data...');
-        const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
-        fs.writeFileSync(metadataPath, JSON.stringify(STATIC_FALLBACK_DATA, null, 2));
-        console.log(`\n✅ Offline demo mode! Using ${STATIC_FALLBACK_DATA.length} placeholder designs.`);
-        return STATIC_FALLBACK_DATA;
+        if (localResults.length > 0) {
+            const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
+            fs.writeFileSync(metadataPath, JSON.stringify(localResults, null, 2));
+            console.log(`\n✅ Demo mode active! Using ${localResults.length} cached local images.`);
+            return localResults;
+        }
+    } catch (scanError) {
+        console.log(`   ⚠️ Could not scan local images: ${scanError.message}`);
     }
 
-    // Save metadata
+    // Ultimate fallback: use static placeholder data
+    console.log('   📦 Using placeholder data...');
     const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
-    fs.writeFileSync(metadataPath, JSON.stringify(results, null, 2));
-
-    console.log(`\n✅ Scraping complete! Saved ${results.length} images.`);
-    return results;
+    fs.writeFileSync(metadataPath, JSON.stringify(STATIC_FALLBACK_DATA, null, 2));
+    console.log(`\n✅ Offline demo mode! Using ${STATIC_FALLBACK_DATA.length} placeholder designs.`);
+    return STATIC_FALLBACK_DATA;
 }
 
 // Run directly
