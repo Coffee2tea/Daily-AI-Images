@@ -172,7 +172,7 @@ Return your response in this exact JSON format (no markdown, just pure JSON):
                 return generateSingleSampleIdea(index + 1);
             };
 
-            const results = await processInBatches(tasks, 5, processTask);
+            const results = await processInBatches(tasks, 3, processTask);
             // Filter out nulls/duplicates if any logic required, but here we just push
             results.forEach(r => ideas.push(r));
 
