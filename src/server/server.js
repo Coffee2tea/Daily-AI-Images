@@ -64,8 +64,8 @@ app.get('/health', (req, res) => {
 // Version check to verify deployment
 app.get('/version', (req, res) => {
   res.json({
-    version: '1.4.1',
-    desc: 'Debug: Added /api/debug/logs endpoint',
+    version: '1.4.2',
+    desc: 'Debug: Added /api/debug/test-gen endpoint',
     timestamp: new Date().toISOString()
   });
 });
@@ -77,6 +77,42 @@ app.get('/api/debug/logs', (req, res) => {
     count: logBuffer.length,
     logs: logBuffer
   });
+});
+
+// Debug: Test Image Generation directly
+app.get('/api/debug/test-gen', async (req, res) => {
+  try {
+    const { GoogleGenerativeAI } = await import('@google/generative-ai');
+
+    if (!process.env.GEMINI_API_KEY) {
+      return res.json({ success: false, error: 'No GEMINI_API_KEY found in env' });
+    }
+
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-2.0-flash-exp',
+      generationConfig: { responseModalities: ['IMAGE'] }
+    });
+
+    const prompt = "A simple red circle on white background";
+    const result = await model.generateContent(prompt);
+
+    // Check if we got image data
+    const response = result.response;
+    if (response.candidates && response.candidates[0]?.content?.parts?.[0]?.inlineData) {
+      return res.json({ success: true, message: 'Image generated successfully' });
+    }
+
+    res.json({ success: false, error: 'No image data in response', response: response });
+
+  } catch (error) {
+    res.json({
+      success: false,
+      error: error.message,
+      stack: error.stack,
+      env_key_exists: !!process.env.GEMINI_API_KEY
+    });
+  }
 });
 
 // Routes
