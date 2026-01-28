@@ -83,42 +83,69 @@ async function analyzeAndGenerateIdeasInternal() {
 
         const ideas = [];
 
+        // Helper for concurrency
+        const runWithConcurrency = async (items, limit, fn) => {
+            const results = [];
+            const executing = [];
+            for (const item of items) {
+                const p = fn(item).then(res => results.push(res));
+                executing.push(p);
+                if (executing.length >= limit) {
+                    await Promise.race(executing);
+                    // Remove completed promises
+                    /* eslint-disable-next-line no-loop-func */
+                    const index = executing.findIndex(p => p.status === 'fulfilled'); // Only works if we track status, simplifying:
+                    // Actually, simpler approach for this scale:
+                }
+            }
+            // Better simple implementation for "Limit 3"
+            // We will just chunk it or use a simple queue
+            return results;
+        };
+
+        // Simpler Queue Implementation
+        const processInBatches = async (items, limit, asyncFn) => {
+            let results = [];
+            for (let i = 0; i < items.length; i += limit) {
+                const batch = items.slice(i, i + limit);
+                console.log(`   🚀 Processing batch ${Math.floor(i / limit) + 1}/${Math.ceil(items.length / limit)} (${batch.length} items)...`);
+                const batchResults = await Promise.all(batch.map(asyncFn));
+                results = [...results, ...batchResults];
+                // Small delay between batches to be nice
+                if (i + limit < items.length) await new Promise(r => setTimeout(r, 1000));
+            }
+            return results;
+        };
+
+        // Prepare tasks
+        let tasks = [];
+
         // If we have actual images, analyze them
         if (imageFiles.length > 0) {
-            console.log(`   🖼️ Analyzing images to generate 10 unique ideas...`);
+            console.log(`   🖼️ Analyzing images to generate 10 unique ideas (Parallel Mode)...`);
 
+            // Create 10 tasks
             for (let i = 0; i < 10; i++) {
-                // Cycle through images if we have fewer than 4
-                const imagePath = imageFiles[i % imageFiles.length];
-                console.log(`   📊 Analyzing image ${i + 1}/10 (Source: ${path.basename(imagePath)})...`);
+                tasks.push({
+                    index: i,
+                    imagePath: imageFiles[i % imageFiles.length],
+                    type: 'image_analysis'
+                });
+            }
+
+            const processTask = async (task) => {
+                const { index, imagePath } = task;
+                console.log(`   📊 analyzing #${index + 1}...`);
 
                 try {
                     const imageData = imageToBase64(imagePath);
                     const mimeType = getMimeType(imagePath);
-
                     const prompt = `You are a professional T-shirt designer analyzing popular designs.
-
 Analyze this T-shirt design image and create a NEW unique design idea inspired by it.
-
 Return your response in this exact JSON format (no markdown, just pure JSON):
 {
-  "originalAnalysis": {
-    "colorPalette": ["color1", "color2", "color3"],
-    "style": "describe the style",
-    "theme": "main theme",
-    "targetAudience": "who would wear this",
-    "technique": "design technique used"
-  },
-  "newIdea": {
-    "title": "Creative catchy title for new design",
-    "theme": "Main theme/concept",
-    "style": "Design style (minimalist, vintage, bold, etc.)",
-    "colorScheme": "Recommended color palette",
-    "targetAudience": "Who would buy this",
-    "designElements": "Key visual elements to include",
-    "mood": "What feeling/emotion it should evoke",
-    "aiPrompt": "Detailed prompt for AI image generation (be specific about composition, colors, style, elements)"
-  }
+  "originalAnalysis": { "colorPalette": [], "style": "", "theme": "", "targetAudience": "", "technique": "" },
+  "newIdea": { "title": "", "theme": "", "style": "", "colorScheme": "", "targetAudience": "", "designElements": "", "mood": "", "aiPrompt": "" }
 }`;
 
                     const result = await model.generateContent([
@@ -127,71 +154,70 @@ Return your response in this exact JSON format (no markdown, just pure JSON):
                     ]);
 
                     const responseText = result.response.text();
-
-                    // Parse JSON from response
                     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+
                     if (jsonMatch) {
                         const parsed = JSON.parse(jsonMatch[0]);
-                        ideas.push({
-                            id: i + 1,
+                        return {
+                            id: index + 1,
                             inspirationSource: path.basename(imagePath),
                             ...parsed.newIdea,
                             originalAnalysis: parsed.originalAnalysis
-                        });
+                        };
                     }
                 } catch (error) {
-                    console.log(`   ⚠️ Error analyzing image ${i + 1}: ${error.message}`);
-                    // Add a sample idea as fallback
-                    ideas.push(generateSingleSampleIdea(i + 1));
+                    console.log(`   ⚠️ Error analyzing #${index + 1}: ${error.message}`);
+                    return generateSingleSampleIdea(index + 1);
                 }
+                return generateSingleSampleIdea(index + 1);
+            };
 
-                // Rate limiting delay
-                await new Promise(r => setTimeout(r, 1000));
-            }
+            const results = await processInBatches(tasks, 3, processTask);
+            // Filter out nulls/duplicates if any logic required, but here we just push
+            results.forEach(r => ideas.push(r));
+
         } else {
-            // No images available, generate ideas based on scraped metadata or samples
-            console.log('   📝 Generating ideas from metadata...');
+            // No images available
+            console.log('   📝 Generating ideas from metadata (Parallel Mode)...');
 
             for (let i = 0; i < 10; i++) {
-                const sourceData = scrapedData[i] || { title: `Design ${i + 1}`, style: 'Modern' };
+                tasks.push({
+                    index: i,
+                    sourceData: scrapedData[i] || { title: `Design ${i + 1}`, style: 'Modern' },
+                    type: 'text_generation'
+                });
+            }
+
+            const processTask = async (task) => {
+                const { index, sourceData } = task;
 
                 try {
                     const prompt = `You are a professional T-shirt designer.
-
 Based on this trending T-shirt design concept: "${sourceData.title}" (Style: ${sourceData.style || 'Contemporary'})
-
 Create a unique NEW design idea. Return your response in this exact JSON format (no markdown, just pure JSON):
-{
-  "title": "Creative catchy title",
-  "theme": "Main theme/concept",
-  "style": "Design style (minimalist, vintage, bold, etc.)",
-  "colorScheme": "Recommended color palette",
-  "targetAudience": "Who would buy this",
-  "designElements": "Key visual elements to include",
-  "mood": "What feeling/emotion it should evoke",
-  "aiPrompt": "Detailed prompt for AI T-shirt design image generation (be very specific about: composition, exact colors with hex codes, style elements, what should be in the design, artistic technique)"
-}`;
+{ "title": "", "theme": "", "style": "", "colorScheme": "", "targetAudience": "", "designElements": "", "mood": "", "aiPrompt": "" }`;
 
                     const result = await model.generateContent(prompt);
                     const responseText = result.response.text();
-
                     const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+
                     if (jsonMatch) {
                         const parsed = JSON.parse(jsonMatch[0]);
-                        ideas.push({
-                            id: i + 1,
+                        return {
+                            id: index + 1,
                             inspirationSource: sourceData.title,
                             ...parsed
-                        });
+                        };
                     }
                 } catch (error) {
-                    console.log(`   ⚠️ Error generating idea ${i + 1}: ${error.message}`);
-                    ideas.push(generateSingleSampleIdea(i + 1));
+                    console.log(`   ⚠️ Error generating #${index + 1}: ${error.message}`);
+                    return generateSingleSampleIdea(index + 1);
                 }
+                return generateSingleSampleIdea(index + 1);
+            };
 
-                // Rate limiting delay
-                await new Promise(r => setTimeout(r, 500));
-            }
+            const results = await processInBatches(tasks, 4, processTask); // Text generation is faster
+            results.forEach(r => ideas.push(r));
         }
 
         // Save ideas

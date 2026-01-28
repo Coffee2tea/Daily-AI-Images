@@ -57,17 +57,29 @@ async function generateImagesInternal() {
             }
         });
 
-        const manifest = { generatedAt: new Date().toISOString(), images: [] };
+        // Helper: Process in batches
+        const processInBatches = async (items, limit, asyncFn) => {
+            let results = [];
+            for (let i = 0; i < items.length; i += limit) {
+                const batch = items.slice(i, i + limit);
+                console.log(`   🚀 Generating Batch ${Math.floor(i / limit) + 1}/${Math.ceil(items.length / limit)} (${batch.length} images)...`);
 
-        for (let i = 0; i < ideas.length; i++) {
-            const idea = ideas[i];
-            const result = await generateSingleImage(model, idea, i);
-            manifest.images.push(result);
+                const batchPromises = batch.map((item, batchIdx) => asyncFn(item, i + batchIdx));
+                const batchResults = await Promise.all(batchPromises);
 
-            // Minimal delay to let the network stack breathe, but fast enough to finish
-            // 200ms delay
-            await new Promise(r => setTimeout(r, 200));
-        }
+                results = [...results, ...batchResults];
+
+                // Small delay between batches to respect rate limits
+                if (i + limit < items.length) {
+                    console.log('   ⏳ Cooling down (2s)...');
+                    await new Promise(r => setTimeout(r, 2000));
+                }
+            }
+            return results;
+        };
+
+        const results = await processInBatches(ideas, 3, (idea, index) => generateSingleImage(model, idea, index));
+        manifest.images = results;
 
         fs.writeFileSync(path.join(DATA_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
         console.log(`\n✅ Generated ${manifest.images.length} images!`);
@@ -167,8 +179,8 @@ REQUIREMENTS:
  * Main Export - With Timeout Wrapper
  */
 export async function generateImages() {
-    // 60 Second Timeout for generation too
-    const timeoutMs = 60000;
+    // 5 Minute Timeout for generation too
+    const timeoutMs = 300000;
 
     const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error(`Timeout of ${timeoutMs}ms exceeded`)), timeoutMs);
