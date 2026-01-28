@@ -64,8 +64,8 @@ app.get('/health', (req, res) => {
 // Version check to verify deployment
 app.get('/version', (req, res) => {
   res.json({
-    version: '1.4.2',
-    desc: 'Debug: Added /api/debug/test-gen endpoint',
+    version: '1.4.3',
+    desc: 'Debug: Listing available models',
     timestamp: new Date().toISOString()
   });
 });
