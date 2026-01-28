@@ -2,238 +2,242 @@
   {
     "id": 1,
     "inspirationSource": "fallback_design_01.jpg",
-    "title": "Zen Garden Glitch",
-    "theme": "Serenity disrupted, digital zen",
-    "style": "Modern, glitch art, minimalist with a touch of chaos",
-    "colorScheme": "Muted greens, greys, and a bright neon pink/magenta accent",
-    "targetAudience": "Tech enthusiasts, fans of glitch art, those seeking balance in a digital world",
-    "designElements": "A traditional Japanese zen garden (sand, rocks, small trees) rendered in a slightly pixelated style. A 'glitch' effect disrupts a portion of the garden with neon pink lines and distorted pixels, creating a sense of serene chaos. Small Japanese characters translating to \"Digital Serenity\" subtly placed near the bottom.",
-    "mood": "Calm with a hint of unsettling energy, a reflection of the digital age.",
-    "aiPrompt": "Create a digital art image of a traditional Japanese zen garden with sand, rocks, and small trees. The style should be slightly pixelated, like low-resolution video game graphics. A portion of the garden is disrupted by a 'glitch' effect, featuring neon pink lines and distorted pixels. The overall color palette is muted greens and greys, with the neon pink/magenta as a sharp contrast. Include small Japanese characters that translate to \"Digital Serenity\" near the bottom. The image should evoke a sense of serene chaos.",
+    "title": "Cyberpunk Neko",
+    "theme": "Futuristic Japanese Lucky Cat",
+    "style": "Cyberpunk, techwear",
+    "colorScheme": "Neon pink and electric blue on black background",
+    "targetAudience": "Gamers, anime fans, cyberpunk enthusiasts, tech-savvy individuals",
+    "designElements": "A stylized, pixelated Maneki Neko (lucky cat) wearing a cyberpunk headset. Glitch effects around the edges. Binary code as background noise. Futuristic Japanese characters incorporated into the design. Neon glowing details.",
+    "mood": "Edgy, futuristic, playful",
+    "aiPrompt": "Create a cyberpunk style pixel art illustration of a Maneki Neko wearing a gaming headset with neon glowing details, glitch effects, and binary code background. Use neon pink and electric blue on a black background. Include futuristic Japanese characters.",
     "originalAnalysis": {
       "colorPalette": [
-        "beige",
-        "blue",
-        "white"
+        "Beige",
+        "Blue"
       ],
-      "style": "Graphic, bold, slightly retro",
-      "theme": "Japanese culture, luck (Maneki Neko), originality",
-      "targetAudience": "Young adults, fans of Japanese culture, those interested in streetwear fashion",
-      "technique": "Screen printing with bold, solid colors"
+      "style": "Streetwear",
+      "theme": "Japanese Lucky Cat",
+      "targetAudience": "Young adults, streetwear enthusiasts, people interested in Japanese culture",
+      "technique": "Screen printing"
     }
   },
   {
     "id": 2,
     "inspirationSource": "fallback_design_02.jpg",
-    "title": "Celestial Guidance",
-    "theme": "Stars and astrology in a more modern way",
-    "style": "Minimalist, geometric, modern",
-    "colorScheme": "Navy blue, gold, and white",
-    "targetAudience": "Young adults interested in astrology, self-discovery, and minimalist design.",
-    "designElements": "Stylized hand reaching upwards towards constellations. Small geometric shapes representing astrological symbols (e.g., zodiac signs). Faint dotted lines connecting stars.",
-    "mood": "Mystical, hopeful, guiding, aspirational.",
-    "aiPrompt": "Generate a minimalist graphic of a stylized hand drawn in white, reaching upwards to a navy blue background filled with geometric golden constellations and faint dotted lines connecting stars. The design should have a modern, clean aesthetic with precise geometric shapes. Use a navy blue background with gold and white line art. The style should evoke feelings of wonder and guidance.",
+    "title": "Cyberpunk Glitch Hand",
+    "theme": "Cyberpunk, Technology, Glitch Art",
+    "style": "Modern, Futuristic",
+    "colorScheme": "Neon green, Electric blue, Black, White",
+    "targetAudience": "Gamers, Tech enthusiasts, Science fiction fans, Urban dwellers",
+    "designElements": "A stylized hand made of digital glitches and geometric shapes, circuitry patterns, binary code, holographic effect",
+    "mood": "Energetic, Futuristic, Technological",
+    "aiPrompt": "Create a cyberpunk-style T-shirt design featuring a hand composed of digital glitches and circuit patterns. Use neon green, electric blue, black, and white colors. Incorporate elements of binary code and holographic effects to give it a futuristic and technological feel. The overall mood should be energetic and dynamic.",
     "originalAnalysis": {
       "colorPalette": [
-        "black",
-        "white",
-        "gray"
+        "Black",
+        "White"
       ],
-      "style": "Edgy, urban, casual",
-      "theme": "Skeletal/occult themed graphic",
-      "targetAudience": "Teenagers and young adults interested in alternative fashion, music, and art.",
-      "technique": "Screen printing (single color)"
+      "style": "Edgy, Streetwear",
+      "theme": "Occult, Gothic",
+      "targetAudience": "Teenagers, Young adults, Alternative fashion enthusiasts",
+      "technique": "Screen printing"
     }
   },
   {
     "id": 3,
     "inspirationSource": "fallback_design_03.jpg",
-    "title": "Cosmic Bloom",
-    "theme": "Galaxy formation, nebula, cosmic dust clouds",
-    "style": "Surreal, dreamy, vibrant, slightly psychedelic",
-    "colorScheme": "Deep blues, purples, pinks, oranges, yellows, with hints of white and silver for stars/highlights.",
-    "targetAudience": "Sci-fi fans, astronomy enthusiasts, people who appreciate abstract and space-themed art, festival-goers.",
-    "designElements": "Swirling clouds of color resembling nebulas, interspersed with small, bright dots representing stars. The composition should mimic the flow and organic shapes seen in the original image.",
-    "mood": "Mysterious, awe-inspiring, beautiful, expansive, peaceful.",
-    "aiPrompt": "Create a surreal and dreamy image of a cosmic nebula. Use deep blues, purples, pinks, oranges, and yellows to create swirling clouds of gas and dust. Add small, bright dots of white and silver to represent stars scattered throughout the nebula. The composition should be flowing and organic, resembling oil and water mixing. The style should be vibrant and slightly psychedelic. High detail, 8k resolution.",
+    "title": "Celestial Bubbles",
+    "theme": "Space, Planets, Abstract",
+    "style": "Modern, Graphic, Minimalist",
+    "colorScheme": "Deep blues and purples as a background, with lighter pastel shades of pink, yellow, and orange for the bubbles to mimic planets.",
+    "targetAudience": "Space enthusiasts, science lovers, those who appreciate abstract art, and people who like unique designs.",
+    "designElements": "Stylized, simplified planetary orbs and smaller water droplets, against a deep space background gradient. The bubbles could have subtle textures resembling planetary surfaces.",
+    "mood": "Calm, Serene, Wonder, Awe",
+    "aiPrompt": "Create a graphic design of stylized planetary orbs resembling bubbles, set against a deep blue and purple space gradient background with subtle textures and highlights.",
     "originalAnalysis": {
       "colorPalette": [
-        "pink",
-        "yellow",
-        "blue",
-        "orange",
-        "purple"
+        "Pink",
+        "Orange",
+        "Yellow",
+        "Blue",
+        "Purple",
+        "White"
       ],
-      "style": "Abstract, fluid, macro",
-      "theme": "Oil and water mixing, abstract patterns, iridescent shapes",
-      "targetAudience": "People who enjoy abstract art, science enthusiasts, those drawn to vibrant colors",
-      "technique": "Photography, macro photography, oil and water suspension"
+      "style": "Abstract, Macro",
+      "theme": "Water Droplets, Fluid Art, Science",
+      "targetAudience": "People interested in art, science, or unique patterns; possibly children or young adults.",
+      "technique": "Photography, Possibly oil and water mixture"
     }
   },
   {
     "id": 4,
     "inspirationSource": "fallback_design_04.jpg",
-    "title": "Coordinates Collection",
-    "theme": "Travel and specific locations",
-    "style": "Minimalist, clean, geographic",
-    "colorScheme": "White, black, and a subtle accent color (e.g., a light blue or grey) for the longitude/latitude lines.",
-    "targetAudience": "Travel enthusiasts, geography nerds, people who have a special connection to a specific place.",
-    "designElements": "The longitude and latitude coordinates of a significant location (e.g., Paris, Tokyo, New York) printed in a similar minimalist font. Include the city name in parenthesis below the coordinates, just like the original design.",
-    "mood": "Nostalgic, sophisticated, subtle, wanderlust.",
-    "aiPrompt": "Create a minimalist t-shirt design on a white t-shirt. The design should feature the following text in a clean, sans-serif font: '48.8566° N, 2.3522° E' in black ink. Beneath the coordinates, add '(Paris)' in a smaller font size. The overall style should be simple, clean, and modern. Capture the t-shirt laying flat against a dark, neutral-colored background to emphasize the design. No people should be included in the image.",
+    "title": "Airport Code Tee",
+    "theme": "Travel/Airports",
+    "style": "Minimalist, Modern",
+    "colorScheme": "White T-shirt with Navy or Dark Grey Text, or Black T-shirt with white Text",
+    "targetAudience": "Adults, travelers, aviation enthusiasts, those with a sense of humor",
+    "designElements": "Airport Code (e.g., JFK, LAX, LHR) inside parentheses, positioned where the original 'HOTEL' text is. Use a clean, sans-serif font like Helvetica or Arial. Optionally, subtle line drawing of an airplane taking off could be included above the code.",
+    "mood": "Subtle, sophisticated, travel-oriented, understated",
+    "aiPrompt": "Create a minimalist t-shirt design. The design features a white or black short-sleeve t-shirt. The graphic element is the three-letter airport code 'JFK' inside parentheses, rendered in a clean, sans-serif font like Helvetica or Arial. The text should be Navy Blue or Dark Grey if the shirt is white, and white if the shirt is black. Place the text on the upper chest.",
     "originalAnalysis": {
       "colorPalette": [
-        "white",
-        "black"
+        "White",
+        "Black"
       ],
-      "style": "Minimalist, simple, understated",
-      "theme": "Hotel/travel concept",
-      "targetAudience": "People who appreciate minimalist design, travelers, minimalists",
-      "technique": "Screen printing or direct-to-garment (DTG) for the text."
+      "style": "Minimalist",
+      "theme": "Travel/Lifestyle",
+      "targetAudience": "Adults, travelers, minimalist style lovers",
+      "technique": "Screen printing, embroidery"
     }
   },
   {
     "id": 5,
-    "inspirationSource": "fallback_design_01.jpg",
-    "title": "Pixelated Prosperity",
-    "theme": "Retro Gaming meets Lucky Cat",
-    "style": "Pixel Art, 8-bit",
-    "colorScheme": "Neon green, black, shades of grey",
-    "targetAudience": "Gamers, retro enthusiasts, fans of pixel art, those who appreciate a touch of luck",
-    "designElements": "A pixelated Maneki Neko cat waving, designed as if it were an 8-bit sprite from a classic video game. Background should feature pixelated elements like hearts or coins. A health bar graphic above the cat.",
-    "mood": "Nostalgic, playful, lucky, fun",
-    "aiPrompt": "Create an 8-bit style image of a Maneki Neko cat, waving its paw. The cat should be entirely made of large, distinct pixels. Use a neon green color for the cat's outline and accents. The background should be black with scattered pixelated hearts and coins in shades of grey. Above the cat, display a pixelated health bar graphic filled to 80% in green.",
+    "inspirationSource": "fallback_design_05.jpg",
+    "title": "Mountain Majesty Silhouette",
+    "theme": "Nature, Wildlife, Mountain Adventure",
+    "style": "Minimalist, graphic, with vintage elements",
+    "colorScheme": "Monochromatic or duotone -  a dark color such as navy or black for the mountain silhouette and a lighter color such as cream or white for the background/sky.",
+    "targetAudience": "Hikers, climbers, nature lovers, people who appreciate minimalist design.",
+    "designElements": "A stylized silhouette of a mountain range similar to the one in the image, with a stylized eagle or mountain goat silhouette incorporated into the design or placed above the mountain. A subtle vintage texture overlay can add character.",
+    "mood": "Serene, adventurous, inspiring, strong",
+    "aiPrompt": "Create a minimalist, graphic T-shirt design. Feature a silhouetted mountain range with a stylized eagle flying above. Use a duotone color scheme of dark navy and cream. Add a subtle vintage texture overlay.",
     "originalAnalysis": {
       "colorPalette": [
-        "beige",
-        "blue",
-        "white"
+        "Blue",
+        "Green",
+        "White",
+        "Grey",
+        "Brown"
       ],
-      "style": "Graphic, blocky, slightly retro",
-      "theme": "Japanese lucky cat (Maneki Neko)",
-      "targetAudience": "Fans of Japanese culture, streetwear enthusiasts, cat lovers",
-      "technique": "Screen printing with bold graphic elements"
+      "style": "Photorealistic",
+      "theme": "Nature, Mountains, Landscape",
+      "targetAudience": "Outdoor enthusiasts, hikers, nature lovers",
+      "technique": "Photography, potentially layered with digital effects"
     }
   },
   {
     "id": 6,
-    "inspirationSource": "fallback_design_02.jpg",
-    "title": "Cyberpunk Glitch Hand",
-    "theme": "Futuristic technology meets organic form; cyberpunk aesthetic.",
-    "style": "Cyberpunk, digital glitch art, futuristic",
-    "colorScheme": "Neon cyan, electric blue, black, with white highlights",
-    "targetAudience": "Gamers, tech enthusiasts, people into cyberpunk and dystopian themes",
-    "designElements": "A stylized, slightly robotic hand with digital glitching effects radiating from it. Circuit board patterns visible within the hand's structure. Binary code elements subtly incorporated.",
-    "mood": "Intense, futuristic, slightly ominous, technologically advanced",
-    "aiPrompt": "Generate a highly detailed digital illustration of a stylized hand with visible circuit board components beneath a translucent skin. The hand should appear to be experiencing a digital glitch, with neon cyan and electric blue distortion effects emanating outwards. Incorporate subtle binary code patterns around the edges of the glitch. The background should be black. Render in a cyberpunk style with sharp details and a high contrast color palette.",
+    "inspirationSource": "google_design_01.jpg",
+    "title": "Cosmic Librarian",
+    "theme": "Education, Space, Retro-futurism",
+    "style": "Vintage, Graphic, Illustrated",
+    "colorScheme": "Navy blue, Cream, Gold accents, Purple nebula background",
+    "targetAudience": "Students, Teachers, Book lovers, Sci-fi fans",
+    "designElements": "Stack of books forming a rocket, Stars, Planets, Reading glasses, Quill pen, Nebula background",
+    "mood": "Intelligent, Whimsical, Adventurous, Nostalgic",
+    "aiPrompt": "Create a T-shirt design featuring a stack of books arranged as a rocket ship blasting off into a nebula. The rocket is adorned with reading glasses and a quill pen. Use a vintage, graphic illustration style with a navy blue, cream, gold, and purple color scheme. The design should evoke a sense of adventure and intellectual curiosity, targeting book lovers and sci-fi fans.",
     "originalAnalysis": {
       "colorPalette": [
-        "black",
-        "white",
-        "gray"
+        "Yellow",
+        "Green",
+        "Pink",
+        "Orange",
+        "Blue",
+        "White",
+        "Brown"
       ],
-      "style": "Urban, edgy, casual",
-      "theme": "Alternative fashion, skeletal imagery",
-      "targetAudience": "Teenagers and young adults interested in alternative fashion, rock music, or gothic styles",
-      "technique": "Screen printing (likely)"
+      "style": "Graphic, Collegiate, Retro",
+      "theme": "School, Summer, Travel, Nostalgia, Sports",
+      "targetAudience": "Students, Campers, Athletes, Travelers, Gamers",
+      "technique": "Screen Printing, Direct-to-Garment"
     }
   },
   {
     "id": 7,
-    "inspirationSource": "fallback_design_03.jpg",
-    "title": "Nebula Bloom",
-    "theme": "Cosmic nebula formation",
-    "style": "Surreal, Digital Art, Gradient",
-    "colorScheme": "Deep blues, purples, vibrant pinks, and hints of gold and turquoise.",
-    "targetAudience": "Sci-fi fans, astronomy lovers, anyone who appreciates dreamy, ethereal designs.",
-    "designElements": "Swirling clouds of color reminiscent of nebulae, small sparkling stars scattered throughout, subtle depth of field effect to mimic the original image's texture.",
-    "mood": "Dreamy, vast, awe-inspiring, peaceful.",
-    "aiPrompt": "Generate a digital painting of a swirling cosmic nebula with deep blues, purples, vibrant pinks, gold, and turquoise hues. Include small, sparkling stars scattered throughout the scene. Use a soft, gradient style with subtle depth of field to create a sense of vastness and ethereal beauty. The composition should be reminiscent of oil and water mixing, creating flowing, organic shapes.",
+    "inspirationSource": "google_design_02.jpg",
+    "title": "Retro Robotics Team",
+    "theme": "STEM, Robotics Competition, School Spirit",
+    "style": "Retro, Distressed, Collegiate",
+    "colorScheme": "Navy Blue, Gold, Off-White (for distressed look)",
+    "targetAudience": "Robotics team members, STEM students, School community",
+    "designElements": "A stylized robot head composed of geometric shapes, banner with the team name \"Cyber Titans\" in a retro font, year of establishment (e.g., \"Est. 2024\"), circuit board patterns subtly incorporated, distressed texture.",
+    "mood": "Proud, Intellectual, Energetic, Nostalgic",
+    "aiPrompt": "Create a vintage-style T-shirt design for a high school robotics team called \"Cyber Titans.\" The design should feature a geometric robot head, the team name in a retro font, and the year of establishment. Use a navy blue and gold color scheme with a distressed texture.",
     "originalAnalysis": {
       "colorPalette": [
-        "pink",
-        "orange",
-        "yellow",
-        "blue",
-        "purple"
+        "White",
+        "Red",
+        "Black",
+        "Green"
       ],
-      "style": "Abstract, Macro Photography",
-      "theme": "Oil and Water Mixing, Iridescence",
-      "targetAudience": "People who like abstract art, science enthusiasts, those interested in visual patterns and colorful designs.",
-      "technique": "Macro photography, possibly digitally enhanced for color."
+      "style": "Vintage, Collegiate, Sports",
+      "theme": "Sports, School Spirit, Achievement",
+      "targetAudience": "Students, Alumni, Sports Fans",
+      "technique": "Screen Printing, Direct-to-Garment (DTG)"
     }
   },
   {
     "id": 8,
-    "inspirationSource": "fallback_design_04.jpg",
-    "title": "Room Service Required",
-    "theme": "Humorous take on travel and relaxation",
-    "style": "Minimalist with a playful twist",
-    "colorScheme": "Pastel Yellow, Black, White (T-shirt color)",
-    "targetAudience": "Travel lovers, people with a sense of humor, introverts",
-    "designElements": "Illustration of a 'Do Not Disturb' sign on a hotel door with the words 'Room Service Required' written on it in a stylish font.",
-    "mood": "Relaxed, humorous, slightly sarcastic",
-    "aiPrompt": "Create a minimalist, slightly humorous T-shirt design. The design features a simple illustration of a 'Do Not Disturb' sign hanging on a hotel door. The text on the sign reads 'Room Service Required' in a modern sans-serif font. The sign is pastel yellow and the text is black. The background is a plain white T-shirt.",
+    "inspirationSource": "google_design_03.jpg",
+    "title": "Bloom Where You're Planted",
+    "theme": "Resilience, Personal Growth, Nature",
+    "style": "Bohemian, Hand-lettered, Botanical",
+    "colorScheme": "Earthy tones like olive green, burnt orange, and cream or beige. Alternatively, a dark background with pastel colors for contrast.",
+    "targetAudience": "Young adults and adults interested in mindfulness, gardening, and personal development. Also, for those who appreciate bohemian and nature-inspired aesthetics.",
+    "designElements": "Hand-lettered font with floral accents (leaves, small stylized flowers) incorporated within or around the text. A small potted plant graphic could be used to emphasize the 'planted' aspect. Text arranged in a circular or organic flowing pattern.",
+    "mood": "Hopeful, Peaceful, Encouraging, Natural",
+    "aiPrompt": "Create a T-shirt design with the phrase 'Bloom Where You're Planted' using a hand-lettered font. Incorporate botanical elements such as leaves and small stylized flowers. Use earthy tones like olive green, burnt orange, and cream. The design should evoke feelings of resilience and personal growth. Arrange the text in a flowing, organic pattern.",
     "originalAnalysis": {
       "colorPalette": [
-        "white",
-        "black"
+        "Black",
+        "White",
+        "Orange",
+        "Yellow"
       ],
-      "style": "Minimalist, clean, understated",
-      "theme": "Hotel lifestyle/travel",
-      "targetAudience": "Young adults, travelers, minimalist fashion enthusiasts",
-      "technique": "Simple text print"
+      "style": "Typography-based, Motivational",
+      "theme": "Inspirational Quotes, Self-Help",
+      "targetAudience": "Adults, Individuals seeking motivation and positive affirmation",
+      "technique": "Screen printing or Direct-to-garment printing, Text layout design"
     }
   },
   {
     "id": 9,
-    "inspirationSource": "fallback_design_01.jpg",
-    "title": "Lucky Ramen Bar",
-    "theme": "Ramen and good luck",
-    "style": "Vintage Japanese poster style",
-    "colorScheme": "Red, black, cream, and gold accents",
-    "targetAudience": "Foodies, ramen lovers, fans of Japanese culture, streetwear fashionistas",
-    "designElements": "A bowl of ramen with a Maneki Neko (lucky cat) holding chopsticks or sitting inside the bowl. Japanese text incorporating 'lucky' and 'ramen'. A steam effect, bold lines, worn texture.",
-    "mood": "Playful, inviting, lucky, authentic",
-    "aiPrompt": "Create a vintage Japanese-style poster design for a t-shirt. The design should feature a steaming bowl of ramen with a Maneki Neko (lucky cat) inside, either holding chopsticks or sitting comfortably. Include Japanese text incorporating the words 'lucky' and 'ramen' in a traditional font. Use a color scheme of red, black, cream, and gold accents. Add a worn texture to the design to give it a vintage feel. The composition should be balanced and visually appealing, with bold lines and clear elements. The overall aesthetic should evoke a sense of playfulness, authenticity, and good luck.",
+    "inspirationSource": "google_design_04.jpg",
+    "title": "Sustainable Futures Club",
+    "theme": "Environmental Awareness, Club Identity",
+    "style": "Modern, Minimalist, Earthy",
+    "colorScheme": "Earthy greens, browns, creams, with a pop of bright blue (representing water). Use muted tones.",
+    "targetAudience": "University students, Environmental clubs, eco-conscious individuals",
+    "designElements": "Stylized illustration of a hand holding a seedling sprouting from the earth, surrounded by a circular geometric pattern representing interconnectedness and sustainability. The club name integrated into the design in a clean, sans-serif font.",
+    "mood": "Hopeful, Sustainable, Collaborative, Responsible",
+    "aiPrompt": "Create a minimalist T-shirt design featuring a hand holding a seedling sprouting from the earth. Surround the image with a circular geometric pattern in muted earth tones (greens, browns, creams) with a pop of bright blue. Include the text 'Sustainable Futures Club' in a clean, sans-serif font below the image. The overall style should be modern and convey a message of environmental awareness.",
     "originalAnalysis": {
       "colorPalette": [
-        "beige",
-        "blue",
-        "white"
+        "Peach",
+        "Lavender",
+        "Baby Blue",
+        "Black",
+        "White",
+        "Various pastel colors"
       ],
-      "style": "Graphic, bold, slightly retro",
-      "theme": "Japanese culture, good luck charm (Maneki Neko)",
-      "targetAudience": "Fans of Japanese culture, streetwear enthusiasts, cat lovers",
-      "technique": "Screen printing or direct-to-garment printing"
+      "style": "Retro, Cartoonish, Collegiate",
+      "theme": "Team/Group Identity, Activity Based, Event Focused",
+      "targetAudience": "Students, Sororities/Fraternities, Bowling Leagues",
+      "technique": "Screen printing or Direct-to-Garment printing, featuring vector graphics"
     }
   },
   {
     "id": 10,
-    "inspirationSource": "fallback_design_02.jpg",
-    "title": "Cyberpunk Glitch Hand",
-    "theme": "Cyberpunk, technology malfunction, glitch art",
-    "style": "Modern, digital glitch, futuristic",
-    "colorScheme": [
-      "Neon green",
-      "Black",
-      "Electric blue",
-      "White"
-    ],
-    "targetAudience": "Tech enthusiasts, gamers, cyberpunk fans, Gen Z",
-    "designElements": "A stylized human hand composed of glitching pixels and digital lines. Static effect. Circuits. Binary code subtly embedded.",
-    "mood": "Technological, edgy, slightly unsettling, futuristic.",
-    "aiPrompt": "Create a digital illustration of a human hand made of glitching pixels and digital lines. The hand should appear to be malfunctioning or experiencing a digital glitch. Use a neon green, electric blue, and black color palette. Add subtle circuit patterns and binary code elements to the background. The style should be modern, digital art with a cyberpunk aesthetic and static effect.",
+    "inspirationSource": "google_design_05.jpg",
+    "title": "Fractured Landscape",
+    "theme": "Nature meets Technology",
+    "style": "Abstract, Geometric, Urban",
+    "colorScheme": "Deep teal, burnt orange, charcoal gray, with a touch of neon green as an accent.",
+    "targetAudience": "Outdoor enthusiasts, tech-savvy individuals, artists",
+    "designElements": "A fractured landscape design on the front, resembling mountains and rivers. The geometric shapes are formed by pixelated patterns, creating a glitch effect. Incorporate small, stylized icons of nature elements (trees, birds) within the geometric shapes. The back of the shirt features a subtle, repeating pattern of binary code.",
+    "mood": "Energetic, adventurous, futuristic, eco-conscious",
+    "aiPrompt": "Generate a T-shirt design with a fractured landscape pattern using geometric shapes and pixelated effects. The color scheme should be deep teal, burnt orange, and charcoal gray with a touch of neon green. Incorporate small, stylized icons of nature elements (trees, birds) within the geometric shapes. The back should feature a repeating pattern of binary code.",
     "originalAnalysis": {
       "colorPalette": [
-        "black",
-        "white",
-        "grey"
+        "Black",
+        "Hot Pink/Magenta",
+        "Gray"
       ],
-      "style": "Edgy, urban, casual",
-      "theme": "Alternative fashion, skeletal hand imagery",
-      "targetAudience": "Young adults, fans of alternative fashion, streetwear enthusiasts",
-      "technique": "Screen printing or DTG (Direct-to-Garment)"
+      "style": "Abstract, Modern, Sporty",
+      "theme": "Geometric Pattern, Asymmetrical Design",
+      "targetAudience": "Athletes, Gamers, People who like bold designs",
+      "technique": "Sublimation Printing (likely)"
     }
   }
 ]

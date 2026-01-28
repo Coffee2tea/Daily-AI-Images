@@ -78,7 +78,7 @@ async function analyzeAndGenerateIdeasInternal() {
             imageFiles = fs.readdirSync(IMAGES_DIR)
                 .filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f))
                 .map(f => path.join(IMAGES_DIR, f))
-                .slice(0, 4);
+                .slice(0, 10);
         }
 
         const ideas = [];
@@ -125,7 +125,7 @@ async function analyzeAndGenerateIdeasInternal() {
             console.log(`   🖼️ Analyzing images to generate 10 unique ideas (Parallel Mode)...`);
 
             // Create 10 tasks
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 10; i++) {
                 tasks.push({
                     index: i,
                     imagePath: imageFiles[i % imageFiles.length],
@@ -180,7 +180,7 @@ Return your response in this exact JSON format (no markdown, just pure JSON):
             // No images available
             console.log('   📝 Generating ideas from metadata (Parallel Mode)...');
 
-            for (let i = 0; i < 4; i++) {
+            for (let i = 0; i < 10; i++) {
                 tasks.push({
                     index: i,
                     sourceData: scrapedData[i] || { title: `Design ${i + 1}`, style: 'Modern' },

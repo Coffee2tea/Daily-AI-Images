@@ -31,6 +31,12 @@ async function generateImagesInternal() {
         const ideas = JSON.parse(fs.readFileSync(ideasPath, 'utf-8'));
         console.log(`   📝 Loaded ${ideas.length} ideas`);
 
+        // Initialize manifest
+        const manifest = {
+            generatedAt: new Date().toISOString(),
+            images: []
+        };
+
         if (!process.env.GEMINI_API_KEY) {
             console.log('   ⚠️ No API key. Creating placeholders...');
             return createPlaceholders(ideas);
@@ -68,17 +74,12 @@ async function generateImagesInternal() {
                 const batchResults = await Promise.all(batchPromises);
 
                 results = [...results, ...batchResults];
-
-                // Small delay between batches to respect rate limits
-                if (i + limit < items.length) {
-                    console.log('   ⏳ Cooling down (2s)...');
-                    await new Promise(r => setTimeout(r, 1000));
-                }
             }
             return results;
         };
 
-        const results = await processInBatches(ideas, 2, (idea, index) => generateSingleImage(model, idea, index));
+        // Increase batch size to 5 for faster generation
+        const results = await processInBatches(ideas, 5, (idea, index) => generateSingleImage(model, idea, index));
         manifest.images = results;
 
         fs.writeFileSync(path.join(DATA_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));

@@ -1,74 +1,74 @@
 {
-  "generatedAt": "2026-01-28T18:58:24.345Z",
+  "generatedAt": "2026-01-28T22:32:52.661Z",
   "images": [
     {
       "id": 1,
-      "title": "Zen Garden Glitch",
-      "description": "Serenity disrupted, digital zen",
-      "style": "Modern, glitch art, minimalist with a touch of chaos",
+      "title": "Cyberpunk Neko",
+      "description": "Futuristic Japanese Lucky Cat",
+      "style": "Cyberpunk, techwear",
       "imagePath": "/generated_images/design_01.png"
     },
     {
       "id": 2,
-      "title": "Celestial Guidance",
-      "description": "Stars and astrology in a more modern way",
-      "style": "Minimalist, geometric, modern",
+      "title": "Cyberpunk Glitch Hand",
+      "description": "Cyberpunk, Technology, Glitch Art",
+      "style": "Modern, Futuristic",
       "imagePath": "/generated_images/design_02.png"
     },
     {
       "id": 3,
-      "title": "Cosmic Bloom",
-      "description": "Galaxy formation, nebula, cosmic dust clouds",
-      "style": "Surreal, dreamy, vibrant, slightly psychedelic",
+      "title": "Celestial Bubbles",
+      "description": "Space, Planets, Abstract",
+      "style": "Modern, Graphic, Minimalist",
       "imagePath": "/generated_images/design_03.png"
     },
     {
       "id": 4,
-      "title": "Coordinates Collection",
-      "description": "Travel and specific locations",
-      "style": "Minimalist, clean, geographic",
+      "title": "Airport Code Tee",
+      "description": "Travel/Airports",
+      "style": "Minimalist, Modern",
       "imagePath": "/generated_images/design_04.png"
     },
     {
       "id": 5,
-      "title": "Pixelated Prosperity",
-      "description": "Retro Gaming meets Lucky Cat",
-      "style": "Pixel Art, 8-bit",
+      "title": "Mountain Majesty Silhouette",
+      "description": "Nature, Wildlife, Mountain Adventure",
+      "style": "Minimalist, graphic, with vintage elements",
       "imagePath": "/generated_images/design_05.png"
     },
     {
       "id": 6,
-      "title": "Cyberpunk Glitch Hand",
-      "description": "Futuristic technology meets organic form; cyberpunk aesthetic.",
-      "style": "Cyberpunk, digital glitch art, futuristic",
+      "title": "Cosmic Librarian",
+      "description": "Education, Space, Retro-futurism",
+      "style": "Vintage, Graphic, Illustrated",
       "imagePath": "/generated_images/design_06.png"
     },
     {
       "id": 7,
-      "title": "Nebula Bloom",
-      "description": "Cosmic nebula formation",
-      "style": "Surreal, Digital Art, Gradient",
+      "title": "Retro Robotics Team",
+      "description": "STEM, Robotics Competition, School Spirit",
+      "style": "Retro, Distressed, Collegiate",
       "imagePath": "/generated_images/design_07.png"
     },
     {
       "id": 8,
-      "title": "Room Service Required",
-      "description": "Humorous take on travel and relaxation",
-      "style": "Minimalist with a playful twist",
+      "title": "Bloom Where You're Planted",
+      "description": "Resilience, Personal Growth, Nature",
+      "style": "Bohemian, Hand-lettered, Botanical",
       "imagePath": "/generated_images/design_08.png"
     },
     {
       "id": 9,
-      "title": "Lucky Ramen Bar",
-      "description": "Ramen and good luck",
-      "style": "Vintage Japanese poster style",
+      "title": "Sustainable Futures Club",
+      "description": "Environmental Awareness, Club Identity",
+      "style": "Modern, Minimalist, Earthy",
       "imagePath": "/generated_images/design_09.png"
     },
     {
       "id": 10,
-      "title": "Cyberpunk Glitch Hand",
-      "description": "Cyberpunk, technology malfunction, glitch art",
-      "style": "Modern, digital glitch, futuristic",
+      "title": "Fractured Landscape",
+      "description": "Nature meets Technology",
+      "style": "Abstract, Geometric, Urban",
       "imagePath": "/generated_images/design_10.png"
     }
   ]
