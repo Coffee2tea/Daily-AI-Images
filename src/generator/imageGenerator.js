@@ -127,9 +127,12 @@ REQUIREMENTS:
                 }
             }
 
+            let finalFilename = filename;
+
             if (!generationSuccess) {
                 console.log(`   ❌ All retries failed for ${idea.title}. Creating placeholder.`);
                 createPngPlaceholder(idea, filepath, i + 1);
+                finalFilename = filename.replace('.png', '.svg');
             }
 
             manifest.images.push({
@@ -137,7 +140,7 @@ REQUIREMENTS:
                 title: idea.title,
                 description: idea.theme,
                 style: idea.style,
-                imagePath: `/generated_images/${filename}`
+                imagePath: `/generated_images/${finalFilename}`
             });
 
             // Delay to avoid rate limits
@@ -196,9 +199,13 @@ function createPlaceholders(ideas) {
     ideas.forEach((idea, i) => {
         const filename = `design_${String(i + 1).padStart(2, '0')}.png`;
         createPngPlaceholder(idea, path.join(OUTPUT_DIR, filename), i + 1);
+
+        // createPngPlaceholder saves as .svg, so we must update manifest to match
+        const svgFilename = filename.replace('.png', '.svg');
+
         manifest.images.push({
             id: i + 1, title: idea.title, description: idea.theme,
-            style: idea.style, imagePath: `/generated_images/${filename}`
+            style: idea.style, imagePath: `/generated_images/${svgFilename}`
         });
     });
     fs.writeFileSync(path.join(DATA_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
