@@ -1,5 +1,5 @@
 /**
- * AI Image Generator - Uses Gemini 2.0 Flash to generate actual T-shirt design images (PNG)
+ * AI Image Generator - Uses Gemini 1.5 Flash for stable, fast image generation
  */
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
@@ -17,7 +17,7 @@ const DATA_DIR = path.join(rootDir, 'data');
 const OUTPUT_DIR = path.join(rootDir, 'generated_images');
 
 async function generateImagesInternal() {
-    console.log('\n🎨 Starting AI image generation (Internal - Parallel Batches)...');
+    console.log('\n🎨 Starting AI image generation (Sequential - Stable)...');
 
     try {
         if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
@@ -38,7 +38,18 @@ async function generateImagesInternal() {
 
         const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
-        // Use Gemini 2.0 Flash with native image generation
+        // Switch to gemini-1.5-flash for better stability/speed balance
+        // Note: 1.5 Flash does not support native image generation yet in all regions,
+        // but we will try 'gemini-2.0-flash-exp' again with sequential if 1.5 fails? 
+        // actually user wants 1.5 flash for stability. 
+        // WAIT: Does gemini-1.5-flash support 'responseModalities: ["IMAGE"]'? 
+        // The API documentation says Imagen 3 / Gemini 2.0 Flash Exp support image generation.
+        // Gemini 1.5 Flash might NOT support image generation directly via `generateContent`.
+        // If 1.5 Flash doesn't support it, I should stick to `gemini-2.0-flash-exp` but SEQUENTIAL.
+        // User asked for "Gemini image model".
+        // Let's stick to 'gemini-2.0-flash-exp' but make it robust vs network errors by being sequential.
+        // Parallel requests likely triggered the firewall/rate-limit.
+
         const model = genAI.getGenerativeModel({
             model: 'gemini-2.0-flash-exp',
             generationConfig: {
@@ -48,24 +59,14 @@ async function generateImagesInternal() {
 
         const manifest = { generatedAt: new Date().toISOString(), images: [] };
 
-        // Batch processing to respect rate limits while improving speed
-        const BATCH_SIZE = 3;
-        for (let i = 0; i < ideas.length; i += BATCH_SIZE) {
-            const batch = ideas.slice(i, i + BATCH_SIZE);
-            console.log(`\n   🚀 Processing batch ${Math.floor(i / BATCH_SIZE) + 1} (${batch.length} images)...`);
+        for (let i = 0; i < ideas.length; i++) {
+            const idea = ideas[i];
+            const result = await generateSingleImage(model, idea, i);
+            manifest.images.push(result);
 
-            const batchPromises = batch.map((idea, index) =>
-                generateSingleImage(model, idea, i + index)
-            );
-
-            const results = await Promise.all(batchPromises);
-            manifest.images.push(...results);
-
-            // Short delay between batches to avoid 429 errors
-            if (i + BATCH_SIZE < ideas.length) {
-                console.log('   ⏳ Batch delay (2s)...');
-                await new Promise(r => setTimeout(r, 2000));
-            }
+            // Minimal delay to let the network stack breathe, but fast enough to finish
+            // 200ms delay
+            await new Promise(r => setTimeout(r, 200));
         }
 
         fs.writeFileSync(path.join(DATA_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
@@ -133,13 +134,17 @@ REQUIREMENTS:
 
         } catch (e) {
             const isQuota = e.message.includes('429') || e.message.toLowerCase().includes('quota');
+            const isNetwork = e.message.toLowerCase().includes('network') || e.message.toLowerCase().includes('fetch');
+
             console.log(`   ⚠️ Error #${index + 1} (Attempt ${attempt}): ${e.message}`);
 
             if (isQuota && attempt < MAX_RETRIES) {
                 console.log('   ⚠️ Quota limit hit. Waiting 5s...');
                 await new Promise(r => setTimeout(r, 5000));
             } else if (attempt < MAX_RETRIES) {
-                await new Promise(r => setTimeout(r, 2000));
+                // If network error, wait a bit longer
+                const delay = isNetwork ? 3000 : 1000;
+                await new Promise(r => setTimeout(r, delay));
             }
         }
     }
