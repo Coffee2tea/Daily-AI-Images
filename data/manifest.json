@@ -1,74 +1,74 @@
 {
-  "generatedAt": "2026-01-28T14:47:59.638Z",
+  "generatedAt": "2026-01-28T18:58:24.345Z",
   "images": [
     {
       "id": 1,
-      "title": "Cosmic Wanderer",
-      "description": "Space exploration and wonder",
-      "style": "Minimalist with gradient accents",
+      "title": "Zen Garden Glitch",
+      "description": "Serenity disrupted, digital zen",
+      "style": "Modern, glitch art, minimalist with a touch of chaos",
       "imagePath": "/generated_images/design_01.png"
     },
     {
       "id": 2,
-      "title": "Neon Tokyo Nights",
-      "description": "Japanese urban aesthetics",
-      "style": "Cyberpunk neon",
+      "title": "Celestial Guidance",
+      "description": "Stars and astrology in a more modern way",
+      "style": "Minimalist, geometric, modern",
       "imagePath": "/generated_images/design_02.png"
     },
     {
       "id": 3,
-      "title": "Wild Heart",
-      "description": "Nature and freedom",
-      "style": "Boho watercolor",
+      "title": "Cosmic Bloom",
+      "description": "Galaxy formation, nebula, cosmic dust clouds",
+      "style": "Surreal, dreamy, vibrant, slightly psychedelic",
       "imagePath": "/generated_images/design_03.png"
     },
     {
       "id": 4,
-      "title": "Retro Sunset Vibes",
-      "description": "80s nostalgia",
-      "style": "Synthwave retro",
+      "title": "Coordinates Collection",
+      "description": "Travel and specific locations",
+      "style": "Minimalist, clean, geographic",
       "imagePath": "/generated_images/design_04.png"
     },
     {
       "id": 5,
-      "title": "Zen Lotus",
-      "description": "Mindfulness and peace",
-      "style": "Elegant line art",
+      "title": "Pixelated Prosperity",
+      "description": "Retro Gaming meets Lucky Cat",
+      "style": "Pixel Art, 8-bit",
       "imagePath": "/generated_images/design_05.png"
     },
     {
       "id": 6,
-      "title": "Pixel Adventure",
-      "description": "Gaming and nostalgia",
-      "style": "8-bit pixel art",
+      "title": "Cyberpunk Glitch Hand",
+      "description": "Futuristic technology meets organic form; cyberpunk aesthetic.",
+      "style": "Cyberpunk, digital glitch art, futuristic",
       "imagePath": "/generated_images/design_06.png"
     },
     {
       "id": 7,
-      "title": "Ocean Dreams",
-      "description": "Sea life and tranquility",
-      "style": "Illustrative watercolor",
+      "title": "Nebula Bloom",
+      "description": "Cosmic nebula formation",
+      "style": "Surreal, Digital Art, Gradient",
       "imagePath": "/generated_images/design_07.png"
     },
     {
       "id": 8,
-      "title": "Urban Graffiti",
-      "description": "Street art culture",
-      "style": "Bold graffiti",
+      "title": "Room Service Required",
+      "description": "Humorous take on travel and relaxation",
+      "style": "Minimalist with a playful twist",
       "imagePath": "/generated_images/design_08.png"
     },
     {
       "id": 9,
-      "title": "Forest Spirit",
-      "description": "Mystical nature",
-      "style": "Illustrated fantasy",
+      "title": "Lucky Ramen Bar",
+      "description": "Ramen and good luck",
+      "style": "Vintage Japanese poster style",
       "imagePath": "/generated_images/design_09.png"
     },
     {
       "id": 10,
-      "title": "Positive Energy",
-      "description": "Happiness and motivation",
-      "style": "Bold typography",
+      "title": "Cyberpunk Glitch Hand",
+      "description": "Cyberpunk, technology malfunction, glitch art",
+      "style": "Modern, digital glitch, futuristic",
       "imagePath": "/generated_images/design_10.png"
     }
   ]
