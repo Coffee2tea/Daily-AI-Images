@@ -51,7 +51,7 @@ async function generateImagesInternal() {
         // Parallel requests likely triggered the firewall/rate-limit.
 
         const model = genAI.getGenerativeModel({
-            model: 'gemini-2.0-flash-exp',
+            model: 'gemini-2.0-flash-exp-image-generation',
             generationConfig: {
                 responseModalities: ['IMAGE']
             }
