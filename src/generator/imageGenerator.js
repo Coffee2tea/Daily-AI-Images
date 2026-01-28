@@ -17,7 +17,7 @@ const DATA_DIR = path.join(rootDir, 'data');
 const OUTPUT_DIR = path.join(rootDir, 'generated_images');
 
 async function generateImagesInternal() {
-    console.log('\n🎨 Starting AI image generation (Internal)...');
+    console.log('\n🎨 Starting AI image generation (Internal - Parallel Batches)...');
 
     try {
         if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
@@ -48,100 +48,24 @@ async function generateImagesInternal() {
 
         const manifest = { generatedAt: new Date().toISOString(), images: [] };
 
-        for (let i = 0; i < ideas.length; i++) {
-            const idea = ideas[i];
-            const filename = `design_${String(i + 1).padStart(2, '0')}.png`;
-            const filepath = path.join(OUTPUT_DIR, filename);
+        // Batch processing to respect rate limits while improving speed
+        const BATCH_SIZE = 3;
+        for (let i = 0; i < ideas.length; i += BATCH_SIZE) {
+            const batch = ideas.slice(i, i + BATCH_SIZE);
+            console.log(`\n   🚀 Processing batch ${Math.floor(i / BATCH_SIZE) + 1} (${batch.length} images)...`);
 
-            console.log(`   🖼️ Generating ${i + 1}/${ideas.length}: ${idea.title}...`);
+            const batchPromises = batch.map((idea, index) =>
+                generateSingleImage(model, idea, i + index)
+            );
 
-            const MAX_RETRIES = 3;
-            let generationSuccess = false;
+            const results = await Promise.all(batchPromises);
+            manifest.images.push(...results);
 
-            for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-                try {
-                    if (attempt > 1) console.log(`   🔄 Retry ${attempt}/${MAX_RETRIES}...`);
-
-                    // Detailed prompt for high-quality T-shirt design generation
-                    const prompt = `Create a professional, print-ready t-shirt design illustration:
-
-DESIGN CONCEPT:
-- Title: "${idea.title}"
-- Theme: ${idea.theme}
-- Style: ${idea.style}
-- Color Scheme: ${idea.colorScheme}
-
-REQUIREMENTS:
-- Create a striking, eye-catching graphic design suitable for screen printing on a t-shirt
-- The design should be centered and work well on a solid color t-shirt background
-- Use bold, clear shapes and strong contrast
-- Make it artistic, trendy, and commercially appealing
-- NO text unless it's an integral part of the design concept
-- Professional quality that could sell on platforms like Etsy or Redbubble
-- Clean edges, suitable for print production`;
-
-                    const result = await model.generateContent(prompt);
-                    const response = result.response;
-
-                    // Extract image data from response
-                    if (response.candidates &&
-                        response.candidates[0] &&
-                        response.candidates[0].content &&
-                        response.candidates[0].content.parts) {
-
-                        for (const part of response.candidates[0].content.parts) {
-                            if (part.inlineData && part.inlineData.data) {
-                                // Decode Base64 and save as PNG
-                                const imageBuffer = Buffer.from(part.inlineData.data, 'base64');
-                                fs.writeFileSync(filepath, imageBuffer);
-                                console.log(`   ✅ Saved: ${filename}`);
-                                generationSuccess = true;
-                                break;
-                            }
-                        }
-                    }
-
-                    if (generationSuccess) break;
-
-                    // If we got here without success, the response format was unexpected
-                    throw new Error('No image data found in response');
-
-                } catch (e) {
-                    const isNetworkError = e.message.toLowerCase().includes('network') ||
-                        e.message.toLowerCase().includes('fetch') ||
-                        e.message.toLowerCase().includes('econnreset') ||
-                        e.message.toLowerCase().includes('etimedout') ||
-                        e.message.toLowerCase().includes('socket');
-                    console.log(`   ⚠️ Error (Attempt ${attempt}): ${e.message}`);
-
-                    if (isNetworkError && attempt >= MAX_RETRIES) {
-                        console.log(`   ⚠️ Network error detected. Continuing with placeholder...`);
-                        break;
-                    }
-
-                    if (attempt < MAX_RETRIES) {
-                        const delay = isNetworkError ? attempt * 3000 : attempt * 2000;
-                        console.log(`   ⏳ Waiting ${delay / 1000}s before retry...`);
-                        await new Promise(r => setTimeout(r, delay));
-                    }
-                }
+            // Short delay between batches to avoid 429 errors
+            if (i + BATCH_SIZE < ideas.length) {
+                console.log('   ⏳ Batch delay (2s)...');
+                await new Promise(r => setTimeout(r, 2000));
             }
-
-            if (!generationSuccess) {
-                console.log(`   ❌ All retries failed for ${idea.title}. Creating placeholder.`);
-                createPngPlaceholder(idea, filepath, i + 1);
-            }
-
-            manifest.images.push({
-                id: i + 1,
-                title: idea.title,
-                description: idea.theme,
-                style: idea.style,
-                imagePath: `/generated_images/${filename}`
-            });
-
-            // Delay to avoid rate limits
-            await new Promise(r => setTimeout(r, 1500));
         }
 
         fs.writeFileSync(path.join(DATA_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
@@ -158,6 +82,80 @@ REQUIREMENTS:
         }
         return [];
     }
+}
+
+async function generateSingleImage(model, idea, index) {
+    const filename = `design_${String(index + 1).padStart(2, '0')}.png`;
+    const filepath = path.join(OUTPUT_DIR, filename);
+
+    console.log(`   🖼️ Generating ${index + 1}: ${idea.title}...`);
+
+    const MAX_RETRIES = 3;
+    let generationSuccess = false;
+
+    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+        try {
+            if (attempt > 1) console.log(`   🔄 Retry ${attempt}/${MAX_RETRIES} for #${index + 1}...`);
+
+            const prompt = `Create a professional, print-ready t-shirt design illustration:
+DESIGN CONCEPT:
+- Title: "${idea.title}"
+- Theme: ${idea.theme}
+- Style: ${idea.style}
+- Color Scheme: ${idea.colorScheme}
+
+REQUIREMENTS:
+- Create a striking, eye-catching graphic design suitable for screen printing on a t-shirt
+- The design should be centered and work well on a solid color t-shirt background
+- Use bold, clear shapes and strong contrast
+- Make it artistic, trendy, and commercially appealing
+- NO text unless it's an integral part of the design concept
+- Professional quality that could sell on platforms like Etsy or Redbubble
+- Clean edges, suitable for print production`;
+
+            const result = await model.generateContent(prompt);
+            const response = result.response;
+
+            if (response.candidates && response.candidates[0]?.content?.parts) {
+                for (const part of response.candidates[0].content.parts) {
+                    if (part.inlineData && part.inlineData.data) {
+                        const imageBuffer = Buffer.from(part.inlineData.data, 'base64');
+                        fs.writeFileSync(filepath, imageBuffer);
+                        console.log(`   ✅ Saved: ${filename}`);
+                        generationSuccess = true;
+                        break;
+                    }
+                }
+            }
+
+            if (generationSuccess) break;
+            throw new Error('No image data found in response');
+
+        } catch (e) {
+            const isQuota = e.message.includes('429') || e.message.toLowerCase().includes('quota');
+            console.log(`   ⚠️ Error #${index + 1} (Attempt ${attempt}): ${e.message}`);
+
+            if (isQuota && attempt < MAX_RETRIES) {
+                console.log('   ⚠️ Quota limit hit. Waiting 5s...');
+                await new Promise(r => setTimeout(r, 5000));
+            } else if (attempt < MAX_RETRIES) {
+                await new Promise(r => setTimeout(r, 2000));
+            }
+        }
+    }
+
+    if (!generationSuccess) {
+        console.log(`   ❌ Failed to generate ${idea.title}. Using placeholder.`);
+        createPngPlaceholder(idea, filepath, index + 1);
+    }
+
+    return {
+        id: index + 1,
+        title: idea.title,
+        description: idea.theme,
+        style: idea.style,
+        imagePath: `/generated_images/${filename}`
+    };
 }
 
 /**

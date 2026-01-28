@@ -32,8 +32,8 @@ app.get('/health', (req, res) => {
 // Version check to verify deployment
 app.get('/version', (req, res) => {
   res.json({
-    version: '1.3.7',
-    desc: 'Optimized Image Generator (Parallel Batches)',
+    version: '1.3.8',
+    desc: 'Retry: Optimized Image Generator (Parallel Batches)',
     timestamp: new Date().toISOString()
   });
 });
