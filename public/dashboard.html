@@ -133,6 +133,7 @@
 
     <script>
         let isRunning = false;
+        let pollInterval = null;
 
         async function startWorkflow() {
             if (isRunning) return;
@@ -140,106 +141,162 @@
 
             const btn = document.getElementById('start-btn');
             const progressContainer = document.getElementById('progress-container');
-            const progressFill = document.getElementById('progress-fill');
-            const progressText = document.getElementById('progress-text');
             const logContainer = document.getElementById('log-container');
             const logOutput = document.getElementById('log-output');
 
-            // Update UI
+            // Reset UI
             btn.disabled = true;
-            btn.innerHTML = '<span class="material-symbols-outlined spin-icon">hourglass_empty</span><span>Running...</span>';
+            btn.innerHTML = '<span class="material-symbols-outlined spin-icon">hourglass_empty</span><span>Initializing...</span>';
             progressContainer.style.display = 'block';
             logContainer.style.display = 'block';
             logOutput.innerHTML = '';
 
-            const steps = [
-                { id: 'step1', name: 'Scraping Online Images', progress: 33 },
-                { id: 'step2', name: 'Analyzing & Generating Ideas', progress: 66 },
-                { id: 'step3', name: 'Generating AI Images', progress: 100 }
-            ];
+            // Reset Progress Bar
+            document.getElementById('progress-fill').style.width = '0%';
+            document.getElementById('progress-text').textContent = 'Starting process, please wait... (Approx 3-5 mins)';
+
+            // Reset Steps
+            for (let i = 1; i <= 3; i++) {
+                const icon = document.getElementById(`step${i}-icon`);
+                icon.className = 'status-icon material-symbols-outlined';
+                icon.textContent = 'pause_circle';
+            }
 
             try {
-                addLog('🚀 Starting workflow...', 'info');
+                addLog('🚀 Requesting background job...', 'info');
 
-                const response = await fetch('/api/run-workflow', {
+                // 1. Start Job
+                const response = await fetch('/api/jobs/start', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' }
                 });
 
-                if (!response.ok) {
-                    throw new Error(`Server returned ${response.status} ${response.statusText}`);
-                }
+                if (!response.ok) throw new Error('Failed to start job');
 
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
+                const data = await response.json();
+                const jobId = data.jobId;
 
-                while (true) {
-                    const { done, value } = await reader.read();
-                    if (done) break;
+                addLog(`✅ Job started (ID: ${jobId})`, 'success');
+                addLog('⏳ Polling in background to avoid timeout...', 'info');
 
-                    const text = decoder.decode(value);
-                    const lines = text.split('\n').filter(line => line.startsWith('data: '));
-
-                    for (const line of lines) {
-                        try {
-                            const data = JSON.parse(line.slice(6));
-                            handleEvent(data, steps, progressFill, progressText);
-                        } catch (e) { }
-                    }
-                }
-
-                addLog('✅ Workflow Completed!', 'success');
-                btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span><span>Done! View Results</span>';
-                btn.onclick = () => window.location.href = '/gallery';
-                btn.disabled = false;
+                // 2. Poll Status
+                startPolling(jobId);
 
             } catch (error) {
                 addLog(`❌ Error: ${error.message}`, 'error');
-                btn.innerHTML = '<span class="material-symbols-outlined">refresh</span><span>Retry</span>';
-                btn.disabled = false;
+                resetBtnState();
+                isRunning = false;
+            }
+        }
+
+        function startPolling(jobId) {
+            const btn = document.getElementById('start-btn');
+            const progressFill = document.getElementById('progress-fill');
+            const progressText = document.getElementById('progress-text');
+
+            // Track logs we've already shown to avoid dupes if simple polling
+            let lastLogIndex = 0;
+
+            pollInterval = setInterval(async () => {
+                try {
+                    const res = await fetch(`/api/jobs/${jobId}`);
+                    if (!res.ok) return; // Retrying silently on network blip
+
+                    const data = await res.json();
+                    if (!data.success || !data.job) return;
+
+                    const job = data.job;
+
+                    // Update Logs
+                    if (job.logs && job.logs.length > lastLogIndex) {
+                        const newLogs = job.logs.slice(lastLogIndex);
+                        newLogs.forEach(log => {
+                            addLog(log.message, log.type || 'info');
+
+                            // Update Step Icons based on log content/step
+                            if (log.step) {
+                                updateStepIcon(log.step);
+                            }
+                        });
+                        lastLogIndex = job.logs.length;
+                    }
+
+                    // Update Progress bar roughly based on step
+                    // Step 1: 33%, Step 2: 66%, Step 3: 100% (when done)
+                    let pct = 0;
+                    let text = "Processing...";
+
+                    if (job.status === 'running') {
+                        btn.innerHTML = '<span class="material-symbols-outlined spin-icon">sync</span><span>Working in Background...</span>';
+
+                        if (job.currentStep === 1) { pct = 33; text = "Scraping Images..."; }
+                        else if (job.currentStep === 2) { pct = 66; text = "Analyzing & Generating Ideas..."; }
+                        else if (job.currentStep === 3) { pct = 90; text = "Generating AI Images (Takes time)..."; }
+
+                    } else if (job.status === 'completed') {
+                        pct = 100;
+                        text = "Completed!";
+                        clearInterval(pollInterval);
+                        finishWorkflow();
+                        return;
+                    } else if (job.status === 'failed') {
+                        clearInterval(pollInterval);
+                        addLog(`❌ Job Failed: ${job.error}`, 'error');
+                        resetBtnState();
+                        isRunning = false;
+                        return;
+                    }
+
+                    progressFill.style.width = `${pct}%`;
+                    progressText.textContent = text;
+
+                } catch (e) {
+                    console.log('Polling error:', e);
+                }
+            }, 2000); // Poll every 2 seconds
+        }
+
+        function updateStepIcon(stepNumber) {
+            // Mark previous steps as done
+            for (let i = 1; i < stepNumber; i++) {
+                const icon = document.getElementById(`step${i}-icon`);
+                icon.textContent = 'check_circle';
+                icon.classList.add('text-success');
+            }
+            // Mark current step as running
+            const current = document.getElementById(`step${stepNumber}-icon`);
+            if (current) {
+                current.textContent = 'sync';
+                current.classList.add('spin-icon');
+            }
+        }
+
+        function finishWorkflow() {
+            const btn = document.getElementById('start-btn');
+
+            // Mark all steps done
+            for (let i = 1; i <= 3; i++) {
+                const icon = document.getElementById(`step${i}-icon`);
+                icon.textContent = 'check_circle';
+                icon.classList.remove('spin-icon');
+                icon.classList.add('text-success');
             }
 
+            document.getElementById('progress-fill').style.width = '100%';
+            document.getElementById('progress-text').textContent = 'All Finished!';
+
+            addLog('🎉 Workflow successfully finished!', 'success');
+
+            btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span><span>Done! View Results</span>';
+            btn.onclick = () => window.location.href = '/gallery';
+            btn.disabled = false;
             isRunning = false;
         }
 
-        function handleEvent(data, steps, progressFill, progressText) {
-            if (data.type === 'ping') return;
-
-            if (data.step) {
-                const stepIndex = parseInt(data.step) - 1;
-                if (stepIndex >= 0 && stepIndex < steps.length) {
-                    // Update icons
-                    for (let i = 0; i <= stepIndex; i++) {
-                        const icon = document.getElementById(`step${i + 1}-icon`);
-                        if (i < stepIndex) {
-                            icon.textContent = 'check_circle';
-                            icon.classList.add('text-success');
-                        } else if (i === stepIndex) {
-                            icon.textContent = 'sync';
-                            icon.classList.add('spin-icon');
-                        }
-                    }
-
-                    // Update progress
-                    progressFill.style.width = `${steps[stepIndex].progress}%`;
-                    progressText.textContent = steps[stepIndex].name;
-                }
-            }
-
-            if (data.message) {
-                addLog(data.message, data.type || 'info');
-            }
-
-            if (data.complete) {
-                for (let i = 0; i < 3; i++) {
-                    const icon = document.getElementById(`step${i + 1}-icon`);
-                    icon.textContent = 'check_circle';
-                    icon.classList.remove('spin-icon');
-                    icon.classList.add('text-success');
-                }
-                progressFill.style.width = '100%';
-                progressText.textContent = 'Completed!';
-            }
+        function resetBtnState() {
+            const btn = document.getElementById('start-btn');
+            btn.innerHTML = '<span class="material-symbols-outlined">refresh</span><span>Retry</span>';
+            btn.disabled = false;
         }
 
         function addLog(message, type = 'info') {

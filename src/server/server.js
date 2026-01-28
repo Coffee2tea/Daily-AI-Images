@@ -241,70 +241,114 @@ app.post('/api/send-email', async (req, res) => {
   }
 });
 
-// API: Run workflow (SSE - Server-Sent Events)
-app.post('/api/run-workflow', async (req, res) => {
-  res.setHeader('Content-Type', 'text/event-stream');
-  res.setHeader('Cache-Control', 'no-cache');
-  res.setHeader('Connection', 'keep-alive');
+// --- Async Job Queue System ---
+const jobs = new Map();
 
-  const sendEvent = (data) => {
-    res.write(`data: ${JSON.stringify(data)}\n\n`);
-  };
+function generateJobId() {
+  return 'job_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
 
-  // Keep-alive ping to prevent timeouts
-  const keepAliveInterval = setInterval(() => {
-    sendEvent({ type: 'ping', message: 'ping' });
-  }, 15000);
-
-  // Clean up interval on close
-  req.on('close', () => {
-    clearInterval(keepAliveInterval);
-  });
+// Background Worker Function
+async function runBackgroundWorkflow(jobId) {
+  const job = jobs.get(jobId);
+  if (!job) return;
 
   try {
-    // Step 1: Scrape Google Images
-    sendEvent({ step: 1, message: '🔍 Starting Google Image scraping...', type: 'info' });
+    // Helper to update job status
+    const updateJob = (step, msg, type = 'info') => {
+      job.currentStep = step;
+      job.logs.push({
+        timestamp: new Date().toISOString(),
+        message: msg,
+        type: type,
+        step: step
+      });
+      job.updatedAt = Date.now();
+    };
+
+    // Step 1: Scraper
+    updateJob(1, '🔍 Starting Google Image scraping...');
 
     try {
       const { scrapeGoogleImages } = await import('../scraper/googleScraper.js');
       await scrapeGoogleImages();
-      sendEvent({ step: 1, message: '✅ Google scraping completed', type: 'success' });
+      updateJob(1, '✅ Google scraping completed', 'success');
     } catch (e) {
-      console.log(`Scraper module error (using cached data): ${e.message}`);
-      // Fallback: Use existing data without showing error to user (Demo Mode)
-      sendEvent({ step: 1, message: '⚠️ Network issue detected - Switching to offline demo mode (Using cached data)', type: 'warning' });
-      sendEvent({ step: 1, message: '✅ Google scraping completed (Cached)', type: 'success' });
+      console.log(`Scraper module error: ${e.message}`);
+      updateJob(1, '⚠️ Network issue detected - Switching to offline demo mode', 'warning');
+      updateJob(1, '✅ Google scraping completed (Cached)', 'success');
     }
 
-    // Step 2: Analyze and generate ideas
-    sendEvent({ step: 2, message: '🧠 Analyzing images and generating ideas...', type: 'info' });
+    // Step 2: Analyzer
+    updateJob(2, '🧠 Analyzing images and generating ideas...');
 
     try {
       const { analyzeAndGenerateIdeas } = await import('../analyzer/imageAnalyzer.js');
       await analyzeAndGenerateIdeas();
-      sendEvent({ step: 2, message: '✅ Ideas generated', type: 'success' });
+      updateJob(2, '✅ Ideas generated', 'success');
     } catch (e) {
-      sendEvent({ step: 2, message: `⚠️ Analysis error: ${e.message}`, type: 'error' });
+      throw new Error(`Analysis failed: ${e.message}`);
     }
 
-    // Step 3: Generate images
-    sendEvent({ step: 3, message: '🎨 Generating AI Images...', type: 'info' });
+    // Step 3: Generator
+    updateJob(3, '🎨 Generating AI Images...');
 
     try {
       const { generateImages } = await import('../generator/imageGenerator.js');
       await generateImages();
-      sendEvent({ step: 3, message: '✅ Image generation completed', type: 'success' });
+      updateJob(3, '✅ Image generation completed', 'success');
     } catch (e) {
-      sendEvent({ step: 3, message: `⚠️ Generation error: ${e.message}`, type: 'error' });
+      throw new Error(`Generation failed: ${e.message}`);
     }
 
-    sendEvent({ complete: true, message: '🎉 Workflow Completed!' });
+    // Complete
+    job.status = 'completed';
+    job.progress = 100;
+    updateJob(3, '🎉 Workflow Completed!', 'success');
 
   } catch (error) {
-    sendEvent({ error: true, message: `❌ Error: ${error.message}` });
+    job.status = 'failed';
+    job.error = error.message;
+    job.logs.push({
+      timestamp: new Date().toISOString(),
+      message: `❌ Error: ${error.message}`,
+      type: 'error'
+    });
+  }
+}
+
+// API: Start Job
+app.post('/api/jobs/start', (req, res) => {
+  const jobId = generateJobId();
+
+  // Initialize Job
+  jobs.set(jobId, {
+    id: jobId,
+    status: 'running',
+    createdAt: Date.now(),
+    updatedAt: Date.now(),
+    currentStep: 0,
+    progress: 0,
+    logs: [],
+    error: null
+  });
+
+  // Start processing in background (FIRE AND FORGET)
+  runBackgroundWorkflow(jobId);
+
+  res.json({ success: true, jobId, message: 'Workflow started in background' });
+});
+
+// API: Get Job Status
+app.get('/api/jobs/:id', (req, res) => {
+  const jobId = req.params.id;
+  const job = jobs.get(jobId);
+
+  if (!job) {
+    return res.status(404).json({ success: false, error: 'Job not found' });
   }
 
-  res.end();
+  res.json({ success: true, job });
 });
 
 // Start server
