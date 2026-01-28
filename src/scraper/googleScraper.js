@@ -89,11 +89,16 @@ const SAMPLE_DATA = [
 
 // Pure static fallback - no network required at all (used when even demo downloads fail)
 const STATIC_FALLBACK_DATA = [
-    { id: 1, title: "Neon Cyberpunk T-Shirt", imageUrl: "/demo/placeholder.svg", localPath: null, source: 'offline-demo', originalLink: "#" },
-    { id: 2, title: "Vintage Retro Sunset", imageUrl: "/demo/placeholder.svg", localPath: null, source: 'offline-demo', originalLink: "#" },
-    { id: 3, title: "Abstract Geometric Design", imageUrl: "/demo/placeholder.svg", localPath: null, source: 'offline-demo', originalLink: "#" },
-    { id: 4, title: "Minimalist Line Art", imageUrl: "/demo/placeholder.svg", localPath: null, source: 'offline-demo', originalLink: "#" },
-    { id: 5, title: "Nature Mountain Hiking", imageUrl: "/demo/placeholder.svg", localPath: null, source: 'offline-demo', originalLink: "#" }
+    { id: 1, title: "Neon Cyberpunk T-Shirt", imageUrl: "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500", localPath: null, source: 'offline-demo', originalLink: "https://unsplash.com/photos/neon-sign-during-nighttime-xFaH_7UmVjo" },
+    { id: 2, title: "Vintage Retro Sunset", imageUrl: "https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=500", localPath: null, source: 'offline-demo', originalLink: "https://unsplash.com/photos/red-led-neon-sign-turned-on-during-night-time-Gg7uG5b-3P0" },
+    { id: 3, title: "Abstract Geometric Design", imageUrl: "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=500", localPath: null, source: 'offline-demo', originalLink: "https://unsplash.com/photos/purple-and-pink-light-digital-wallpaper-2-3Hh9_wc6c" },
+    { id: 4, title: "Minimalist Line Art", imageUrl: "https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=500", localPath: null, source: 'offline-demo', originalLink: "https://unsplash.com/photos/person-wearing-white-crew-neck-t-shirt-mEz3PoFGs_k" },
+    { id: 5, title: "Nature Mountain Hiking", imageUrl: "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500", localPath: null, source: 'offline-demo', originalLink: "https://unsplash.com/photos/mountains-during-sunset-VBLHICVh-lI" },
+    { id: 6, title: "Urban Street Art", imageUrl: "https://images.unsplash.com/photo-1499781350541-7783f6c6a0c8?w=500", localPath: null, source: 'offline-demo', originalLink: "https://unsplash.com/photos/graffiti-artwork-on-wall-8CqDvPuekTI" },
+    { id: 7, title: "Cool Graphic Tee", imageUrl: "https://images.unsplash.com/photo-1503341455253-b2e72333dbdb?w=500", localPath: null, source: 'offline-demo', originalLink: "https://unsplash.com/photos/man-wearing-black-crew-neck-t-shirt-2-3Hh9_wc6c" },
+    { id: 8, title: "Retro Gaming Style", imageUrl: "https://images.unsplash.com/photo-1551103782-8ab07afd45c1?w=500", localPath: null, source: 'offline-demo', originalLink: "https://unsplash.com/photos/black-sony-ps4-controller-lCPhGxs7pww" },
+    { id: 9, title: "Surreal Digital Art", imageUrl: "https://images.unsplash.com/photo-1563089145-599997674d42?w=500", localPath: null, source: 'offline-demo', originalLink: "https://unsplash.com/photos/blue-and-pink-light-digital-wallpaper-2-3Hh9_wc6c" },
+    { id: 10, title: "Typography Design", imageUrl: "https://images.unsplash.com/photo-1554568218-0f1715e72254?w=500", localPath: null, source: 'offline-demo', originalLink: "https://unsplash.com/photos/text-overlay-on-white-text-overlay-2-3Hh9_wc6c" }
 ];
 
 export async function scrapeGoogleImages() {
