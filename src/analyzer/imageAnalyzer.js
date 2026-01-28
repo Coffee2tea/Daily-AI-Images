@@ -47,55 +47,56 @@ function getMimeType(filepath) {
 export async function analyzeAndGenerateIdeas() {
     console.log('\n🧠 Starting image analysis and idea generation...');
 
-    // Check API key
-    if (!process.env.GEMINI_API_KEY) {
-        console.log('   ⚠️ GEMINI_API_KEY not found. Using sample ideas...');
-        return generateSampleIdeas();
-    }
+    try {
+        // Check API key
+        if (!process.env.GEMINI_API_KEY) {
+            console.log('   ⚠️ GEMINI_API_KEY not found. Using sample ideas...');
+            return generateSampleIdeas();
+        }
 
-    // Ensure data directory exists
-    if (!fs.existsSync(DATA_DIR)) {
-        fs.mkdirSync(DATA_DIR, { recursive: true });
-    }
+        // Ensure data directory exists
+        if (!fs.existsSync(DATA_DIR)) {
+            fs.mkdirSync(DATA_DIR, { recursive: true });
+        }
 
-    // Initialize Gemini
-    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+        // Initialize Gemini
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
 
-    // Load scraped metadata
-    const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
-    let scrapedData = [];
+        // Load scraped metadata
+        const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
+        let scrapedData = [];
 
-    if (fs.existsSync(metadataPath)) {
-        scrapedData = JSON.parse(fs.readFileSync(metadataPath, 'utf-8'));
-        console.log(`   📄 Loaded ${scrapedData.length} scraped entries`);
-    }
+        if (fs.existsSync(metadataPath)) {
+            scrapedData = JSON.parse(fs.readFileSync(metadataPath, 'utf-8'));
+            console.log(`   📄 Loaded ${scrapedData.length} scraped entries`);
+        }
 
-    // Get downloaded images
-    let imageFiles = [];
-    if (fs.existsSync(IMAGES_DIR)) {
-        imageFiles = fs.readdirSync(IMAGES_DIR)
-            .filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f))
-            .map(f => path.join(IMAGES_DIR, f))
-            .slice(0, 10);
-    }
+        // Get downloaded images
+        let imageFiles = [];
+        if (fs.existsSync(IMAGES_DIR)) {
+            imageFiles = fs.readdirSync(IMAGES_DIR)
+                .filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f))
+                .map(f => path.join(IMAGES_DIR, f))
+                .slice(0, 10);
+        }
 
-    const ideas = [];
+        const ideas = [];
 
-    // If we have actual images, analyze them
-    if (imageFiles.length > 0) {
-        console.log(`   🖼️ Analyzing images to generate 10 unique ideas...`);
+        // If we have actual images, analyze them
+        if (imageFiles.length > 0) {
+            console.log(`   🖼️ Analyzing images to generate 10 unique ideas...`);
 
-        for (let i = 0; i < 10; i++) {
-            // Cycle through images if we have fewer than 10
-            const imagePath = imageFiles[i % imageFiles.length];
-            console.log(`   📊 Analyzing image ${i + 1}/10 (Source: ${path.basename(imagePath)})...`);
+            for (let i = 0; i < 10; i++) {
+                // Cycle through images if we have fewer than 10
+                const imagePath = imageFiles[i % imageFiles.length];
+                console.log(`   📊 Analyzing image ${i + 1}/10 (Source: ${path.basename(imagePath)})...`);
 
-            try {
-                const imageData = imageToBase64(imagePath);
-                const mimeType = getMimeType(imagePath);
+                try {
+                    const imageData = imageToBase64(imagePath);
+                    const mimeType = getMimeType(imagePath);
 
-                const prompt = `You are a professional T-shirt designer analyzing popular designs.
+                    const prompt = `You are a professional T-shirt designer analyzing popular designs.
 
 Analyze this T-shirt design image and create a NEW unique design idea inspired by it.
 
@@ -120,42 +121,42 @@ Return your response in this exact JSON format (no markdown, just pure JSON):
   }
 }`;
 
-                const result = await model.generateContent([
-                    { text: prompt },
-                    { inlineData: { mimeType, data: imageData } }
-                ]);
+                    const result = await model.generateContent([
+                        { text: prompt },
+                        { inlineData: { mimeType, data: imageData } }
+                    ]);
 
-                const responseText = result.response.text();
+                    const responseText = result.response.text();
 
-                // Parse JSON from response
-                const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-                if (jsonMatch) {
-                    const parsed = JSON.parse(jsonMatch[0]);
-                    ideas.push({
-                        id: i + 1,
-                        inspirationSource: path.basename(imagePath),
-                        ...parsed.newIdea,
-                        originalAnalysis: parsed.originalAnalysis
-                    });
+                    // Parse JSON from response
+                    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        const parsed = JSON.parse(jsonMatch[0]);
+                        ideas.push({
+                            id: i + 1,
+                            inspirationSource: path.basename(imagePath),
+                            ...parsed.newIdea,
+                            originalAnalysis: parsed.originalAnalysis
+                        });
+                    }
+                } catch (error) {
+                    console.log(`   ⚠️ Error analyzing image ${i + 1}: ${error.message}`);
+                    // Add a sample idea as fallback
+                    ideas.push(generateSingleSampleIdea(i + 1));
                 }
-            } catch (error) {
-                console.log(`   ⚠️ Error analyzing image ${i + 1}: ${error.message}`);
-                // Add a sample idea as fallback
-                ideas.push(generateSingleSampleIdea(i + 1));
+
+                // Rate limiting delay
+                await new Promise(r => setTimeout(r, 1000));
             }
+        } else {
+            // No images available, generate ideas based on scraped metadata or samples
+            console.log('   📝 Generating ideas from metadata...');
 
-            // Rate limiting delay
-            await new Promise(r => setTimeout(r, 1000));
-        }
-    } else {
-        // No images available, generate ideas based on scraped metadata or samples
-        console.log('   📝 Generating ideas from metadata...');
+            for (let i = 0; i < 10; i++) {
+                const sourceData = scrapedData[i] || { title: `Design ${i + 1}`, style: 'Modern' };
 
-        for (let i = 0; i < 10; i++) {
-            const sourceData = scrapedData[i] || { title: `Design ${i + 1}`, style: 'Modern' };
-
-            try {
-                const prompt = `You are a professional T-shirt designer.
+                try {
+                    const prompt = `You are a professional T-shirt designer.
 
 Based on this trending T-shirt design concept: "${sourceData.title}" (Style: ${sourceData.style || 'Contemporary'})
 
@@ -171,36 +172,42 @@ Create a unique NEW design idea. Return your response in this exact JSON format 
   "aiPrompt": "Detailed prompt for AI T-shirt design image generation (be very specific about: composition, exact colors with hex codes, style elements, what should be in the design, artistic technique)"
 }`;
 
-                const result = await model.generateContent(prompt);
-                const responseText = result.response.text();
+                    const result = await model.generateContent(prompt);
+                    const responseText = result.response.text();
 
-                const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-                if (jsonMatch) {
-                    const parsed = JSON.parse(jsonMatch[0]);
-                    ideas.push({
-                        id: i + 1,
-                        inspirationSource: sourceData.title,
-                        ...parsed
-                    });
+                    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+                    if (jsonMatch) {
+                        const parsed = JSON.parse(jsonMatch[0]);
+                        ideas.push({
+                            id: i + 1,
+                            inspirationSource: sourceData.title,
+                            ...parsed
+                        });
+                    }
+                } catch (error) {
+                    console.log(`   ⚠️ Error generating idea ${i + 1}: ${error.message}`);
+                    ideas.push(generateSingleSampleIdea(i + 1));
                 }
-            } catch (error) {
-                console.log(`   ⚠️ Error generating idea ${i + 1}: ${error.message}`);
-                ideas.push(generateSingleSampleIdea(i + 1));
+
+                // Rate limiting delay
+                await new Promise(r => setTimeout(r, 500));
             }
-
-            // Rate limiting delay
-            await new Promise(r => setTimeout(r, 500));
         }
+
+        // Save ideas
+        const ideasPath = path.join(DATA_DIR, 'ideas.json');
+        fs.writeFileSync(ideasPath, JSON.stringify(ideas, null, 2));
+
+        console.log(`\n✅ Generated ${ideas.length} design ideas!`);
+        console.log(`   📄 Ideas saved to: ${ideasPath}`);
+
+        return ideas;
+
+    } catch (fatalError) {
+        console.log(`\n❌ Fatal error in Analyzer: ${fatalError.message}`);
+        console.log(`   ⚠️ Switching to fallback: Generating sample ideas...`);
+        return generateSampleIdeas();
     }
-
-    // Save ideas
-    const ideasPath = path.join(DATA_DIR, 'ideas.json');
-    fs.writeFileSync(ideasPath, JSON.stringify(ideas, null, 2));
-
-    console.log(`\n✅ Generated ${ideas.length} design ideas!`);
-    console.log(`   📄 Ideas saved to: ${ideasPath}`);
-
-    return ideas;
 }
 
 /**

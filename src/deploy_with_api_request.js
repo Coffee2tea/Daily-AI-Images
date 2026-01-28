@@ -1,11 +1,14 @@
 import { request } from 'playwright';
 import fs from 'fs/promises';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 async function deploy() {
     console.log('Starting deployment via Playwright APIRequest...');
 
     // Configuration
-    const token = 'sk_e954e069_055cfe5e1e0e13a0e5cd1aaa141412afb110';
+    const token = process.env.AI_BUILDER_TOKEN;
     // Using the user-specified domain
     const deployUrl = 'https://space.ai-builders.com/backend/v1/deployments';
 
