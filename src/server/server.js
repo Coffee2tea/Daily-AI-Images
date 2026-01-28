@@ -32,8 +32,8 @@ app.get('/health', (req, res) => {
 // Version check to verify deployment
 app.get('/version', (req, res) => {
   res.json({
-    version: '1.3.9',
-    desc: 'Sequential Generation (Network Stability Fix)',
+    version: '1.4.0',
+    desc: 'Reduced Generation Count (4) for Reliability',
     timestamp: new Date().toISOString()
   });
 });

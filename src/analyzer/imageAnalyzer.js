@@ -78,19 +78,19 @@ async function analyzeAndGenerateIdeasInternal() {
             imageFiles = fs.readdirSync(IMAGES_DIR)
                 .filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f))
                 .map(f => path.join(IMAGES_DIR, f))
-                .slice(0, 10);
+                .slice(0, 4);
         }
 
         const ideas = [];
 
         // If we have actual images, analyze them
         if (imageFiles.length > 0) {
-            console.log(`   🖼️ Analyzing images to generate 10 unique ideas...`);
+            console.log(`   🖼️ Analyzing images to generate 4 unique ideas...`);
 
-            for (let i = 0; i < 10; i++) {
-                // Cycle through images if we have fewer than 10
+            for (let i = 0; i < 4; i++) {
+                // Cycle through images if we have fewer than 4
                 const imagePath = imageFiles[i % imageFiles.length];
-                console.log(`   📊 Analyzing image ${i + 1}/10 (Source: ${path.basename(imagePath)})...`);
+                console.log(`   📊 Analyzing image ${i + 1}/4 (Source: ${path.basename(imagePath)})...`);
 
                 try {
                     const imageData = imageToBase64(imagePath);
@@ -152,7 +152,7 @@ Return your response in this exact JSON format (no markdown, just pure JSON):
             // No images available, generate ideas based on scraped metadata or samples
             console.log('   📝 Generating ideas from metadata...');
 
-            for (let i = 0; i < 10; i++) {
+            for (let i = 0; i < 4; i++) {
                 const sourceData = scrapedData[i] || { title: `Design ${i + 1}`, style: 'Modern' };
 
                 try {
@@ -341,8 +341,8 @@ function generateSampleIdeas() {
         }
     ];
 
-    // Add IDs
-    const ideas = sampleIdeas.map((idea, index) => ({
+    // Generate 4 sample ideas
+    const ideas = sampleIdeas.slice(0, 4).map((idea, index) => ({
         id: index + 1,
         inspirationSource: 'Sample Design Library',
         ...idea
