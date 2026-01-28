@@ -18,6 +18,38 @@ const rootDir = path.join(__dirname, '..', '..');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// --- In-Memory Log Buffer for Debugging ---
+const LOG_BUFFER_SIZE = 200;
+const logBuffer = [];
+
+function addToLogBuffer(type, args) {
+  const msg = args.map(arg =>
+    typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+  ).join(' ');
+
+  const entry = `[${new Date().toISOString()}] [${type.toUpperCase()}] ${msg}`;
+  logBuffer.push(entry);
+
+  if (logBuffer.length > LOG_BUFFER_SIZE) {
+    logBuffer.shift();
+  }
+}
+
+// Override console methods to capture logs
+const originalLog = console.log;
+const originalError = console.error;
+
+console.log = function (...args) {
+  addToLogBuffer('info', args);
+  originalLog.apply(console, args);
+};
+
+console.error = function (...args) {
+  addToLogBuffer('error', args);
+  originalError.apply(console, args);
+};
+// ------------------------------------------
+
 // Middleware
 app.use(express.json());
 app.use(express.static(path.join(rootDir, 'public')));
@@ -32,9 +64,18 @@ app.get('/health', (req, res) => {
 // Version check to verify deployment
 app.get('/version', (req, res) => {
   res.json({
-    version: '1.4.0',
-    desc: 'Reduced Generation Count (4) for Reliability',
+    version: '1.4.1',
+    desc: 'Debug: Added /api/debug/logs endpoint',
     timestamp: new Date().toISOString()
+  });
+});
+
+// Debug: Get recent server logs
+app.get('/api/debug/logs', (req, res) => {
+  res.json({
+    success: true,
+    count: logBuffer.length,
+    logs: logBuffer
   });
 });
 
