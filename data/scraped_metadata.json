@@ -1,0 +1,42 @@
+[
+  {
+    "id": 1,
+    "title": "Neon Cyberpunk T-Shirt",
+    "imageUrl": "https://images.unsplash.com/photo-1576566588028-4147f3842f27?w=500",
+    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\fallback_design_01.jpg",
+    "source": "demo-fallback",
+    "originalLink": "https://example.com/1"
+  },
+  {
+    "id": 2,
+    "title": "Vintage Retro Sunset",
+    "imageUrl": "https://images.unsplash.com/photo-1503342394128-c104d54dba01?w=500",
+    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\fallback_design_02.jpg",
+    "source": "demo-fallback",
+    "originalLink": "https://example.com/2"
+  },
+  {
+    "id": 3,
+    "title": "Abstract Geometric Design",
+    "imageUrl": "https://images.unsplash.com/photo-1550684848-fac1c5b4e853?w=500",
+    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\fallback_design_03.jpg",
+    "source": "demo-fallback",
+    "originalLink": "https://example.com/3"
+  },
+  {
+    "id": 4,
+    "title": "Minimalist Line Art",
+    "imageUrl": "https://images.unsplash.com/photo-1529374255404-311a2a4f1fd9?w=500",
+    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\fallback_design_04.jpg",
+    "source": "demo-fallback",
+    "originalLink": "https://example.com/4"
+  },
+  {
+    "id": 5,
+    "title": "Nature Mountain Hiking",
+    "imageUrl": "https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=500",
+    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\fallback_design_05.jpg",
+    "source": "demo-fallback",
+    "originalLink": "https://example.com/5"
+  }
+]

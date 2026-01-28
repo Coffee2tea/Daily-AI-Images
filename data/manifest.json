@@ -1,0 +1,75 @@
+{
+  "generatedAt": "2026-01-28T14:47:59.638Z",
+  "images": [
+    {
+      "id": 1,
+      "title": "Cosmic Wanderer",
+      "description": "Space exploration and wonder",
+      "style": "Minimalist with gradient accents",
+      "imagePath": "/generated_images/design_01.png"
+    },
+    {
+      "id": 2,
+      "title": "Neon Tokyo Nights",
+      "description": "Japanese urban aesthetics",
+      "style": "Cyberpunk neon",
+      "imagePath": "/generated_images/design_02.png"
+    },
+    {
+      "id": 3,
+      "title": "Wild Heart",
+      "description": "Nature and freedom",
+      "style": "Boho watercolor",
+      "imagePath": "/generated_images/design_03.png"
+    },
+    {
+      "id": 4,
+      "title": "Retro Sunset Vibes",
+      "description": "80s nostalgia",
+      "style": "Synthwave retro",
+      "imagePath": "/generated_images/design_04.png"
+    },
+    {
+      "id": 5,
+      "title": "Zen Lotus",
+      "description": "Mindfulness and peace",
+      "style": "Elegant line art",
+      "imagePath": "/generated_images/design_05.png"
+    },
+    {
+      "id": 6,
+      "title": "Pixel Adventure",
+      "description": "Gaming and nostalgia",
+      "style": "8-bit pixel art",
+      "imagePath": "/generated_images/design_06.png"
+    },
+    {
+      "id": 7,
+      "title": "Ocean Dreams",
+      "description": "Sea life and tranquility",
+      "style": "Illustrative watercolor",
+      "imagePath": "/generated_images/design_07.png"
+    },
+    {
+      "id": 8,
+      "title": "Urban Graffiti",
+      "description": "Street art culture",
+      "style": "Bold graffiti",
+      "imagePath": "/generated_images/design_08.png"
+    },
+    {
+      "id": 9,
+      "title": "Forest Spirit",
+      "description": "Mystical nature",
+      "style": "Illustrated fantasy",
+      "imagePath": "/generated_images/design_09.png"
+    },
+    {
+      "id": 10,
+      "title": "Positive Energy",
+      "description": "Happiness and motivation",
+      "style": "Bold typography",
+      "imagePath": "/generated_images/design_10.png"
+    }
+  ]
+}

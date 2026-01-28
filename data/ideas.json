@@ -1,0 +1,261 @@
+[
+  {
+    "id": 1,
+    "inspirationSource": "fallback_design_01.jpg",
+    "title": "Cyberpunk Neko Glitch",
+    "theme": "Cyberpunk/Glitch Art meets Lucky Cat",
+    "style": "Cyberpunk, glitch art, futuristic, slightly distressed",
+    "colorScheme": "Neon pink, electric blue, dark gray/black",
+    "targetAudience": "Tech enthusiasts, cyberpunk fans, anime lovers, anyone who appreciates unique and edgy designs",
+    "designElements": "A Maneki Neko (lucky cat) rendered in a low-poly, pixelated style. The cat is partially glitched out, with digital noise and distorted textures. Use neon colors for the glitch effects and outlines. Background is a dark gradient with circuit board patterns faintly visible.",
+    "mood": "Edgy, futuristic, chaotic but also cool and stylish",
+    "aiPrompt": "Generate an image for a T-shirt design: A Maneki Neko (lucky cat) in a low-poly pixel art style. Cat should be glitching with neon pink and electric blue digital noise, creating a distorted and fragmented look. The background is a dark gray gradient with faint circuit board patterns. The overall style is cyberpunk with a glitch art aesthetic. The cat should be waving. Keep the cat design simple.",
+    "originalAnalysis": {
+      "colorPalette": [
+        "beige",
+        "blue",
+        "white"
+      ],
+      "style": "Graphic, bold, slightly retro",
+      "theme": "Japanese lucky cat (Maneki Neko)",
+      "targetAudience": "Fans of Japanese culture, streetwear enthusiasts, cat lovers",
+      "technique": "Screen printing or direct-to-garment (DTG)"
+    }
+  },
+  {
+    "id": 2,
+    "inspirationSource": "fallback_design_02.jpg",
+    "title": "Cyberpunk Skull Circuit",
+    "theme": "Cyberpunk/futuristic technology with a skull motif",
+    "style": "Cyberpunk, Techwear, Bold",
+    "colorScheme": [
+      "Neon Green",
+      "Black",
+      "Dark Grey",
+      "Electric Blue"
+    ],
+    "targetAudience": "Tech enthusiasts, gamers, fans of cyberpunk culture, young adults interested in unique and edgy designs.",
+    "designElements": "A stylized skull made of circuit board patterns, glowing neon green lines highlighting key features of the skull (eyes, nose, teeth), scattered binary code elements, glitch effects.",
+    "mood": "Futuristic, edgy, technologically advanced, slightly ominous",
+    "aiPrompt": "Create a graphic T-shirt design. A stylized skull is formed from intricate circuit board patterns. Key features of the skull like the eyes, nose and teeth are emphasized with glowing neon green lines. The background is black with subtle dark grey circuit patterns and scattered binary code elements. Add a subtle glitch effect around the edges. Cyberpunk style, high-tech aesthetic.",
+    "originalAnalysis": {
+      "colorPalette": [
+        "black",
+        "white"
+      ],
+      "style": "Edgy, urban, minimalist with a gothic touch",
+      "theme": "Skeleton hands/occult",
+      "targetAudience": "Teenagers and young adults interested in alternative fashion, gothic styles, and music.",
+      "technique": "Screen printing (likely)"
+    }
+  },
+  {
+    "id": 3,
+    "inspirationSource": "fallback_design_03.jpg",
+    "title": "Cosmic Bloom",
+    "theme": "Nebula formation and cosmic events",
+    "style": "Surreal, dreamy, galaxy-inspired",
+    "colorScheme": "Deep blues, purples, pinks with hints of gold and white for highlights",
+    "targetAudience": "Sci-fi enthusiasts, dreamers, people who appreciate the beauty of the universe, space lovers",
+    "designElements": "Swirling nebula clouds, clusters of stars, shimmering cosmic dust, abstract representation of a supernova",
+    "mood": "Awe-inspiring, peaceful, mysterious, vast, imaginative",
+    "aiPrompt": "Create a surreal, vibrant image of a nebula formation in deep space. Use deep blues, purples, and pinks as dominant colors. Include swirling clouds of gas and dust, clusters of shimmering stars, and subtle golden highlights to represent cosmic dust. The composition should be dynamic and evoke a sense of vastness and wonder. The style should be dreamy and painterly, with soft edges and a touch of surrealism.",
+    "originalAnalysis": {
+      "colorPalette": [
+        "pink",
+        "yellow",
+        "blue",
+        "purple",
+        "orange"
+      ],
+      "style": "Abstract, fluid, macro photography",
+      "theme": "Oil and water mixture creating colorful bubbles and organic shapes",
+      "targetAudience": "People interested in science, abstract art, or vibrant designs; could appeal to a younger demographic due to the bright colors.",
+      "technique": "Macro photography of oil droplets in water."
+    }
+  },
+  {
+    "id": 4,
+    "inspirationSource": "fallback_design_04.jpg",
+    "title": "Checked Out",
+    "theme": "Travel and escapism with a touch of melancholy",
+    "style": "Vintage travel poster meets minimalist design",
+    "colorScheme": "Off-white/cream for the shirt, faded teal and burnt orange for the design elements, black for text outlines.",
+    "targetAudience": "Travel lovers, people who appreciate vintage aesthetics, introverts",
+    "designElements": "A simplified, worn-looking vintage hotel key tag graphic with the text \"Checked Out\" replacing the usual room number. A faint, stylized world map in the background. Distressed textures.",
+    "mood": "Nostalgic, slightly melancholic, wanderlust",
+    "aiPrompt": "Create a vintage-style t-shirt design. The shirt color is off-white. The design features a simplified graphic of a vintage hotel key tag with the text \"Checked Out\" in a serif font. Behind the key tag is a faint, stylized world map with distressed textures. The color palette is faded teal and burnt orange with black text outlines. The overall style is reminiscent of a faded travel poster, with a touch of minimalist design. Focus on texture and subtle color variations to evoke a sense of nostalgia and wear.",
+    "originalAnalysis": {
+      "colorPalette": [
+        "white",
+        "black"
+      ],
+      "style": "Minimalist, simple",
+      "theme": "Hotel branding/representation",
+      "targetAudience": "Minimalist fashion enthusiasts, travelers",
+      "technique": "Direct-to-garment printing or embroidery"
+    }
+  },
+  {
+    "id": 5,
+    "inspirationSource": "fallback_design_05.jpg",
+    "title": "Alpine Ascent",
+    "theme": "Abstract mountain exploration",
+    "style": "Geometric abstraction, minimalist",
+    "colorScheme": [
+      "#2C6037",
+      "#77A1B3",
+      "#FFFFFF",
+      "#F0E68C"
+    ],
+    "targetAudience": "Art lovers, minimalist design fans, outdoor adventure seekers with an appreciation for modern art",
+    "designElements": "A stylized geometric mountain range with sharp lines and layered triangular shapes. A small sun or star symbol positioned above the highest peak. Use of negative space to suggest depth and vastness.",
+    "mood": "Serene, adventurous, modern, inspiring",
+    "aiPrompt": "Create a minimalist geometric design of a mountain range. Use sharp, layered triangular shapes in shades of green (#2C6037) and blue (#77A1B3). The background should be white. A small, stylized golden star (#F0E68C) should be placed above the highest peak. Use negative space to create depth and a sense of vastness. The style should be similar to a modern geometric poster design.",
+    "originalAnalysis": {
+      "colorPalette": [
+        "#77A1B3",
+        "#395A6B",
+        "#A0C4D1",
+        "#2C6037"
+      ],
+      "style": "Photorealistic landscape, scenic",
+      "theme": "Mountain range, wilderness, nature",
+      "targetAudience": "Outdoor enthusiasts, hikers, nature lovers, travelers",
+      "technique": "Photography/Photographic print"
+    }
+  },
+  {
+    "id": 6,
+    "inspirationSource": "google_design_01.jpg",
+    "title": "Retro Space Explorer Club",
+    "theme": "Space Exploration and Nostalgia",
+    "style": "Vintage, Retro, Illustrated",
+    "colorScheme": "Navy blue, orange, white, with accents of retro teal and muted gold.",
+    "targetAudience": "Space enthusiasts, retro lovers, anyone who enjoys a touch of nostalgia",
+    "designElements": "A stylized astronaut wearing a vintage space helmet, a retro rocket ship, and a stylized planet with rings. Text 'Space Explorer Club' in a retro font.",
+    "mood": "Adventurous, nostalgic, optimistic, and playful.",
+    "aiPrompt": "Create a retro-style T-shirt design featuring an astronaut with a vintage space helmet and a retro rocket ship orbiting a stylized planet. Use navy blue, orange, white, teal and gold colors. The text 'Space Explorer Club' should be incorporated using a retro-style font. The design should evoke a feeling of adventure and nostalgia, reminiscent of vintage space travel posters. The astronaut and rocket should have a slightly worn, vintage look, as if they are from an old comic book.",
+    "originalAnalysis": {
+      "colorPalette": [
+        "yellow",
+        "green",
+        "pink",
+        "white",
+        "orange",
+        "blue",
+        "brown"
+      ],
+      "style": "Varied, ranging from cartoonish and playful to retro and simple typography",
+      "theme": "School, summer activities, travel, games",
+      "targetAudience": "Students, campers, travelers, gamers",
+      "technique": "Combination of graphic design, typography, and illustration"
+    }
+  },
+  {
+    "id": 7,
+    "inspirationSource": "google_design_02.jpg",
+    "title": "Cosmic Champions",
+    "theme": "Space exploration team with vintage sporting elements",
+    "style": "Retro futurism, blending classic sports imagery with space travel aesthetics.",
+    "colorScheme": [
+      "Navy blue",
+      "Electric blue",
+      "Silver",
+      "Red accents"
+    ],
+    "targetAudience": "Science enthusiasts, sports fans, retro design lovers, individuals interested in space exploration, people who like unique T-shirts.",
+    "designElements": "A stylized rocket taking off (or landing) instead of a person throwing/kicking a ball, with the words \"Cosmic Champions\" in a vintage sports font. Stars and planets forming team uniforms. A retro-futuristic badge shape with a space team logo.",
+    "mood": "Excitement, adventure, nostalgia, ambition, wonder.",
+    "aiPrompt": "Generate a vintage-style sports t-shirt design. The primary image is a rocket taking off, rendered in a retro-futuristic style, replacing a basketball player. The text \"Cosmic Champions\" is arched above the rocket in a distressed, varsity font. The background features stylized stars and planets. Use a color palette of navy blue, electric blue, silver, and red accents. The overall aesthetic should be reminiscent of 1950s sci-fi movie posters combined with collegiate sportswear.",
+    "originalAnalysis": {
+      "colorPalette": [
+        "off-white",
+        "burgundy",
+        "dark green",
+        "white"
+      ],
+      "style": "Vintage, Collegiate, Sports-themed",
+      "theme": "Team spirit, University pride, Event commemoration",
+      "targetAudience": "Students, alumni, sports fans, local community",
+      "technique": "Screen printing or direct-to-garment printing with a slightly distressed effect."
+    }
+  },
+  {
+    "id": 8,
+    "inspirationSource": "google_design_03.jpg",
+    "title": "Growth Mindset Bloom",
+    "theme": "Personal growth and embracing challenges",
+    "style": "Modern, minimalist with a touch of organic/nature-inspired design",
+    "colorScheme": "Earthy tones (sage green, beige, terracotta) with a pop of vibrant floral color (e.g., a coral or deep purple).",
+    "targetAudience": "Young adults, entrepreneurs, creatives, and anyone interested in self-development.",
+    "designElements": "The phrase 'Bloom Where You Are Planted' arranged in a visually appealing layout. Incorporate a subtle botanical illustration, such as stylized wildflowers or leaves, that appear to be growing around or within the text. The font should be a combination of a clean sans-serif and a slightly script-like font to add personality.",
+    "mood": "Uplifting, encouraging, hopeful, and grounded.",
+    "aiPrompt": "Create a T-shirt design featuring the phrase 'Bloom Where You Are Planted' in a modern minimalist style. Use earthy tones such as sage green, beige, and terracotta. Incorporate stylized, delicate wildflowers and leaves growing subtly around the text. The text should be a combination of a clean sans-serif font for 'Bloom Where You Are' and a slightly flowing script font for 'Planted'. The overall composition should be balanced and visually appealing, evoking a sense of growth, hope, and resilience. Soft lighting and a slightly textured background.",
+    "originalAnalysis": {
+      "colorPalette": [
+        "black",
+        "white",
+        "orange",
+        "yellow"
+      ],
+      "style": "Motivational, Typography-based",
+      "theme": "Positive affirmations and encouraging messages",
+      "targetAudience": "Individuals seeking inspiration, self-improvement, or positive reinforcement, potentially students or young professionals.",
+      "technique": "Text-based design with decorative elements, layering of text, and possibly vectorized elements."
+    }
+  },
+  {
+    "id": 9,
+    "inspirationSource": "google_design_04.jpg",
+    "title": "Cosmic Coffee Crew",
+    "theme": "Astronomy-themed coffee club",
+    "style": "Vintage, illustrative, slightly psychedelic",
+    "colorScheme": "Deep blues, purples, and oranges with cream accents",
+    "targetAudience": "Coffee lovers, astronomy enthusiasts, quirky individuals",
+    "designElements": "A vintage-style spaceship shaped like a coffee mug surrounded by stars and planets, with text 'Cosmic Coffee Crew' and a year.",
+    "mood": "Fun, adventurous, whimsical, comforting",
+    "aiPrompt": "Create a vintage-style T-shirt design. The central image is a cartoon spaceship shaped like a coffee mug, with steam rising from the top like rocket exhaust. The spaceship is surrounded by colorful cartoon planets, stars, and a crescent moon. The color palette should be deep blues, purples, oranges, and cream. Text should read 'Cosmic Coffee Crew' in a retro font above the spaceship, and '2024' below in a smaller, sans-serif font. Style should be illustrative and slightly psychedelic with a distressed texture.",
+    "originalAnalysis": {
+      "colorPalette": [
+        "peach",
+        "lavender",
+        "sky blue",
+        "black",
+        "white"
+      ],
+      "style": "Retro, playful, collegiate",
+      "theme": "School spirit, team pride, group affiliation",
+      "targetAudience": "Students, members of organizations, teams",
+      "technique": "Screen printing, graphic illustration"
+    }
+  },
+  {
+    "id": 10,
+    "inspirationSource": "google_design_05.jpg",
+    "title": "Cyber Bloom",
+    "theme": "Futuristic nature meets technology",
+    "style": "Cyberpunk, floral, geometric",
+    "colorScheme": [
+      "Neon green",
+      "dark blue",
+      "black",
+      "subtle orange accents"
+    ],
+    "targetAudience": "Gamers, tech enthusiasts, those interested in cyberpunk fashion",
+    "designElements": "Stylized glowing neon green floral patterns (e.g., orchids, lilies) arranged in a geometric grid pattern overlaid on a dark blue/black background. Subtle circuit board details integrated within the floral design. Glitching/pixelated edges on some floral elements.",
+    "mood": "Energetic, vibrant, futuristic, slightly edgy",
+    "aiPrompt": "Create a T-shirt design with a cyberpunk theme. The background should be a dark blue to black gradient. Overlay a geometric grid pattern with stylized neon green floral elements like orchids and lilies. Integrate subtle circuit board patterns within the floral design. Add glitching and pixelation effects to the edges of some flowers. The overall style should be vibrant, futuristic, and slightly edgy. Render in high detail.",
+    "originalAnalysis": {
+      "colorPalette": [
+        "black",
+        "pink",
+        "gray"
+      ],
+      "style": "Modern, sporty, geometric",
+      "theme": "Abstract athletic wear",
+      "targetAudience": "Athletes, sports enthusiasts, people who like modern abstract designs",
+      "technique": "Sublimation printing or dye sublimation"
+    }
+  }
+]
