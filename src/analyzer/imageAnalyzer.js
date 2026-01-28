@@ -112,7 +112,7 @@ async function analyzeAndGenerateIdeasInternal() {
                 const batchResults = await Promise.all(batch.map(asyncFn));
                 results = [...results, ...batchResults];
                 // Small delay between batches to be nice
-                if (i + limit < items.length) await new Promise(r => setTimeout(r, 1000));
+                if (i + limit < items.length) await new Promise(r => setTimeout(r, 200));
             }
             return results;
         };
@@ -172,7 +172,7 @@ Return your response in this exact JSON format (no markdown, just pure JSON):
                 return generateSingleSampleIdea(index + 1);
             };
 
-            const results = await processInBatches(tasks, 3, processTask);
+            const results = await processInBatches(tasks, 10, processTask);
             // Filter out nulls/duplicates if any logic required, but here we just push
             results.forEach(r => ideas.push(r));
 

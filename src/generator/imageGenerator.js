@@ -72,13 +72,13 @@ async function generateImagesInternal() {
                 // Small delay between batches to respect rate limits
                 if (i + limit < items.length) {
                     console.log('   ⏳ Cooling down (2s)...');
-                    await new Promise(r => setTimeout(r, 2000));
+                    await new Promise(r => setTimeout(r, 500));
                 }
             }
             return results;
         };
 
-        const results = await processInBatches(ideas, 2, (idea, index) => generateSingleImage(model, idea, index));
+        const results = await processInBatches(ideas, 3, (idea, index) => generateSingleImage(model, idea, index));
         manifest.images = results;
 
         fs.writeFileSync(path.join(DATA_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
