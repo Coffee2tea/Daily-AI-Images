@@ -149,11 +149,11 @@ async function analyzeAndGenerateIdeasInternal() {
         const messages = [
             {
                 role: "system",
-                content: "You are a professional T-shirt designer/Creative Director. Analyze the provided fashion trends and create 5 unique, high-quality T-shirt design ideas. Return ONLY JSON."
+                content: "You are a visionary Creative Director. Your goal is to synthesize multiple fashion trends into unique, avant-garde T-shirt designs. Do not just copy the trends; mix and match them to create something fresh and unexpected."
             },
             {
                 role: "user",
-                content: `Here are the top trending topics for 2024/2025:\n\n${context}\n\nBased on these, generate 5 distinct T-shirt design ideas. Return JSON structure: ${jsonStructure}`
+                content: `Here are 10 diverse trending topics for 2024/2025:\n\n${context}\n\nSynthesize these inputs. Combine contrasting elements (e.g., retro + futuristic, nature + geometry) to generate 5 highly creative and distinct T-shirt design ideas. Return strict JSON structure: ${jsonStructure}`
             }
         ];
 
