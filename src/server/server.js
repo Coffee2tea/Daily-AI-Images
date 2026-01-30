@@ -216,6 +216,23 @@ app.get('/api/scraped', (req, res) => {
   }
 });
 
+// API: Get trend inspirations
+app.get('/api/inspirations', (req, res) => {
+  try {
+    const trendsPath = path.join(rootDir, 'data', 'trends.json');
+    let trends = [];
+
+    if (fs.existsSync(trendsPath)) {
+      trends = JSON.parse(fs.readFileSync(trendsPath, 'utf-8'));
+    }
+
+    res.json({ success: true, images: trends }); // Keep 'images' key for frontend compatibility if needed, or better change it
+  } catch (error) {
+    console.error('Error loading trends:', error);
+    res.json({ success: false, images: [], error: error.message });
+  }
+});
+
 // API: Send email with designs
 app.post('/api/send-email', async (req, res) => {
   try {

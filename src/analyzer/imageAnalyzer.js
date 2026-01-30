@@ -114,156 +114,75 @@ async function analyzeAndGenerateIdeasInternal() {
             return generateSampleIdeas();
         }
 
-        // Load scraped metadata
-        const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
-        let scrapedData = [];
+        // Load Trend Data
+        const trendsPath = path.join(DATA_DIR, 'trends.json');
+        let trendsData = [];
 
-        if (fs.existsSync(metadataPath)) {
-            scrapedData = JSON.parse(fs.readFileSync(metadataPath, 'utf-8'));
-            console.log(`   📄 Loaded ${scrapedData.length} scraped entries`);
-        }
-
-        // Get downloaded images
-        let imageFiles = [];
-        if (fs.existsSync(IMAGES_DIR)) {
-            imageFiles = fs.readdirSync(IMAGES_DIR)
-                .filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f))
-                .map(f => path.join(IMAGES_DIR, f))
-                .slice(0, 5); // Limit to 5 for speed with vision API
-        }
-
-        const ideas = [];
-        const tasks = [];
-
-        // Helper: Process in batches
-        const processInBatches = async (items, limit, asyncFn) => {
-            let results = [];
-            for (let i = 0; i < items.length; i += limit) {
-                const batch = items.slice(i, i + limit);
-                console.log(`   🚀 Processing batch ${Math.floor(i / limit) + 1}/${Math.ceil(items.length / limit)} (${batch.length} items)...`);
-                const batchResults = await Promise.all(batch.map(asyncFn));
-                results = [...results, ...batchResults];
-                if (i + limit < items.length) await new Promise(r => setTimeout(r, 1000));
-            }
-            return results;
-        };
-
-        // Strategy: Combine Vision Analysis + Text Generation
-
-        if (imageFiles.length > 0) {
-            console.log(`   🖼️ Analyzing ${imageFiles.length} images...`);
-
-            // Create tasks for vision analysis
-            imageFiles.forEach((img, i) => {
-                tasks.push({ type: 'vision', index: i, data: img });
-            });
-        }
-
-        // Fill remaining slots with text generation based on scraped metadata titles
-        const remainingSlots = 5 - tasks.length;
-        if (remainingSlots > 0 && scrapedData.length > 0) {
-            console.log(`   📝 Scheduling ${remainingSlots} text-based generations...`);
-            for (let i = 0; i < remainingSlots; i++) {
-                tasks.push({
-                    type: 'text',
-                    index: tasks.length + i,
-                    data: scrapedData[i % scrapedData.length]
-                });
-            }
-        }
-
-        // If still empty tasks (no images, no metadata), fallback to generic
-        if (tasks.length === 0) {
-            console.log('   ⚠️ No input data found. Using samples.');
+        if (fs.existsSync(trendsPath)) {
+            trendsData = JSON.parse(fs.readFileSync(trendsPath, 'utf-8'));
+            console.log(`   📄 Loaded ${trendsData.length} trend insights.`);
+        } else {
+            console.log('   ⚠️ No trends.json found. Using samples.');
             return generateSampleIdeas();
         }
 
-        const processTask = async (task) => {
-            const { index, type, data } = task;
-            console.log(`   📊 Generating #${index + 1} (${type})...`);
+        console.log(`   🧠 Analyzing ${trendsData.length} trends to generate 5 ideas...`);
 
-            try {
-                let messages = [];
-                const jsonStructure = `
+        // Prepare Context string
+        const context = trendsData.map(t => `- ${t.title}: ${t.content}`).join('\n');
+
+        const jsonStructure = `
 {
-  "newIdea": { 
-      "title": "String", 
-      "theme": "String", 
-      "style": "String", 
-      "colorScheme": "String", 
-      "targetAudience": "String", 
-      "designElements": "String", 
-      "mood": "String", 
-      "aiPrompt": "String" 
-  }
+  "ideas": [
+      {
+        "title": "String", 
+        "theme": "String", 
+        "style": "String", 
+        "colorScheme": "String", 
+        "designElements": "String", 
+        "mood": "String", 
+        "aiPrompt": "String" 
+      }
+  ]
 }`;
 
-                if (type === 'vision') {
-                    const b64 = imageToBase64(data);
-                    const mime = getMimeType(data);
-                    messages = [
-                        {
-                            role: "system",
-                            content: "You are a professional T-shirt designer. Analyze the input design and create a NEW, UNIQUE design idea inspired by it. Return ONLY JSON."
-                        },
-                        {
-                            role: "user",
-                            content: [
-                                { type: "text", text: `Analyze this design and generate a new idea. Return JSON structure: ${jsonStructure}` },
-                                {
-                                    type: "image_url",
-                                    image_url: {
-                                        url: `data:${mime};base64,${b64}`
-                                    }
-                                }
-                            ]
-                        }
-                    ];
-                } else {
-                    // Text based
-                    const title = data.title || "T-Shirt Design";
-                    messages = [
-                        {
-                            role: "system",
-                            content: "You are a professional T-shirt designer. Create a unique design idea based on the trending concept provided. Return ONLY JSON."
-                        },
-                        {
-                            role: "user",
-                            content: `Trend Concept: "${title}". Create a new design idea. Return JSON structure: ${jsonStructure}`
-                        }
-                    ];
-                }
-
-                const responseText = await callChatApi(messages);
-                const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-
-                if (jsonMatch) {
-                    const parsed = JSON.parse(jsonMatch[0]);
-                    const idea = parsed.newIdea || parsed; // Handle flat or nested
-                    return {
-                        id: index + 1,
-                        inspirationSource: type === 'vision' ? path.basename(data) : (data.title || 'Trend'),
-                        ...idea
-                    };
-                } else {
-                    throw new Error("Invalid JSON in response");
-                }
-
-            } catch (e) {
-                console.log(`   ⚠️ Failed task #${index + 1}: ${e.message}`);
-                return generateSingleSampleIdea(index + 1);
+        const messages = [
+            {
+                role: "system",
+                content: "You are a professional T-shirt designer/Creative Director. Analyze the provided fashion trends and create 5 unique, high-quality T-shirt design ideas. Return ONLY JSON."
+            },
+            {
+                role: "user",
+                content: `Here are the top trending topics for 2024/2025:\n\n${context}\n\nBased on these, generate 5 distinct T-shirt design ideas. Return JSON structure: ${jsonStructure}`
             }
-        };
+        ];
 
-        // Execute
-        // Vision requests are heavy, process 3 at a time max
-        const results = await processInBatches(tasks, 3, processTask);
+        // Call API once for all ideas (faster/cheaper)
+        const responseText = await callChatApi(messages);
+        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+
+        let generatedIdeas = [];
+        if (jsonMatch) {
+            const parsed = JSON.parse(jsonMatch[0]);
+            generatedIdeas = parsed.ideas || [];
+        }
+
+        if (generatedIdeas.length === 0) {
+            throw new Error("Failed to generate ideas from LLM response");
+        }
+
+        // Format results
+        const results = generatedIdeas.slice(0, 5).map((idea, i) => ({
+            id: i + 1,
+            inspirationSource: 'Trend Analysis',
+            ...idea
+        }));
 
         // Save ideas
         const ideasPath = path.join(DATA_DIR, 'ideas.json');
         fs.writeFileSync(ideasPath, JSON.stringify(results, null, 2));
 
-        console.log(`\n✅ Generated ${results.length} design ideas!`);
+        console.log(`\n✅ Generated ${results.length} design ideas from trends!`);
         return results;
 
     } catch (fatalError) {

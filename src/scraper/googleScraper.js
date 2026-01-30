@@ -172,96 +172,120 @@ function getDynamicQuery() {
     return `creative t-shirt design trends ${style} graphic ${year}`;
 }
 
-export async function scrapeGoogleImages() {
-    const dynamicQuery = getDynamicQuery();
-    console.log('\n🔍 Starting Image Search (via AI Builder Tavily API)...');
-    console.log(`   Search query: "${dynamicQuery}" (Randomized for variety)`);
+// Trend Search Configuration
+const TREND_QUERIES = [
+    'top t-shirt design trends 2024 2025',
+    'graphic design fashion trends 2025',
+    'trending aesthetics for streetwear 2025',
+    'popular typography styles for apparel'
+];
+
+export async function scrapeDesignTrends() {
+    const query = TREND_QUERIES[Math.floor(Math.random() * TREND_QUERIES.length)];
+
+    console.log('\n🔍 Starting Trend Search (via AI Builder Tavily API)...');
+    console.log(`   Search query: "${query}"`);
 
     // Ensure directories exist
-    if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
     if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
     const results = [];
 
     try {
-        // --- API Search Logic ---
-        console.log(`   🌐 Connecting to Search API...`);
+        console.log(`   🌐 Connecting to Search API for text trends...`);
 
-        try {
-            apiResponse = await searchImagesApi(dynamicQuery);
-        } catch (e) {
-            console.log(`   ⚠️ API Request Failed: ${e.message}`);
-            console.log('   ℹ️ Ensure AI_BUILDER_TOKEN is set correctly.');
-            throw e;
+        // Helper to call API
+        const textResults = await searchTrendsApi(query);
+
+        if (!textResults || textResults.length === 0) {
+            throw new Error('No text results returned.');
         }
 
-        // Parse results
-        // Structure: { results: [ { keyword: "...", response: { images: [ ... ], results: [ ... ] } } ] }
-        const images = apiResponse.images || [];
+        console.log(`   📝 Found ${textResults.length} trend articles/snippets.`);
 
-        if (!images || images.length === 0) {
-            console.log("   ⚠️ No images found in API response. Falling back to text results for links?");
-            // If no images property, try to find image URLs in text results? Unlikely to work well for raw images.
-            throw new Error('No images returned by Search API');
-        }
-
-        console.log(`   📷 Found ${images.length} candidates. Downloading (Parallel)...`);
-
-        const downloadTasks = images.slice(0, MAX_IMAGES + 5).map(async (item, index) => {
-            const imageUrl = item.url || item.src;
-            if (!imageUrl) return null;
-
-            const tempCount = index + 1; // Temporary ID for logging
-            const filename = `google_design_${String(tempCount).padStart(2, '0')}.jpg`;
-            const filepath = path.join(OUTPUT_DIR, filename);
-
-            try {
-                // console.log(`   ⬇️ Downloading image ${tempCount}...`);
-                await downloadImage(imageUrl, filepath);
-                return {
-                    id: tempCount,
-                    title: item.title || item.description || `Design #${tempCount}`,
-                    imageUrl: `/downloaded_images/${filename}`,
-                    localPath: filepath,
-                    source: 'api-search',
-                    originalLink: item.source_url || imageUrl
-                };
-            } catch (err) {
-                // console.log(`   ⚠️ Failed to download image ${tempCount}: ${err.message}`);
-                return null;
-            }
+        // Process results
+        textResults.slice(0, 10).forEach((item, index) => {
+            results.push({
+                id: index + 1,
+                title: item.title,
+                content: item.content || item.snippet || "No description available",
+                url: item.url,
+                source: 'api-search',
+                timestamp: new Date().toISOString()
+            });
         });
 
-        const downloadResults = await Promise.all(downloadTasks);
-
-        // Filter out failures and re-assign IDs to be sequential
-        results.push(...downloadResults.filter(r => r !== null));
-
-        // Re-number IDs
-        results.forEach((r, i) => r.id = i + 1);
-
-        // Trim to MAX_IMAGES
-        if (results.length > MAX_IMAGES) {
-            results.length = MAX_IMAGES;
-        }
-
-        if (results.length === 0) {
-            throw new Error('Failed to download any valid images from API results');
-        }
-
     } catch (error) {
-        console.log(`   ⚠️ Scraping/API issue detected: ${error.message}`);
-        console.log('   ✨ Using existing local images/placeholders for demo...');
-
-        return await getFallbackData();
+        console.log(`   ⚠️ Trend Search issue detected: ${error.message}`);
+        console.log('   ✨ Using outdated/fallback trend data...');
+        return getFallbackTrends();
     }
 
     // Save metadata
-    const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
-    fs.writeFileSync(metadataPath, JSON.stringify(results, null, 2));
+    const trendsPath = path.join(DATA_DIR, 'trends.json');
+    fs.writeFileSync(trendsPath, JSON.stringify(results, null, 2));
 
-    console.log(`\n✅ Scraping complete! Saved ${results.length} images.`);
+    console.log(`\n✅ Trend Search complete! Saved ${results.length} insights.`);
     return results;
+}
+
+// ... helper to get fallback trends
+function getFallbackTrends() {
+    return [
+        { id: 1, title: 'Retro Futurism', content: 'Combining 80s aesthetics with futuristic elements.', url: '#', source: 'fallback' },
+        { id: 2, title: 'Sustainable Nature', content: 'Eco-friendly themes, plants, and earth tones.', url: '#', source: 'fallback' },
+        { id: 3, title: 'Minimalist Typography', content: 'Bold, simple text-based designs with meaningful quotes.', url: '#', source: 'fallback' },
+        { id: 4, title: 'Cyberpunk Glitch', content: 'Distorted digital art and neon colors.', url: '#', source: 'fallback' },
+        { id: 5, title: 'Abstract Geometry', content: 'Clean lines and geometric shapes in pastel colors.', url: '#', source: 'fallback' }
+    ];
+}
+
+async function searchTrendsApi(query) {
+    if (!API_TOKEN) throw new Error("AI_BUILDER_TOKEN missing");
+
+    return new Promise((resolve, reject) => {
+        const data = JSON.stringify({
+            keywords: [query],
+            max_results: 10,
+            include_images: false, // Text only
+            include_raw_content: false,
+            search_depth: "basic" // Faster
+        });
+
+        const url = new URL(`${API_BASE_URL}/backend/v1/search/`);
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${API_TOKEN}`,
+                'Content-Length': data.length
+            },
+            rejectUnauthorized: false
+        };
+
+        const req = https.request(url, options, (res) => {
+            let body = '';
+            res.on('data', chunk => body += chunk);
+            res.on('end', () => {
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+                    try {
+                        const json = JSON.parse(body);
+                        const searchResult = json.results?.[0] || json.queries?.[0];
+                        const resp = searchResult?.response;
+                        // Tavily results usually in `results` array inside response
+                        resolve(resp?.results || []);
+                    } catch (e) {
+                        reject(e);
+                    }
+                } else {
+                    reject(new Error(`API Error ${res.statusCode}`));
+                }
+            });
+        });
+        req.on('error', reject);
+        req.write(data);
+        req.end();
+    });
 }
 
 // ... helper functions for fallback ...
@@ -300,7 +324,7 @@ import http from 'http'; // Needed for downloadImage fallback
 
 // Run directly
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
-    scrapeGoogleImages().catch(console.error);
+    scrapeDesignTrends().catch(console.error);
 }
 
-export default scrapeGoogleImages;
+export default scrapeDesignTrends;

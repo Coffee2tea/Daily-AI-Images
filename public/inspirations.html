@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your AI Employee - Inspirations</title>
+    <meta name="description" content="Trending Design Topics">
+    <link rel="stylesheet" href="/styles.css">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <script src="/nav-component.js"></script>
+    <style>
+        /* Custom styles for trend cards */
+        .trend-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: var(--radius-lg);
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .trend-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: var(--primary);
+        }
+
+        .trend-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--primary-light);
+            margin-bottom: 0.75rem;
+        }
+
+        .trend-content {
+            font-size: 0.95rem;
+            color: var(--text-secondary);
+            line-height: 1.6;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .trend-meta {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.4);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .trend-source {
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navigation -->
+    <nav-menu></nav-menu>
+
+    <!-- Animated Background -->
+    <div class="bg-animation"></div>
+
+    <!-- Main Content -->
+    <div class="container" style="padding-top: 80px;">
+        <header class="gallery-header">
+            <h1 class="gallery-title"><span class="material-symbols-outlined icon-gradient"
+                    style="font-size: 1.2em;">lightbulb</span> Online Inspirations (Trends)</h1>
+            <p class="gallery-subtitle">Latest scraped fashion & design trends fueling the AI</p>
+        </header>
+
+        <!-- Loading State -->
+        <div id="loading" class="loading">
+            <div class="spinner"></div>
+            <p>Loading inspiration data...</p>
+        </div>
+
+        <!-- Empty State -->
+        <div id="empty-state" class="confirm-card"
+            style="display: none; max-width: 500px; margin: 2rem auto; text-align: center;">
+            <div style="font-size: 4rem; margin-bottom: 1rem;" class="material-symbols-outlined">search_off
+            </div>
+            <h2 style="color: rgba(255,255,255,0.9); margin-bottom: 1rem;">No inspirations found</h2>
+            <p style="color: rgba(255,255,255,0.6); margin-bottom: 2rem;">Please run the workflow from the dashboard
+                first</p>
+            <a href="/dashboard" class="btn btn-primary">Go to Dashboard</a>
+        </div>
+
+        <!-- Gallery Grid -->
+        <div id="gallery" class="gallery-grid grid-3" style="display: none;"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', loadInspirations);
+
+        async function loadInspirations() {
+            const loading = document.getElementById('loading');
+            const gallery = document.getElementById('gallery');
+            const emptyState = document.getElementById('empty-state');
+
+            try {
+                // Fetch from new API endpoint
+                const response = await fetch('/api/inspirations');
+                const data = await response.json();
+
+                loading.style.display = 'none';
+
+                // data.images is actually trends
+                if (data.success && data.images && data.images.length > 0) {
+                    renderTrends(data.images);
+                    gallery.style.display = 'grid';
+                } else {
+                    emptyState.style.display = 'block';
+                }
+            } catch (error) {
+                console.error('Error loading inspirations:', error);
+                loading.style.display = 'none';
+                emptyState.style.display = 'block';
+            }
+        }
+
+        function renderTrends(trends) {
+            const gallery = document.getElementById('gallery');
+
+            gallery.innerHTML = trends.map((item, index) => `
+        <div class="trend-card" onclick="window.open('${item.url || '#'}', '_blank')">
+          <h3 class="trend-title">${item.title || `Trend #${index + 1}`}</h3>
+          <p class="trend-content">${item.content || 'No details available'}</p>
+          <div class="trend-meta">
+            <span class="trend-source">${item.source || 'Web Search'}</span>
+            <span class="material-symbols-outlined" style="font-size: 1.2em; opacity: 0.7;">open_in_new</span>
+          </div>
+        </div>
+      `).join('');
+        }
+    </script>
+</body>
+
+</html>

@@ -132,19 +132,19 @@ class NavMenu extends HTMLElement {
             Your AI Employee
           </a>
           <div class="nav-links">
-            <a href="/dashboard" class="nav-link ${currentPath === '/dashboard' || currentPath === '/' ? 'active' : ''}">
+            <a href="/dashboard" class="nav-link ${this.isActive('/dashboard')}">
               <span class="nav-icon material-symbols-outlined">dashboard</span>
               <span>Dashboard</span>
             </a>
-            <a href="/scraped" class="nav-link ${currentPath === '/scraped' ? 'active' : ''}">
-              <span class="nav-icon material-symbols-outlined">image_search</span>
-              <span>Online Images</span>
+            <a href="/inspirations.html" class="nav-link ${this.isActive('/inspirations.html')}">
+                <span class="material-symbols-outlined">lightbulb</span>
+                <span>Online Inspirations</span>
             </a>
-            <a href="/ideas" class="nav-link ${currentPath === '/ideas' ? 'active' : ''}">
+            <a href="/ideas" class="nav-link ${this.isActive('/ideas')}">
               <span class="nav-icon material-symbols-outlined">lightbulb</span>
               <span>Design Ideas</span>
             </a>
-            <a href="/gallery" class="nav-link ${currentPath === '/gallery' ? 'active' : ''}">
+            <a href="/gallery" class="nav-link ${this.isActive('/gallery')}">
               <span class="nav-icon material-symbols-outlined">photo_library</span>
               <span>Gallery</span>
             </a>
