@@ -17,6 +17,7 @@ const rootDir = path.join(__dirname, '..', '..');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
+const APP_VERSION = '1.6.0'; // Trend Workflow
 
 // --- In-Memory Log Buffer for Debugging ---
 const LOG_BUFFER_SIZE = 200;
