@@ -64,8 +64,8 @@ app.get('/health', (req, res) => {
 // Version check to verify deployment
 app.get('/version', (req, res) => {
   res.json({
-    version: '1.4.4',
-    desc: 'Debug: Testing Imagen 3.0',
+    version: '1.5.0',
+    desc: 'API Migration',
     timestamp: new Date().toISOString()
   });
 });
