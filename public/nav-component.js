@@ -5,6 +5,12 @@ class NavMenu extends HTMLElement {
     this.attachShadow({ mode: 'open' });
   }
 
+  isActive(path) {
+    const current = window.location.pathname;
+    if (path === '/dashboard' && current === '/') return 'active';
+    return current === path ? 'active' : '';
+  }
+
   connectedCallback() {
     const currentPath = window.location.pathname;
 
