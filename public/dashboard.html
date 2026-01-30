@@ -261,6 +261,7 @@
             for (let i = 1; i < stepNumber; i++) {
                 const icon = document.getElementById(`step${i}-icon`);
                 icon.textContent = 'check_circle';
+                icon.classList.remove('spin-icon');
                 icon.classList.add('text-success');
             }
             // Mark current step as running
