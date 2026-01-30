@@ -5,7 +5,7 @@
 
 import dotenv from 'dotenv';
 import open from 'open';
-import scrapeGoogleImages from './scraper/googleScraper.js';
+import scrapeDesignTrends from './scraper/googleScraper.js';
 import { analyzeAndGenerateIdeas } from './analyzer/imageAnalyzer.js';
 import generateImages from './generator/imageGenerator.js';
 import { sendIdeasEmail, sendConfirmationEmail } from './emailer/emailService.js';
@@ -15,16 +15,16 @@ dotenv.config();
 
 async function main() {
     console.log('\n' + '='.repeat(60));
-    console.log('  🤖 YOUR AI EMPLOYEE - T-SHIRT DESIGN');
+    console.log('  🤖 YOUR AI EMPLOYEE - TREND & DESIGN AUTOMATION');
     console.log('='.repeat(60));
     console.log(`  Started: ${new Date().toLocaleString()}`);
     console.log('='.repeat(60));
 
     try {
-        // Step 1: Scrape Google Images for popular designs
-        console.log('\n📌 STEP 1: Scraping Google Images for T-shirt designs...');
-        const scrapedImages = await scrapeGoogleImages();
-        console.log(`   Found ${scrapedImages.length} designs`);
+        // Step 1: Search for Design Trends
+        console.log('\n📌 STEP 1: Searching for Fashion & Design Trends...');
+        const trends = await scrapeDesignTrends();
+        console.log(`   Found ${trends.length} trend insights`);
 
         // Step 2: Analyze images and generate ideas
         console.log('\n📌 STEP 2: Analyzing images and generating ideas...');

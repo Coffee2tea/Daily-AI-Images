@@ -284,21 +284,21 @@ async function runBackgroundWorkflow(jobId) {
       job.updatedAt = Date.now();
     };
 
-    // Step 1: Scraper
-    updateJob(1, '🔍 Starting AI Tavily Search scraping...');
+    // Step 1: Trend Search
+    updateJob(1, '🔍 Searching for latest Design Trends...');
 
     try {
-      const { scrapeGoogleImages } = await import('../scraper/googleScraper.js');
-      await scrapeGoogleImages();
-      updateJob(1, '✅ Tavily Search scraping completed', 'success');
+      const { scrapeDesignTrends } = await import('../scraper/googleScraper.js');
+      await scrapeDesignTrends();
+      updateJob(1, '✅ Trend Search completed', 'success');
     } catch (e) {
       console.log(`Scraper module error: ${e.message}`);
-      updateJob(1, '⚠️ Network issue detected - Switching to offline demo mode', 'warning');
-      updateJob(1, '✅ Tavily Search scraping completed (Cached)', 'success');
+      updateJob(1, '⚠️ Trend API issue - Using fallback trends', 'warning');
+      updateJob(1, '✅ Trend Search completed (Fallback)', 'success');
     }
 
     // Step 2: Analyzer
-    updateJob(2, '🧠 Analyzing images and generating ideas...');
+    updateJob(2, '🧠 Analyzing trends to generate ideas...');
 
     try {
       const { analyzeAndGenerateIdeas } = await import('../analyzer/imageAnalyzer.js');
