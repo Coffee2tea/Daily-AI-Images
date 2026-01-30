@@ -153,7 +153,7 @@ async function generateSingleImage(idea, index, timestamp) {
     }
 }
 
-const REQUEST_TIMEOUT = 60000; // 60 seconds
+const REQUEST_TIMEOUT = 180000; // 180 seconds
 
 async function callImageApi(prompt) {
     return new Promise((resolve, reject) => {
