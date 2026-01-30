@@ -267,16 +267,16 @@ async function runBackgroundWorkflow(jobId) {
     };
 
     // Step 1: Scraper
-    updateJob(1, '🔍 Starting Google Image scraping...');
+    updateJob(1, '🔍 Starting AI Tavily Search scraping...');
 
     try {
       const { scrapeGoogleImages } = await import('../scraper/googleScraper.js');
       await scrapeGoogleImages();
-      updateJob(1, '✅ Google scraping completed', 'success');
+      updateJob(1, '✅ Tavily Search scraping completed', 'success');
     } catch (e) {
       console.log(`Scraper module error: ${e.message}`);
       updateJob(1, '⚠️ Network issue detected - Switching to offline demo mode', 'warning');
-      updateJob(1, '✅ Google scraping completed (Cached)', 'success');
+      updateJob(1, '✅ Tavily Search scraping completed (Cached)', 'success');
     }
 
     // Step 2: Analyzer

@@ -163,7 +163,7 @@ async function searchImagesApi(query) {
 }
 
 export async function scrapeGoogleImages() {
-    console.log('\n🔍 Starting Image Search (via AI Builder API)...');
+    console.log('\n🔍 Starting Image Search (via AI Builder Tavily API)...');
     console.log(`   Search query: "${SEARCH_QUERY}"`);
 
     // Ensure directories exist
