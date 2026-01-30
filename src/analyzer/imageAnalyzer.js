@@ -126,7 +126,7 @@ async function analyzeAndGenerateIdeasInternal() {
             return generateSampleIdeas();
         }
 
-        console.log(`   🧠 Analyzing ${trendsData.length} trends to generate 12 ideas...`);
+        console.log(`   🧠 Analyzing ${trendsData.length} trends to generate 5 ideas...`);
 
         // Prepare Context string
         const context = trendsData.map(t => `- ${t.title}: ${t.content}`).join('\n');
@@ -153,7 +153,7 @@ async function analyzeAndGenerateIdeasInternal() {
             },
             {
                 role: "user",
-                content: `Here are 10 diverse trending topics for 2024/2025:\n\n${context}\n\nSynthesize these inputs. Combine contrasting elements (e.g., retro + futuristic, nature + geometry) to generate 12 highly creative and distinct T-shirt design ideas. Return strict JSON structure: ${jsonStructure}`
+                content: `Here are 10 diverse trending topics for 2024/2025:\n\n${context}\n\nSynthesize these inputs. Combine contrasting elements (e.g., retro + futuristic, nature + geometry) to generate 5 highly creative and distinct T-shirt design ideas. Return strict JSON structure: ${jsonStructure}`
             }
         ];
 
@@ -172,7 +172,7 @@ async function analyzeAndGenerateIdeasInternal() {
         }
 
         // Format results
-        const results = generatedIdeas.slice(0, 12).map((idea, i) => ({
+        const results = generatedIdeas.slice(0, 5).map((idea, i) => ({
             id: i + 1,
             inspirationSource: 'Trend Analysis',
             ...idea
