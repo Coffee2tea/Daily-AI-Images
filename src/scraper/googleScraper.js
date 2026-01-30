@@ -14,7 +14,7 @@ const rootDir = path.join(__dirname, '..', '..');
 
 // Configuration
 const SEARCH_QUERY = 'creative t-shirt design trends graphic 2024';
-const MAX_IMAGES = 10;
+const MAX_IMAGES = 5;
 const OUTPUT_DIR = path.join(rootDir, 'downloaded_images');
 const DATA_DIR = path.join(rootDir, 'data');
 const API_BASE_URL = "https://space.ai-builders.com"; // Force correct API URL

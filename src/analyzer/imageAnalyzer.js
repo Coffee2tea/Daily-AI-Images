@@ -160,7 +160,7 @@ async function analyzeAndGenerateIdeasInternal() {
         }
 
         // Fill remaining slots with text generation based on scraped metadata titles
-        const remainingSlots = 10 - tasks.length;
+        const remainingSlots = 5 - tasks.length;
         if (remainingSlots > 0 && scrapedData.length > 0) {
             console.log(`   📝 Scheduling ${remainingSlots} text-based generations...`);
             for (let i = 0; i < remainingSlots; i++) {
@@ -367,9 +367,9 @@ function generateSampleIdeas() {
         }
     ];
 
-    // Duplicate to fill 10
+    // Duplicate to fill 5
     const ideas = [];
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 5; i++) {
         const template = sampleIdeas[i % sampleIdeas.length];
         ideas.push({
             id: i + 1,
