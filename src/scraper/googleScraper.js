@@ -162,9 +162,20 @@ async function searchImagesApi(query) {
     });
 }
 
+// Dynamic Search Query Generator
+const STYLES = ['vintage', 'modern minimalist', 'cyberpunk', 'retro 80s', 'typography', 'abstract art', 'streetwear', 'geometric', 'watercolor', 'pop art'];
+const YEARS = ['2023', '2024', '2025'];
+
+function getDynamicQuery() {
+    const style = STYLES[Math.floor(Math.random() * STYLES.length)];
+    const year = YEARS[Math.floor(Math.random() * YEARS.length)];
+    return `creative t-shirt design trends ${style} graphic ${year}`;
+}
+
 export async function scrapeGoogleImages() {
+    const dynamicQuery = getDynamicQuery();
     console.log('\n🔍 Starting Image Search (via AI Builder Tavily API)...');
-    console.log(`   Search query: "${SEARCH_QUERY}"`);
+    console.log(`   Search query: "${dynamicQuery}" (Randomized for variety)`);
 
     // Ensure directories exist
     if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
@@ -176,9 +187,8 @@ export async function scrapeGoogleImages() {
         // --- API Search Logic ---
         console.log(`   🌐 Connecting to Search API...`);
 
-        let apiResponse;
         try {
-            apiResponse = await searchImagesApi(SEARCH_QUERY);
+            apiResponse = await searchImagesApi(dynamicQuery);
         } catch (e) {
             console.log(`   ⚠️ API Request Failed: ${e.message}`);
             console.log('   ℹ️ Ensure AI_BUILDER_TOKEN is set correctly.');
