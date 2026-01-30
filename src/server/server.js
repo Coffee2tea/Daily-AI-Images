@@ -141,6 +141,7 @@ app.get('/api/images', (req, res) => {
 
     // Load History (Master List)
     const historyPath = path.join(rootDir, 'data', 'history.json');
+    let images = [];
 
     let currentRunIds = new Set();
 
