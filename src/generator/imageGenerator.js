@@ -23,7 +23,18 @@ async function generateImagesInternal() {
     console.log('\n🎨 Starting AI image generation (via AI Builder API)...');
 
     try {
-        if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+        // Clean previous images to avoid stale data
+        if (fs.existsSync(OUTPUT_DIR)) {
+            const files = fs.readdirSync(OUTPUT_DIR);
+            for (const file of files) {
+                if (file.endsWith('.png') || file.endsWith('.jpg') || file.endsWith('.webp')) {
+                    fs.unlinkSync(path.join(OUTPUT_DIR, file));
+                }
+            }
+            console.log('   🧹 Cleaned previous generated images.');
+        } else {
+            fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+        }
 
         // DEMO LOCK REMOVED - Always run real generation if possible
         // if (process.env.NODE_ENV === 'production') ...
