@@ -140,9 +140,8 @@ app.get('/api/images', (req, res) => {
 
 
     // Load History (Master List)
-    // Load History (Master List)
-    // Removed duplicate declarations
-
+    const historyPath = path.join(rootDir, 'data', 'history.json');
+    const manifestPath = path.join(rootDir, 'data', 'manifest.json');
     let currentRunIds = new Set();
 
     // Get current run IDs to mark as "New"
