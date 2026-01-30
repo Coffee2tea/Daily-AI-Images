@@ -153,6 +153,8 @@ async function generateSingleImage(idea, index, timestamp) {
     }
 }
 
+const REQUEST_TIMEOUT = 60000; // 60 seconds
+
 async function callImageApi(prompt) {
     return new Promise((resolve, reject) => {
         const data = JSON.stringify({
@@ -189,6 +191,13 @@ async function callImageApi(prompt) {
         });
 
         req.on('error', (e) => reject(e));
+
+        // Add Timeout
+        req.setTimeout(REQUEST_TIMEOUT, () => {
+            req.destroy();
+            reject(new Error('Image Generation API Request Timed Out'));
+        });
+
         req.write(data);
         req.end();
     });
@@ -200,8 +209,8 @@ async function downloadImage(url, filepath) {
     return new Promise((resolve, reject) => {
         console.log(`   🔍 DEBUG: Downloading from ${url}`);
         const isHttps = url.startsWith('https');
-        console.log(`   🔍 DEBUG: Protocol: ${isHttps ? 'https' : 'http'}`);
         const lib = isHttps ? https : http;
+
         const req = lib.get(url, { rejectUnauthorized: false }, (res) => {
             if (res.statusCode !== 200) {
                 reject(new Error(`Download failed: ${res.statusCode}`));
@@ -215,7 +224,14 @@ async function downloadImage(url, filepath) {
             });
             stream.on('error', reject);
         });
+
         req.on('error', reject);
+
+        // Add Timeout
+        req.setTimeout(REQUEST_TIMEOUT, () => {
+            req.destroy();
+            reject(new Error('Image Download Timed Out'));
+        });
     });
 }
 
