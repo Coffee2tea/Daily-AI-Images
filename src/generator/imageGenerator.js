@@ -23,21 +23,19 @@ async function generateImagesInternal() {
     console.log('\n🎨 Starting AI image generation (via AI Builder API)...');
 
     try {
-        // Clean previous images to avoid stale data
-        if (fs.existsSync(OUTPUT_DIR)) {
-            const files = fs.readdirSync(OUTPUT_DIR);
-            for (const file of files) {
-                if (file.endsWith('.png') || file.endsWith('.jpg') || file.endsWith('.webp')) {
-                    fs.unlinkSync(path.join(OUTPUT_DIR, file));
-                }
-            }
-            console.log('   🧹 Cleaned previous generated images.');
-        } else {
-            fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-        }
+        // Ensure output directory exists
+        if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-        // DEMO LOCK REMOVED - Always run real generation if possible
-        // if (process.env.NODE_ENV === 'production') ...
+        // Load History
+        const historyPath = path.join(DATA_DIR, 'history.json');
+        let history = [];
+        if (fs.existsSync(historyPath)) {
+            try {
+                history = JSON.parse(fs.readFileSync(historyPath, 'utf-8'));
+            } catch (e) {
+                console.log('   ⚠️ Failed to parse history.json, starting fresh.');
+            }
+        }
 
         const ideasPath = path.join(DATA_DIR, 'ideas.json');
         if (!fs.existsSync(ideasPath)) {
@@ -48,7 +46,7 @@ async function generateImagesInternal() {
         const ideas = JSON.parse(fs.readFileSync(ideasPath, 'utf-8'));
         console.log(`   📝 Loaded ${ideas.length} ideas`);
 
-        // Initialize manifest
+        // Initialize manifest for THIS RUN only
         const manifest = {
             generatedAt: new Date().toISOString(),
             images: []
@@ -59,27 +57,36 @@ async function generateImagesInternal() {
             return createPlaceholders(ideas);
         }
 
-        // Optimized: Generate in parallel batches to reduce wait time
+        // Optimized: Generate in parallel batches
         const BATCH_SIZE = 5;
-        const results = [];
+        const currentRunImages = [];
+        const timestamp = Date.now();
 
         for (let i = 0; i < ideas.length; i += BATCH_SIZE) {
             const batch = ideas.slice(i, i + BATCH_SIZE);
             console.log(`   🚀 Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(ideas.length / BATCH_SIZE)} (${batch.length} images)...`);
 
             const batchPromises = batch.map((idea, batchIndex) => {
-                return generateSingleImage(idea, i + batchIndex);
+                // Generate unique filename: design_{timestamp}_{index}.png
+                const uniqueIndex = i + batchIndex + 1;
+                return generateSingleImage(idea, uniqueIndex, timestamp);
             });
 
             const batchResults = await Promise.all(batchPromises);
-            results.push(...batchResults);
+            currentRunImages.push(...batchResults);
         }
 
-        manifest.images = results;
-
+        // Update Manifest (Current Run)
+        manifest.images = currentRunImages;
         fs.writeFileSync(path.join(DATA_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
-        console.log(`\n✅ Generated ${manifest.images.length} images!`);
-        return manifest.images;
+
+        // Update History (Cumulative)
+        // Prepend new images to history so they appear first
+        const newHistory = [...currentRunImages, ...history];
+        fs.writeFileSync(historyPath, JSON.stringify(newHistory, null, 2));
+
+        console.log(`\n✅ Generated ${currentRunImages.length} images! History size: ${newHistory.length}`);
+        return currentRunImages;
 
     } catch (fatalError) {
         console.log(`\n❌ Fatal error in Generator: ${fatalError.message}`);
@@ -93,11 +100,12 @@ async function generateImagesInternal() {
     }
 }
 
-async function generateSingleImage(idea, index) {
-    const filename = `design_${String(index + 1).padStart(2, '0')}.png`;
+async function generateSingleImage(idea, index, timestamp) {
+    // Unique filename
+    const filename = `design_${timestamp}_${String(index).padStart(2, '0')}.png`;
     const filepath = path.join(OUTPUT_DIR, filename);
 
-    console.log(`   🖼️ Generating ${index + 1}: ${idea.title}...`);
+    console.log(`   🖼️ Generating ${index}: ${idea.title}...`);
 
     try {
         const prompt = `T-shirt design, ${idea.title}. ${idea.theme}. ${idea.style}. ${idea.colorScheme}. Vector art, high quality, isolated on white background.`;
@@ -124,11 +132,12 @@ async function generateSingleImage(idea, index) {
         }
 
         return {
-            id: index + 1,
+            id: `${timestamp}_${index}`,
             title: idea.title,
             description: idea.theme,
             style: idea.style,
-            imagePath: `/generated_images/${filename}`
+            imagePath: `/generated_images/${filename}`,
+            timestamp: timestamp
         };
 
     } catch (e) {

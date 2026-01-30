@@ -139,12 +139,37 @@ app.get('/api/images', (req, res) => {
 
     let images = [];
 
-    // Try to load manifest first
+    // Load History (Master List)
+    const historyPath = path.join(rootDir, 'data', 'history.json');
+    const manifestPath = path.join(rootDir, 'data', 'manifest.json');
+
+    let images = [];
+    let currentRunIds = new Set();
+
+    // Get current run IDs to mark as "New"
     if (fs.existsSync(manifestPath)) {
-      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
-      images = manifest.images || [];
+      try {
+        const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+        if (manifest.images) {
+          manifest.images.forEach(img => currentRunIds.add(img.id));
+        }
+      } catch (e) {
+        console.error('Error reading manifest:', e);
+      }
     }
-    // Fallback: scan generated_images directory
+
+    if (fs.existsSync(historyPath)) {
+      const history = JSON.parse(fs.readFileSync(historyPath, 'utf-8'));
+      images = history.map(img => ({
+        ...img,
+        isNew: currentRunIds.has(img.id) // Flag for frontend
+      }));
+    } else if (fs.existsSync(manifestPath)) {
+      // Fallback to just manifest if no history
+      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+      images = (manifest.images || []).map(img => ({ ...img, isNew: true }));
+    }
+    // Fallback: scan generated_images directory (Legacy support)
     else if (fs.existsSync(generatedDir)) {
       const files = fs.readdirSync(generatedDir)
         .filter(f => f.endsWith('.png') || f.endsWith('.jpg') || f.endsWith('.webp') || f.endsWith('.svg'))
