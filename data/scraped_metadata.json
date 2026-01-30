@@ -1,82 +1,34 @@
 [
   {
     "id": 1,
-    "title": "Trending Design #1",
-    "imageUrl": "/downloaded_images/fallback_design_01.jpg",
-    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\fallback_design_01.jpg",
-    "source": "demo-preset",
-    "originalLink": "#"
+    "title": "Two graphic T-shirts feature retro and sports-inspired designs, one with a \"Stay\" cowboy riding a horse and the other with a basketball team celebrating Eastern Conference champions 2024.",
+    "imageUrl": "/downloaded_images/google_design_01.jpg",
+    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\google_design_01.jpg",
+    "source": "api-search",
+    "originalLink": "https://wp-stahlsblog.s3.amazonaws.com/wp-content/uploads/2024-Design-Trends-header.png"
   },
   {
     "id": 2,
-    "title": "Trending Design #2",
-    "imageUrl": "/downloaded_images/fallback_design_02.jpg",
-    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\fallback_design_02.jpg",
-    "source": "demo-preset",
-    "originalLink": "#"
+    "title": "The t-shirts feature vibrant, playful, and nostalgic graphics inspired by summer, gaming, nature, and retro styles, with bold text, colorful illustrations, and trendy designs suitable for 2024.",
+    "imageUrl": "/downloaded_images/google_design_02.jpg",
+    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\google_design_02.jpg",
+    "source": "api-search",
+    "originalLink": "https://blog.uberprints.com/content/images/size/w2000/2024/05/Custom-t-shirt-trends-2024-header-1.jpg"
   },
   {
     "id": 3,
-    "title": "Trending Design #3",
-    "imageUrl": "/downloaded_images/fallback_design_03.jpg",
-    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\fallback_design_03.jpg",
-    "source": "demo-preset",
-    "originalLink": "#"
+    "title": "A person models a pink graphic tee featuring the phrase \"BEAUTY WITHIN\" repeated with a prominent pink rose design, suggesting a popular trend for girls' graphic tees in 2024-2025.",
+    "imageUrl": "/downloaded_images/google_design_03.jpg",
+    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\google_design_03.jpg",
+    "source": "api-search",
+    "originalLink": "https://www.vexels.com/blog/wp-content/uploads/2023/10/pink-repeated-words-rose-tshirt.png"
   },
   {
     "id": 4,
-    "title": "Trending Design #4",
-    "imageUrl": "/downloaded_images/fallback_design_04.jpg",
-    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\fallback_design_04.jpg",
-    "source": "demo-preset",
-    "originalLink": "#"
-  },
-  {
-    "id": 5,
-    "title": "Trending Design #5",
-    "imageUrl": "/downloaded_images/fallback_design_05.jpg",
-    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\fallback_design_05.jpg",
-    "source": "demo-preset",
-    "originalLink": "#"
-  },
-  {
-    "id": 6,
-    "title": "Trending Design #6",
-    "imageUrl": "/downloaded_images/google_design_01.jpg",
-    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\google_design_01.jpg",
-    "source": "demo-preset",
-    "originalLink": "#"
-  },
-  {
-    "id": 7,
-    "title": "Trending Design #7",
-    "imageUrl": "/downloaded_images/google_design_02.jpg",
-    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\google_design_02.jpg",
-    "source": "demo-preset",
-    "originalLink": "#"
-  },
-  {
-    "id": 8,
-    "title": "Trending Design #8",
-    "imageUrl": "/downloaded_images/google_design_03.jpg",
-    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\google_design_03.jpg",
-    "source": "demo-preset",
-    "originalLink": "#"
-  },
-  {
-    "id": 9,
-    "title": "Trending Design #9",
+    "title": "A red graphic t-shirt with a colorful, distressed design featuring the words \"SURF\" and \"VIC\" along with \"SUMMER TIME\" underneath, surrounded by summer-related items like lemons, a straw hat, sneakers, and a small potted succulent, all on a light wooden floor.",
     "imageUrl": "/downloaded_images/google_design_04.jpg",
     "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\google_design_04.jpg",
-    "source": "demo-preset",
-    "originalLink": "#"
-  },
-  {
-    "id": 10,
-    "title": "Trending Design #10",
-    "imageUrl": "/downloaded_images/google_design_05.jpg",
-    "localPath": "C:\\Users\\eshen\\Agentic_AI_Projects\\Daily-AI-Images\\downloaded_images\\google_design_05.jpg",
-    "source": "demo-preset",
-    "originalLink": "#"
+    "source": "api-search",
+    "originalLink": "https://media.licdn.com/dms/image/v2/D4D22AQFbvFj2Voq4oA/feedshare-shrink_2048_1536/feedshare-shrink_2048_1536/0/1723464529584?e=2147483647&v=beta&t=muyKwOK5Lfak7eRcW7Zzcy7MWOZtRan4xecXBOQ5EnA"
   }
 ]

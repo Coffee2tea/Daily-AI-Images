@@ -1,11 +1,12 @@
 /**
- * AI Image Generator - Uses Gemini 1.5 Flash for stable, fast image generation
+ * AI Image Generator (Migrated to AI Builder Space API)
+ * Generates images using the hosted OpenAI-compatible Image Generation API
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import https from 'https';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -15,18 +16,17 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.join(__dirname, '..', '..');
 const DATA_DIR = path.join(rootDir, 'data');
 const OUTPUT_DIR = path.join(rootDir, 'generated_images');
+const API_BASE_URL = "https://space.ai-builders.com"; // Force correct backend URL
+const API_TOKEN = process.env.AI_BUILDER_TOKEN;
 
 async function generateImagesInternal() {
-    console.log('\n🎨 Starting AI image generation (Sequential - Stable)...');
+    console.log('\n🎨 Starting AI image generation (via AI Builder API)...');
 
     try {
         if (!fs.existsSync(OUTPUT_DIR)) fs.mkdirSync(OUTPUT_DIR, { recursive: true });
 
-        // DEMO MODE CHECK
-        if (process.env.NODE_ENV === 'production') {
-            console.log('   ☁️  SERVER/DEMO MODE: Using high-quality preset images.');
-            return restoreDemoImages();
-        }
+        // DEMO LOCK REMOVED - Always run real generation if possible
+        // if (process.env.NODE_ENV === 'production') ...
 
         const ideasPath = path.join(DATA_DIR, 'ideas.json');
         if (!fs.existsSync(ideasPath)) {
@@ -43,49 +43,23 @@ async function generateImagesInternal() {
             images: []
         };
 
-        if (!process.env.GEMINI_API_KEY) {
-            console.log('   ⚠️ No API key. Creating placeholders...');
+        if (!API_TOKEN) {
+            console.log('   ⚠️ No AI_BUILDER_TOKEN. Creating placeholders...');
             return createPlaceholders(ideas);
         }
 
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        // Helper: Process in batches (Sequential for stability with this API)
+        const results = [];
+        for (let i = 0; i < ideas.length; i++) {
+            const idea = ideas[i];
+            console.log(`   🚀 Generating Image ${i + 1}/${ideas.length}...`);
+            const result = await generateSingleImage(idea, i);
+            results.push(result);
 
-        // Switch to gemini-1.5-flash for better stability/speed balance
-        // Note: 1.5 Flash does not support native image generation yet in all regions,
-        // but we will try 'gemini-2.0-flash-exp' again with sequential if 1.5 fails? 
-        // actually user wants 1.5 flash for stability. 
-        // WAIT: Does gemini-1.5-flash support 'responseModalities: ["IMAGE"]'? 
-        // The API documentation says Imagen 3 / Gemini 2.0 Flash Exp support image generation.
-        // Gemini 1.5 Flash might NOT support image generation directly via `generateContent`.
-        // If 1.5 Flash doesn't support it, I should stick to `gemini-2.0-flash-exp` but SEQUENTIAL.
-        // User asked for "Gemini image model".
-        // Let's stick to 'gemini-2.0-flash-exp' but make it robust vs network errors by being sequential.
-        // Parallel requests likely triggered the firewall/rate-limit.
+            // Small delay to be nice to the API
+            await new Promise(r => setTimeout(r, 1000));
+        }
 
-        const model = genAI.getGenerativeModel({
-            model: 'gemini-2.5-flash-image',
-            generationConfig: {
-                responseModalities: ['IMAGE']
-            }
-        });
-
-        // Helper: Process in batches
-        const processInBatches = async (items, limit, asyncFn) => {
-            let results = [];
-            for (let i = 0; i < items.length; i += limit) {
-                const batch = items.slice(i, i + limit);
-                console.log(`   🚀 Generating Batch ${Math.floor(i / limit) + 1}/${Math.ceil(items.length / limit)} (${batch.length} images)...`);
-
-                const batchPromises = batch.map((item, batchIdx) => asyncFn(item, i + batchIdx));
-                const batchResults = await Promise.all(batchPromises);
-
-                results = [...results, ...batchResults];
-            }
-            return results;
-        };
-
-        // Increase batch size to 5 for faster generation
-        const results = await processInBatches(ideas, 5, (idea, index) => generateSingleImage(model, idea, index));
         manifest.images = results;
 
         fs.writeFileSync(path.join(DATA_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
@@ -104,166 +78,121 @@ async function generateImagesInternal() {
     }
 }
 
-async function generateSingleImage(model, idea, index) {
+async function generateSingleImage(idea, index) {
     const filename = `design_${String(index + 1).padStart(2, '0')}.png`;
     const filepath = path.join(OUTPUT_DIR, filename);
 
     console.log(`   🖼️ Generating ${index + 1}: ${idea.title}...`);
 
-    const MAX_RETRIES = 3;
-    let generationSuccess = false;
-
-    for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
-        try {
-            if (attempt > 1) console.log(`   🔄 Retry ${attempt}/${MAX_RETRIES} for #${index + 1}...`);
-
-            const prompt = `Create a professional, print-ready t-shirt design illustration:
-DESIGN CONCEPT:
-- Title: "${idea.title}"
-- Theme: ${idea.theme}
-- Style: ${idea.style}
-- Color Scheme: ${idea.colorScheme}
-
-REQUIREMENTS:
-- Create a striking, eye-catching graphic design suitable for screen printing on a t-shirt
-- The design should be centered and work well on a solid color t-shirt background
-- Use bold, clear shapes and strong contrast
-- Make it artistic, trendy, and commercially appealing
-- NO text unless it's an integral part of the design concept
-- Professional quality that could sell on platforms like Etsy or Redbubble
-- Clean edges, suitable for print production`;
-
-            const result = await model.generateContent(prompt);
-            const response = result.response;
-
-            if (response.candidates && response.candidates[0]?.content?.parts) {
-                for (const part of response.candidates[0].content.parts) {
-                    if (part.inlineData && part.inlineData.data) {
-                        const imageBuffer = Buffer.from(part.inlineData.data, 'base64');
-                        fs.writeFileSync(filepath, imageBuffer);
-                        console.log(`   ✅ Saved: ${filename}`);
-                        generationSuccess = true;
-                        break;
-                    }
-                }
-            }
-
-            if (generationSuccess) break;
-            throw new Error('No image data found in response');
-
-        } catch (e) {
-            const isQuota = e.message.includes('429') || e.message.toLowerCase().includes('quota');
-            const isNetwork = e.message.toLowerCase().includes('network') || e.message.toLowerCase().includes('fetch');
-
-            console.log(`   ⚠️ Error #${index + 1} (Attempt ${attempt}): ${e.message}`);
-
-            if (isQuota && attempt < MAX_RETRIES) {
-                console.log('   ⚠️ Quota limit hit. Waiting 5s...');
-                await new Promise(r => setTimeout(r, 5000));
-            } else if (attempt < MAX_RETRIES) {
-                // If network error, wait a bit longer
-                const delay = isNetwork ? 3000 : 1000;
-                await new Promise(r => setTimeout(r, delay));
-            }
-        }
-    }
-
-    if (!generationSuccess) {
-        console.log(`   ❌ Failed to generate ${idea.title}. Using placeholder.`);
-        createPngPlaceholder(idea, filepath, index + 1);
-    }
-
-    return {
-        id: index + 1,
-        title: idea.title,
-        description: idea.theme,
-        style: idea.style,
-        imagePath: `/generated_images/${filename}`
-    };
-}
-
-/**
- * Main Export - With Timeout Wrapper
- */
-export async function generateImages() {
-    // 10 Minute Timeout for generation to allow for slow server/rate limits
-    const timeoutMs = 600000;
-
-    const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error(`Timeout of ${timeoutMs}ms exceeded`)), timeoutMs);
-    });
-
     try {
-        console.log(`\n⏱️ Starting Generation with ${timeoutMs / 1000}s timeout...`);
-        return await Promise.race([
-            generateImagesInternal(),
-            timeoutPromise
-        ]);
-    } catch (error) {
-        console.log(`\n❌ Generator Failed or Timed Out: ${error.message}`);
-        console.log('   ⚠️ Triggering safety fallback (preserving valid images)...');
+        const prompt = `T-shirt design, ${idea.title}. ${idea.theme}. ${idea.style}. ${idea.colorScheme}. Vector art, high quality, isolated on white background.`;
 
-        // Load ideas to create placeholders
-        const ideasPath = path.join(DATA_DIR, 'ideas.json');
-        if (fs.existsSync(ideasPath)) {
-            const ideas = JSON.parse(fs.readFileSync(ideasPath, 'utf-8'));
-            return createPlaceholders(ideas);
+        // API Call
+        const apiResponse = await callImageApi(prompt);
+
+        // Response format expected: { created: ..., data: [{ b64_json: "..." }] }
+        // or { created: ..., data: [{ url: "..." }] }
+        // We requested b64_json preferably, or we handle URL.
+
+        const imageObj = apiResponse.data?.[0];
+
+        if (imageObj?.b64_json) {
+            const buffer = Buffer.from(imageObj.b64_json, 'base64');
+            fs.writeFileSync(filepath, buffer);
+            console.log(`   ✅ Saved (Base64): ${filename}`);
+        } else if (imageObj?.url) {
+            console.log(`   ⬇️ Downloading from URL: ${imageObj.url}`);
+            await downloadImage(imageObj.url, filepath);
+            console.log(`   ✅ Saved (URL): ${filename}`);
+        } else {
+            throw new Error('No image data (b64 or url) in API response');
         }
-        return [];
-    }
-}
 
-async function restoreDemoImages() {
-    const demoDir = path.join(DATA_DIR, 'demo_assets', 'generated');
-    const ideasPath = path.join(DATA_DIR, 'ideas.json');
-    let ideas = [];
-
-    if (fs.existsSync(ideasPath)) {
-        ideas = JSON.parse(fs.readFileSync(ideasPath, 'utf-8'));
-    }
-
-    if (!fs.existsSync(demoDir)) {
-        console.log('   ⚠️ Demo assets not found. Creating placeholders...');
-        return createPlaceholders(ideas);
-    }
-
-    console.log(`   📦 Restoring preset high-quality images from demo assets...`);
-    const manifest = { generatedAt: new Date().toISOString(), images: [] };
-
-    // Get all files from demo dir
-    const demoFiles = fs.readdirSync(demoDir)
-        .filter(f => f.endsWith('.png'))
-        .sort();
-
-    // Loop through ideas (max 10)
-    for (let i = 0; i < Math.min(ideas.length, 10); i++) {
-        const idea = ideas[i];
-        const sourceFile = demoFiles[i % demoFiles.length]; // Cycle if fewer images than ideas
-        const sourcePath = path.join(demoDir, sourceFile);
-
-        const filename = `design_${String(i + 1).padStart(2, '0')}.png`;
-        const destPath = path.join(OUTPUT_DIR, filename);
-
-        // Simulate generation time (1-2 seconds per image)
-        console.log(`   🖼️ Generating ${i + 1}: ${idea.title}...`);
-        await new Promise(r => setTimeout(r, 1500));
-
-        // Copy file
-        fs.copyFileSync(sourcePath, destPath);
-        console.log(`   ✅ Saved: ${filename}`);
-
-        manifest.images.push({
-            id: i + 1,
+        return {
+            id: index + 1,
             title: idea.title,
             description: idea.theme,
             style: idea.style,
             imagePath: `/generated_images/${filename}`
-        });
-    }
+        };
 
-    fs.writeFileSync(path.join(DATA_DIR, 'manifest.json'), JSON.stringify(manifest, null, 2));
-    console.log(`\n✅ Verification complete! Generated ${manifest.images.length} images.`);
-    return manifest.images;
+    } catch (e) {
+        console.log(`   ⚠️ Generation failed for #${index + 1}: ${e.message}`);
+        createPngPlaceholder(idea, filepath, index + 1);
+        return {
+            id: index + 1,
+            title: idea.title,
+            description: "Generation Failed",
+            style: idea.style,
+            imagePath: `/generated_images/${filename}`
+        };
+    }
+}
+
+async function callImageApi(prompt) {
+    return new Promise((resolve, reject) => {
+        const data = JSON.stringify({
+            prompt: prompt,
+            n: 1,
+            size: "1024x1024"
+        });
+
+        const url = new URL(`${API_BASE_URL}/backend/v1/images/generations`);
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${API_TOKEN}`,
+                'Content-Length': data.length
+            },
+            rejectUnauthorized: false
+        };
+
+        const req = https.request(url, options, (res) => {
+            let body = '';
+            res.on('data', chunk => body += chunk);
+            res.on('end', () => {
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+                    try {
+                        resolve(JSON.parse(body));
+                    } catch (e) {
+                        reject(new Error(`Failed to parse API response: ${e.message}`));
+                    }
+                } else {
+                    reject(new Error(`API Error ${res.statusCode}: ${body}`));
+                }
+            });
+        });
+
+        req.on('error', (e) => reject(e));
+        req.write(data);
+        req.end();
+    });
+}
+
+// Download helper for URL-based responses
+import http from 'http';
+async function downloadImage(url, filepath) {
+    return new Promise((resolve, reject) => {
+        console.log(`   🔍 DEBUG: Downloading from ${url}`);
+        const isHttps = url.startsWith('https');
+        console.log(`   🔍 DEBUG: Protocol: ${isHttps ? 'https' : 'http'}`);
+        const lib = isHttps ? https : http;
+        const req = lib.get(url, { rejectUnauthorized: false }, (res) => {
+            if (res.statusCode !== 200) {
+                reject(new Error(`Download failed: ${res.statusCode}`));
+                return;
+            }
+            const stream = fs.createWriteStream(filepath);
+            res.pipe(stream);
+            stream.on('finish', () => {
+                stream.close();
+                resolve();
+            });
+            stream.on('error', reject);
+        });
+        req.on('error', reject);
+    });
 }
 
 function createPlaceholders(ideas) {
@@ -272,21 +201,18 @@ function createPlaceholders(ideas) {
     ideas.forEach((idea, i) => {
         const filename = `design_${String(i + 1).padStart(2, '0')}.png`;
         const filepath = path.join(OUTPUT_DIR, filename);
-        let usedPlaceholder = false;
 
-        // CHECK: If a valid image (> 500 bytes) already exists, KEEP IT.
+        // Use existing if valid
         if (fs.existsSync(filepath) && fs.statSync(filepath).size > 500) {
             console.log(`   ✅ Preserving existing valid image: ${filename}`);
         } else {
-            // Only overwrite if missing or it's a tiny placeholder
             createPngPlaceholder(idea, filepath, i + 1);
-            usedPlaceholder = true;
         }
 
         manifest.images.push({
             id: i + 1,
             title: idea.title,
-            description: usedPlaceholder ? "Draft Concept" : idea.theme,
+            description: idea.theme,
             style: idea.style,
             imagePath: `/generated_images/${filename}`
         });
@@ -298,7 +224,6 @@ function createPlaceholders(ideas) {
 
 // Create a simple PNG placeholder using Base64 encoded 1x1 pixel images
 function createPngPlaceholder(idea, filepath, idx) {
-    // 1x1 Pixel PNGs in Base64 (Red, Green, Blue, Yellow, Purple, Cyan, Orange, Pink)
     const placeholders = [
         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', // Red
         'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==', // Green
@@ -311,6 +236,28 @@ function createPngPlaceholder(idea, filepath, idx) {
     const buffer = Buffer.from(b64, 'base64');
     fs.writeFileSync(filepath, buffer);
     console.log(`   📋 Placeholder saved as PNG: ${path.basename(filepath)}`);
+}
+
+/**
+ * Main Export - With Timeout Wrapper
+ */
+export async function generateImages() {
+    // 10 Minute Timeout
+    const timeoutMs = 600000;
+    const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error(`Timeout of ${timeoutMs}ms exceeded`)), timeoutMs);
+    });
+
+    try {
+        console.log(`\n⏱️ Starting Generation with ${timeoutMs / 1000}s timeout...`);
+        return await Promise.race([
+            generateImagesInternal(),
+            timeoutPromise
+        ]);
+    } catch (error) {
+        console.log(`\n❌ Generator Failed or Timed Out: ${error.message}`);
+        return [];
+    }
 }
 
 if (process.argv[1] === fileURLToPath(import.meta.url)) generateImages();

@@ -1,74 +1,74 @@
 {
-  "generatedAt": "2026-01-28T22:58:43.066Z",
+  "generatedAt": "2026-01-30T14:35:39.634Z",
   "images": [
     {
       "id": 1,
-      "title": "Glitch Cat",
-      "description": "Cyberpunk, Glitch Art",
-      "style": "Modern, edgy, techwear",
+      "title": "Cyberpunk Lucky Cat Glitch",
+      "description": "Cyberpunk, Japanese Culture, Glitch Art",
+      "style": "Modern, Edgy, Graphic",
       "imagePath": "/generated_images/design_01.png"
     },
     {
       "id": 2,
-      "title": "Cyberpunk Glitch Hand",
-      "description": "Cyberpunk, technology, glitch art",
-      "style": "Futuristic, edgy, digital art",
+      "title": "Cyberpunk Skull Glitch",
+      "description": "Cyberpunk, glitch art, skull",
+      "style": "Modern, futuristic, edgy",
       "imagePath": "/generated_images/design_02.png"
     },
     {
       "id": 3,
-      "title": "Cosmic Jellyfish",
-      "description": "Ocean/Space",
-      "style": "Surreal, Digital Art",
+      "title": "Astral Jellyfish",
+      "description": "Underwater Exploration",
+      "style": "Illustration with gradient effect",
       "imagePath": "/generated_images/design_03.png"
     },
     {
       "id": 4,
-      "title": "Parentheses Series: (Beach)",
-      "description": "Travel/Location",
-      "style": "Minimalist, clean",
+      "title": "OFFLINE (Rebooting)",
+      "description": "Digital Detox, Technology Humor",
+      "style": "Minimalist with a glitch art influence",
       "imagePath": "/generated_images/design_04.png"
     },
     {
       "id": 5,
-      "title": "Bear Peak Explorer",
-      "description": "Adventure, Wilderness, Wildlife, Mountain Exploration",
-      "style": "Illustrative, Vintage Travel Poster",
+      "title": "Celestial Peaks",
+      "description": "Mountains & Night Sky",
+      "style": "Illustrative, Vintage",
       "imagePath": "/generated_images/design_05.png"
     },
     {
       "id": 6,
-      "title": "Retro Arcade High Score",
-      "description": "Gaming, Nostalgia, Achievement",
-      "style": "Retro, Pixel Art, Graphic",
+      "title": "Retro Gaming Legends",
+      "description": "Classic Video Games",
+      "style": "Retro, Graphic, Nostalgic",
       "imagePath": "/generated_images/design_06.png"
     },
     {
       "id": 7,
-      "title": "Retro Space Explorer Club",
-      "description": "Sci-Fi, Retro Futurism, Space Exploration",
-      "style": "Vintage, Distressed",
+      "title": "Retro Anime Ramen",
+      "description": "Food, Anime, Japanese Culture",
+      "style": "Vintage Anime, Graphic",
       "imagePath": "/generated_images/design_07.png"
     },
     {
       "id": 8,
-      "title": "Bloom Where You Are Planted",
-      "description": "Resilience, Personal Growth, Acceptance",
-      "style": "Vintage, Botanical, Slightly distressed",
+      "title": "Growth Through Darkness",
+      "description": "Resilience, Personal Growth, Overcoming Obstacles",
+      "style": "Edgy, Dark, Minimalist",
       "imagePath": "/generated_images/design_08.png"
     },
     {
       "id": 9,
-      "title": "Hiking Club Retro Badge Tee",
-      "description": "Outdoors, Hiking, Club Affiliation",
-      "style": "Vintage, Badge-style, Illustrated",
+      "title": "Retro Sunset Surfer Van",
+      "description": "Surfing, Road Trip, Sunset",
+      "style": "Vintage, Graphic",
       "imagePath": "/generated_images/design_09.png"
     },
     {
       "id": 10,
-      "title": "Fractured Galaxy",
-      "description": "Space, Abstract",
-      "style": "Futuristic, Edgy",
+      "title": "Fractured Terrain",
+      "description": "Geological, Nature-inspired",
+      "style": "Abstract, Textured, Urban",
       "imagePath": "/generated_images/design_10.png"
     }
   ]
