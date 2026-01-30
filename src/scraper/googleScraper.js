@@ -189,7 +189,7 @@ export async function scrapeDesignTrends() {
     // Ensure directories exist
     if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
 
-    const results = [];
+    let results = [];
 
     try {
         console.log(`   🌐 Connecting to Search API for text trends...`);
@@ -218,7 +218,7 @@ export async function scrapeDesignTrends() {
     } catch (error) {
         console.log(`   ⚠️ Trend Search issue detected: ${error.message}`);
         console.log('   ✨ Using outdated/fallback trend data...');
-        return getFallbackTrends();
+        results = getFallbackTrends();
     }
 
     // Save metadata
