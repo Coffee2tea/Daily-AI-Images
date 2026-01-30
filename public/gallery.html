@@ -174,98 +174,99 @@
         renderGallery();
         window.scrollTo(0, 0);
       }
+    }
 
-      function openLightbox(index) {
-        const design = designs[index];
+    function openLightbox(index) {
+      const design = designs[index];
+      const lightbox = document.getElementById('lightbox');
+      const image = document.getElementById('lightbox-image');
+      const title = document.getElementById('lightbox-title');
+      const desc = document.getElementById('lightbox-desc');
+
+      image.src = design.imagePath;
+      image.alt = design.title;
+      title.textContent = design.title;
+      desc.textContent = design.description || `风格: ${design.style} | 色彩: ${design.colors}`;
+
+      lightbox.classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeLightbox(event) {
+      if (event.target.classList.contains('lightbox') ||
+        event.target.classList.contains('lightbox-close')) {
         const lightbox = document.getElementById('lightbox');
-        const image = document.getElementById('lightbox-image');
-        const title = document.getElementById('lightbox-title');
-        const desc = document.getElementById('lightbox-desc');
-
-        image.src = design.imagePath;
-        image.alt = design.title;
-        title.textContent = design.title;
-        desc.textContent = design.description || `风格: ${design.style} | 色彩: ${design.colors}`;
-
-        lightbox.classList.add('active');
-        document.body.style.overflow = 'hidden';
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
       }
+    }
 
-      function closeLightbox(event) {
-        if (event.target.classList.contains('lightbox') ||
-          event.target.classList.contains('lightbox-close')) {
-          const lightbox = document.getElementById('lightbox');
-          lightbox.classList.remove('active');
-          document.body.style.overflow = '';
-        }
-      }
+    async function downloadAll() {
+      const btn = event.target;
+      const originalText = btn.innerHTML;
+      btn.innerHTML = '<span class="material-symbols-outlined spin-icon">hourglass_empty</span> Preparing download...';
+      btn.disabled = true;
 
-      async function downloadAll() {
-        const btn = event.target;
-        const originalText = btn.innerHTML;
-        btn.innerHTML = '<span class="material-symbols-outlined spin-icon">hourglass_empty</span> Preparing download...';
-        btn.disabled = true;
+      try {
+        // Download each image
+        for (const design of designs) {
+          const response = await fetch(design.imagePath);
+          if (response.ok) {
+            const blob = await response.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${design.title}.png`;
+            a.click();
+            URL.revokeObjectURL(url);
 
-        try {
-          // Download each image
-          for (const design of designs) {
-            const response = await fetch(design.imagePath);
-            if (response.ok) {
-              const blob = await response.blob();
-              const url = URL.createObjectURL(blob);
-              const a = document.createElement('a');
-              a.href = url;
-              a.download = `${design.title}.png`;
-              a.click();
-              URL.revokeObjectURL(url);
-
-              // Small delay between downloads
-              await new Promise(r => setTimeout(r, 300));
-            }
+            // Small delay between downloads
+            await new Promise(r => setTimeout(r, 300));
           }
-          btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Download Complete!';
-        } catch (error) {
-          console.error('Download error:', error);
-          btn.innerHTML = '<span class="material-symbols-outlined">error</span> Download Failed';
         }
-
-        setTimeout(() => {
-          btn.innerHTML = originalText;
-          btn.disabled = false;
-        }, 2000);
+        btn.innerHTML = '<span class="material-symbols-outlined">check_circle</span> Download Complete!';
+      } catch (error) {
+        console.error('Download error:', error);
+        btn.innerHTML = '<span class="material-symbols-outlined">error</span> Download Failed';
       }
 
-      function shareGallery() {
-        const url = window.location.href;
+      setTimeout(() => {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+      }, 2000);
+    }
 
-        if (navigator.share) {
-          navigator.share({
-            title: 'T-Shirt Design Gallery',
-            text: 'Check out my AI generated T-Shirt designs!',
-            url: url
-          });
-        } else if (navigator.clipboard) {
-          navigator.clipboard.writeText(url).then(() => {
-            const btn = event.target;
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<span class="material-symbols-outlined">check</span> Link Copied!';
-            setTimeout(() => {
-              btn.innerHTML = originalText;
-            }, 2000);
-          });
-        } else {
-          prompt('Copy this link to share:', url);
-        }
+    function shareGallery() {
+      const url = window.location.href;
+
+      if (navigator.share) {
+        navigator.share({
+          title: 'T-Shirt Design Gallery',
+          text: 'Check out my AI generated T-Shirt designs!',
+          url: url
+        });
+      } else if (navigator.clipboard) {
+        navigator.clipboard.writeText(url).then(() => {
+          const btn = event.target;
+          const originalText = btn.innerHTML;
+          btn.innerHTML = '<span class="material-symbols-outlined">check</span> Link Copied!';
+          setTimeout(() => {
+            btn.innerHTML = originalText;
+          }, 2000);
+        });
+      } else {
+        prompt('Copy this link to share:', url);
       }
+    }
 
-      // Keyboard navigation
-      document.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-          const lightbox = document.getElementById('lightbox');
-          lightbox.classList.remove('active');
-          document.body.style.overflow = '';
-        }
-      });
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const lightbox = document.getElementById('lightbox');
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+      }
+    });
   </script>
 </body>
 

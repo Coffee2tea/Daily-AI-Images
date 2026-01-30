@@ -137,13 +137,12 @@ app.get('/api/images', (req, res) => {
     const ideasPath = path.join(rootDir, 'data', 'ideas.json');
     const generatedDir = path.join(rootDir, 'generated_images');
 
-    let images = [];
+
 
     // Load History (Master List)
-    const historyPath = path.join(rootDir, 'data', 'history.json');
-    const manifestPath = path.join(rootDir, 'data', 'manifest.json');
+    // Load History (Master List)
+    // Removed duplicate declarations
 
-    let images = [];
     let currentRunIds = new Set();
 
     // Get current run IDs to mark as "New"
