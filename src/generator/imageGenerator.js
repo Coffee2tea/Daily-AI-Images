@@ -48,16 +48,20 @@ async function generateImagesInternal() {
             return createPlaceholders(ideas);
         }
 
-        // Helper: Process in batches (Sequential for stability with this API)
+        // Optimized: Generate in parallel batches to reduce wait time
+        const BATCH_SIZE = 5;
         const results = [];
-        for (let i = 0; i < ideas.length; i++) {
-            const idea = ideas[i];
-            console.log(`   🚀 Generating Image ${i + 1}/${ideas.length}...`);
-            const result = await generateSingleImage(idea, i);
-            results.push(result);
 
-            // Small delay to be nice to the API
-            await new Promise(r => setTimeout(r, 1000));
+        for (let i = 0; i < ideas.length; i += BATCH_SIZE) {
+            const batch = ideas.slice(i, i + BATCH_SIZE);
+            console.log(`   🚀 Processing batch ${Math.floor(i / BATCH_SIZE) + 1}/${Math.ceil(ideas.length / BATCH_SIZE)} (${batch.length} images)...`);
+
+            const batchPromises = batch.map((idea, batchIndex) => {
+                return generateSingleImage(idea, i + batchIndex);
+            });
+
+            const batchResults = await Promise.all(batchPromises);
+            results.push(...batchResults);
         }
 
         manifest.images = results;
