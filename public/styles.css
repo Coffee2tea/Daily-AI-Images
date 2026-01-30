@@ -604,6 +604,11 @@ body {
   }
 }
 
+.spin-icon {
+  animation: spin 1.5s linear infinite;
+  display: inline-block;
+}
+
 /* ==========================================
    Success Animation
    ========================================== */
