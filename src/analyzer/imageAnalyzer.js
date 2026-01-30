@@ -1,12 +1,12 @@
 /**
- * Image Analyzer & Idea Generator
- * Uses Gemini Vision API to analyze images and generate design ideas
+ * Image Analyzer & Idea Generator (Migrated to AI Builder Space API)
+ * Uses AI Builder Chat API (OpenAI Compatible) to analyze images and generate design ideas
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import https from 'https';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -17,9 +17,11 @@ const rootDir = path.join(__dirname, '..', '..');
 
 const DATA_DIR = path.join(rootDir, 'data');
 const IMAGES_DIR = path.join(rootDir, 'downloaded_images');
+const API_BASE_URL = "https://space.ai-builders.com";
+const API_TOKEN = process.env.AI_BUILDER_TOKEN;
 
 /**
- * Convert image file to base64 for Gemini API
+ * Convert image file to base64 for API
  */
 function imageToBase64(imagePath) {
     const imageBuffer = fs.readFileSync(imagePath);
@@ -42,34 +44,75 @@ function getMimeType(filepath) {
 }
 
 /**
+ * Call AI Builder Chat API (OpenAI Compatible)
+ */
+async function callChatApi(messages, jsonMode = true) {
+    if (!API_TOKEN) {
+        throw new Error("AI_BUILDER_TOKEN not found.");
+    }
+
+    return new Promise((resolve, reject) => {
+        const data = JSON.stringify({
+            model: "gpt-4o", // Using high capability model for vision/analysis
+            messages: messages,
+            temperature: 0.7,
+            max_tokens: 1000,
+            response_format: jsonMode ? { type: "json_object" } : undefined
+        });
+
+        const url = new URL(`${API_BASE_URL}/backend/v1/chat/completions`);
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${API_TOKEN}`,
+                'Content-Length': Buffer.byteLength(data)
+            },
+            rejectUnauthorized: false
+        };
+
+        const req = https.request(url, options, (res) => {
+            let body = '';
+            res.on('data', chunk => body += chunk);
+            res.on('end', () => {
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+                    try {
+                        const json = JSON.parse(body);
+                        const content = json.choices?.[0]?.message?.content;
+                        if (!content) throw new Error("No content in API response");
+                        resolve(content);
+                    } catch (e) {
+                        reject(new Error(`Failed to parse API response: ${e.message}`));
+                    }
+                } else {
+                    reject(new Error(`API Error ${res.statusCode}: ${body}`));
+                }
+            });
+        });
+
+        req.on('error', (e) => reject(e));
+        req.write(data);
+        req.end();
+    });
+}
+
+/**
  * Analyze images and generate design ideas
  */
 async function analyzeAndGenerateIdeasInternal() {
-    console.log('\n🧠 Starting image analysis and idea generation (Internal)...');
+    console.log('\n🧠 Starting image analysis and idea generation (via AI Builder API)...');
 
     try {
-        // DEMO MODE CHECK
-        if (process.env.NODE_ENV === 'production') {
-            console.log('   ☁️  SERVER/DEMO MODE: Using high-quality preset ideas.');
-            console.log('   ⏳ Analyzing design trends (Simulated)...');
-            await new Promise(r => setTimeout(r, 2000));
-            return restoreDemoIdeas();
-        }
-
-        // Check API key
-        if (!process.env.GEMINI_API_KEY) {
-            console.log('   ⚠️ GEMINI_API_KEY not found. Using sample ideas...');
-            return generateSampleIdeas();
-        }
-
         // Ensure data directory exists
         if (!fs.existsSync(DATA_DIR)) {
             fs.mkdirSync(DATA_DIR, { recursive: true });
         }
 
-        // Initialize Gemini
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+        // Check API key
+        if (!API_TOKEN) {
+            console.log('   ⚠️ AI_BUILDER_TOKEN not found. Using sample ideas...');
+            return generateSampleIdeas();
+        }
 
         // Load scraped metadata
         const metadataPath = path.join(DATA_DIR, 'scraped_metadata.json');
@@ -86,32 +129,13 @@ async function analyzeAndGenerateIdeasInternal() {
             imageFiles = fs.readdirSync(IMAGES_DIR)
                 .filter(f => /\.(jpg|jpeg|png|gif|webp)$/i.test(f))
                 .map(f => path.join(IMAGES_DIR, f))
-                .slice(0, 10);
+                .slice(0, 5); // Limit to 5 for speed with vision API
         }
 
         const ideas = [];
+        const tasks = [];
 
-        // Helper for concurrency
-        const runWithConcurrency = async (items, limit, fn) => {
-            const results = [];
-            const executing = [];
-            for (const item of items) {
-                const p = fn(item).then(res => results.push(res));
-                executing.push(p);
-                if (executing.length >= limit) {
-                    await Promise.race(executing);
-                    // Remove completed promises
-                    /* eslint-disable-next-line no-loop-func */
-                    const index = executing.findIndex(p => p.status === 'fulfilled'); // Only works if we track status, simplifying:
-                    // Actually, simpler approach for this scale:
-                }
-            }
-            // Better simple implementation for "Limit 3"
-            // We will just chunk it or use a simple queue
-            return results;
-        };
-
-        // Simpler Queue Implementation
+        // Helper: Process in batches
         const processInBatches = async (items, limit, asyncFn) => {
             let results = [];
             for (let i = 0; i < items.length; i += limit) {
@@ -119,123 +143,128 @@ async function analyzeAndGenerateIdeasInternal() {
                 console.log(`   🚀 Processing batch ${Math.floor(i / limit) + 1}/${Math.ceil(items.length / limit)} (${batch.length} items)...`);
                 const batchResults = await Promise.all(batch.map(asyncFn));
                 results = [...results, ...batchResults];
-                // Small delay between batches to be nice
-                if (i + limit < items.length) await new Promise(r => setTimeout(r, 200));
+                if (i + limit < items.length) await new Promise(r => setTimeout(r, 1000));
             }
             return results;
         };
 
-        // Prepare tasks
-        let tasks = [];
+        // Strategy: Combine Vision Analysis + Text Generation
 
-        // If we have actual images, analyze them
         if (imageFiles.length > 0) {
-            console.log(`   🖼️ Analyzing images to generate 10 unique ideas (Parallel Mode)...`);
+            console.log(`   🖼️ Analyzing ${imageFiles.length} images...`);
 
-            // Create 10 tasks
-            for (let i = 0; i < 10; i++) {
+            // Create tasks for vision analysis
+            imageFiles.forEach((img, i) => {
+                tasks.push({ type: 'vision', index: i, data: img });
+            });
+        }
+
+        // Fill remaining slots with text generation based on scraped metadata titles
+        const remainingSlots = 10 - tasks.length;
+        if (remainingSlots > 0 && scrapedData.length > 0) {
+            console.log(`   📝 Scheduling ${remainingSlots} text-based generations...`);
+            for (let i = 0; i < remainingSlots; i++) {
                 tasks.push({
-                    index: i,
-                    imagePath: imageFiles[i % imageFiles.length],
-                    type: 'image_analysis'
+                    type: 'text',
+                    index: tasks.length + i,
+                    data: scrapedData[i % scrapedData.length]
                 });
             }
+        }
 
-            const processTask = async (task) => {
-                const { index, imagePath } = task;
-                console.log(`   📊 analyzing #${index + 1}...`);
+        // If still empty tasks (no images, no metadata), fallback to generic
+        if (tasks.length === 0) {
+            console.log('   ⚠️ No input data found. Using samples.');
+            return generateSampleIdeas();
+        }
 
-                try {
-                    const imageData = imageToBase64(imagePath);
-                    const mimeType = getMimeType(imagePath);
-                    const prompt = `You are a professional T-shirt designer analyzing popular designs.
-Analyze this T-shirt design image and create a NEW unique design idea inspired by it.
-Return your response in this exact JSON format (no markdown, just pure JSON):
+        const processTask = async (task) => {
+            const { index, type, data } = task;
+            console.log(`   📊 Generating #${index + 1} (${type})...`);
+
+            try {
+                let messages = [];
+                const jsonStructure = `
 {
-  "originalAnalysis": { "colorPalette": [], "style": "", "theme": "", "targetAudience": "", "technique": "" },
-  "newIdea": { "title": "", "theme": "", "style": "", "colorScheme": "", "targetAudience": "", "designElements": "", "mood": "", "aiPrompt": "" }
+  "newIdea": { 
+      "title": "String", 
+      "theme": "String", 
+      "style": "String", 
+      "colorScheme": "String", 
+      "targetAudience": "String", 
+      "designElements": "String", 
+      "mood": "String", 
+      "aiPrompt": "String" 
+  }
 }`;
 
-                    const result = await model.generateContent([
-                        { text: prompt },
-                        { inlineData: { mimeType, data: imageData } }
-                    ]);
-
-                    const responseText = result.response.text();
-                    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-
-                    if (jsonMatch) {
-                        const parsed = JSON.parse(jsonMatch[0]);
-                        return {
-                            id: index + 1,
-                            inspirationSource: path.basename(imagePath),
-                            ...parsed.newIdea,
-                            originalAnalysis: parsed.originalAnalysis
-                        };
-                    }
-                } catch (error) {
-                    console.log(`   ⚠️ Error analyzing #${index + 1}: ${error.message}`);
-                    return generateSingleSampleIdea(index + 1);
+                if (type === 'vision') {
+                    const b64 = imageToBase64(data);
+                    const mime = getMimeType(data);
+                    messages = [
+                        {
+                            role: "system",
+                            content: "You are a professional T-shirt designer. Analyze the input design and create a NEW, UNIQUE design idea inspired by it. Return ONLY JSON."
+                        },
+                        {
+                            role: "user",
+                            content: [
+                                { type: "text", text: `Analyze this design and generate a new idea. Return JSON structure: ${jsonStructure}` },
+                                {
+                                    type: "image_url",
+                                    image_url: {
+                                        url: `data:${mime};base64,${b64}`
+                                    }
+                                }
+                            ]
+                        }
+                    ];
+                } else {
+                    // Text based
+                    const title = data.title || "T-Shirt Design";
+                    messages = [
+                        {
+                            role: "system",
+                            content: "You are a professional T-shirt designer. Create a unique design idea based on the trending concept provided. Return ONLY JSON."
+                        },
+                        {
+                            role: "user",
+                            content: `Trend Concept: "${title}". Create a new design idea. Return JSON structure: ${jsonStructure}`
+                        }
+                    ];
                 }
+
+                const responseText = await callChatApi(messages);
+                const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+
+                if (jsonMatch) {
+                    const parsed = JSON.parse(jsonMatch[0]);
+                    const idea = parsed.newIdea || parsed; // Handle flat or nested
+                    return {
+                        id: index + 1,
+                        inspirationSource: type === 'vision' ? path.basename(data) : (data.title || 'Trend'),
+                        ...idea
+                    };
+                } else {
+                    throw new Error("Invalid JSON in response");
+                }
+
+            } catch (e) {
+                console.log(`   ⚠️ Failed task #${index + 1}: ${e.message}`);
                 return generateSingleSampleIdea(index + 1);
-            };
-
-            const results = await processInBatches(tasks, 10, processTask);
-            // Filter out nulls/duplicates if any logic required, but here we just push
-            results.forEach(r => ideas.push(r));
-
-        } else {
-            // No images available
-            console.log('   📝 Generating ideas from metadata (Parallel Mode)...');
-
-            for (let i = 0; i < 10; i++) {
-                tasks.push({
-                    index: i,
-                    sourceData: scrapedData[i] || { title: `Design ${i + 1}`, style: 'Modern' },
-                    type: 'text_generation'
-                });
             }
+        };
 
-            const processTask = async (task) => {
-                const { index, sourceData } = task;
-
-                try {
-                    const prompt = `You are a professional T-shirt designer.
-Based on this trending T-shirt design concept: "${sourceData.title}" (Style: ${sourceData.style || 'Contemporary'})
-Create a unique NEW design idea. Return your response in this exact JSON format (no markdown, just pure JSON):
-{ "title": "", "theme": "", "style": "", "colorScheme": "", "targetAudience": "", "designElements": "", "mood": "", "aiPrompt": "" }`;
-
-                    const result = await model.generateContent(prompt);
-                    const responseText = result.response.text();
-                    const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-
-                    if (jsonMatch) {
-                        const parsed = JSON.parse(jsonMatch[0]);
-                        return {
-                            id: index + 1,
-                            inspirationSource: sourceData.title,
-                            ...parsed
-                        };
-                    }
-                } catch (error) {
-                    console.log(`   ⚠️ Error generating #${index + 1}: ${error.message}`);
-                    return generateSingleSampleIdea(index + 1);
-                }
-                return generateSingleSampleIdea(index + 1);
-            };
-
-            const results = await processInBatches(tasks, 4, processTask); // Text generation is faster
-            results.forEach(r => ideas.push(r));
-        }
+        // Execute
+        // Vision requests are heavy, process 3 at a time max
+        const results = await processInBatches(tasks, 3, processTask);
 
         // Save ideas
         const ideasPath = path.join(DATA_DIR, 'ideas.json');
-        fs.writeFileSync(ideasPath, JSON.stringify(ideas, null, 2));
+        fs.writeFileSync(ideasPath, JSON.stringify(results, null, 2));
 
-        console.log(`\n✅ Generated ${ideas.length} design ideas!`);
-        console.log(`   📄 Ideas saved to: ${ideasPath}`);
-
-        return ideas;
+        console.log(`\n✅ Generated ${results.length} design ideas!`);
+        return results;
 
     } catch (fatalError) {
         console.log(`\n❌ Fatal error in Analyzer: ${fatalError.message}`);
@@ -248,9 +277,8 @@ Create a unique NEW design idea. Return your response in this exact JSON format 
  * Main Export - With Timeout Wrapper
  */
 export async function analyzeAndGenerateIdeas() {
-    // 5 Minute Timeout to prevent platform 504 errors
+    // 5 Minute Timeout
     const timeoutMs = 300000;
-
     const timeoutPromise = new Promise((_, reject) => {
         setTimeout(() => reject(new Error(`Timeout of ${timeoutMs}ms exceeded`)), timeoutMs);
     });
@@ -263,7 +291,6 @@ export async function analyzeAndGenerateIdeas() {
         ]);
     } catch (error) {
         console.log(`\n❌ Analyzer Failed or Timed Out: ${error.message}`);
-        console.log('   ⚠️ Triggering safety fallback...');
         return generateSampleIdeas();
     }
 }
@@ -275,16 +302,11 @@ function restoreDemoIdeas() {
     const demoIdeasPath = path.join(DATA_DIR, 'demo_assets', 'ideas.json');
     if (fs.existsSync(demoIdeasPath)) {
         const ideas = JSON.parse(fs.readFileSync(demoIdeasPath, 'utf-8'));
-
-        // Ensure we write it to the main ideas.json so the generator can find it
         const ideasPath = path.join(DATA_DIR, 'ideas.json');
         fs.writeFileSync(ideasPath, JSON.stringify(ideas, null, 2));
-
         console.log(`\n✅ Demo analysis complete! Loaded ${ideas.length} preset ideas.`);
         return ideas;
     }
-
-    console.log('   ⚠️ Demo ideas not found. Generating samples...');
     return generateSampleIdeas();
 }
 
@@ -295,146 +317,75 @@ function generateSampleIdeas() {
     const sampleIdeas = [
         {
             title: "Cosmic Wanderer",
-            theme: "Space exploration and wonder",
-            style: "Minimalist with gradient accents",
-            colorScheme: "Deep purple (#2D1B69), Electric blue (#00D4FF), White",
-            targetAudience: "Young adults, space enthusiasts, dreamers",
-            designElements: "Silhouette of astronaut, stars, galaxy swirls",
-            mood: "Adventurous, mysterious, inspiring",
-            aiPrompt: "Minimalist T-shirt design featuring an astronaut silhouette floating in space, surrounded by scattered stars and a subtle galaxy spiral. Use deep purple (#2D1B69) to electric blue (#00D4FF) gradient background fading to black. Clean vector style, centered composition. Professional print-ready design on transparent background."
+            theme: "Space exploration",
+            style: "Minimalist",
+            colorScheme: "Deep purple, Electric blue",
+            targetAudience: "Dreamers",
+            designElements: "Astronaut, stars",
+            mood: "Adventurous",
+            aiPrompt: "Minimalist T-shirt design, astronaut silhouette, galaxy background. Deep purple and blue gradient."
         },
         {
-            title: "Neon Tokyo Nights",
-            theme: "Japanese urban aesthetics",
-            style: "Cyberpunk neon",
-            colorScheme: "Hot pink (#FF1493), Cyan (#00FFFF), Black",
-            targetAudience: "Anime fans, urban fashion lovers",
-            designElements: "Japanese kanji, neon signs, city skyline",
-            mood: "Energetic, futuristic, cool",
-            aiPrompt: "Cyberpunk T-shirt design with Japanese neon sign aesthetic. Feature glowing kanji characters meaning 'dream' in hot pink (#FF1493) and cyan (#00FFFF). Include simplified Tokyo skyline silhouette at bottom. Dark background with neon glow effects. Retro-futuristic style, print-ready on transparent background."
-        },
-        {
-            title: "Wild Heart",
-            theme: "Nature and freedom",
-            style: "Boho watercolor",
-            colorScheme: "Terracotta (#E07A5F), Sage green (#81B29A), Cream",
-            targetAudience: "Nature lovers, bohemian style enthusiasts",
-            designElements: "Mountain range, wildflowers, sun rays",
-            mood: "Free-spirited, peaceful, grounded",
-            aiPrompt: "Bohemian watercolor T-shirt design featuring a mountain range with wildflowers in front. Use terracotta (#E07A5F) and sage green (#81B29A) color palette. Include radiating sun rays behind mountains. Soft, hand-painted watercolor texture. Centered composition, print-ready on transparent background."
-        },
-        {
-            title: "Retro Sunset Vibes",
+            title: "Retro Sunset",
             theme: "80s nostalgia",
-            style: "Synthwave retro",
-            colorScheme: "Orange (#FF6B35), Pink (#FF006E), Purple (#8338EC)",
-            targetAudience: "80s enthusiasts, retrowave fans",
-            designElements: "Palm trees, sunset stripes, grid lines",
-            mood: "Nostalgic, fun, vibrant",
-            aiPrompt: "Synthwave retro T-shirt design with horizontal sunset stripes in orange (#FF6B35), pink (#FF006E), and purple (#8338EC). Include silhouette palm trees and perspective grid at bottom. Sun in center with striped pattern. Vintage 80s aesthetic, clean vector style, print-ready on transparent background."
-        },
-        {
-            title: "Zen Lotus",
-            theme: "Mindfulness and peace",
-            style: "Elegant line art",
-            colorScheme: "Gold (#D4AF37), Black, White",
-            targetAudience: "Yoga practitioners, meditation enthusiasts",
-            designElements: "Lotus flower, geometric mandala, fine lines",
-            mood: "Calm, spiritual, refined",
-            aiPrompt: "Elegant line art T-shirt design of a lotus flower with geometric mandala pattern. Use gold (#D4AF37) lines on black or single color. Intricate fine line details, symmetrical design. Minimalist yet detailed, centered composition. Print-ready on transparent background."
-        },
-        {
-            title: "Pixel Adventure",
-            theme: "Gaming and nostalgia",
-            style: "8-bit pixel art",
-            colorScheme: "Bright green (#39FF14), Blue (#0066FF), Red (#FF0000)",
-            targetAudience: "Gamers, retro gaming enthusiasts",
-            designElements: "Pixel character, hearts, coins, retro elements",
-            mood: "Playful, nostalgic, fun",
-            aiPrompt: "8-bit pixel art T-shirt design featuring a cute pixel character on an adventure. Include pixel hearts, coins, and retro game elements. Use bright arcade colors: green (#39FF14), blue (#0066FF), red (#FF0000). Authentic retro game aesthetic, centered, print-ready on transparent background."
-        },
-        {
-            title: "Ocean Dreams",
-            theme: "Sea life and tranquility",
-            style: "Illustrative watercolor",
-            colorScheme: "Teal (#008B8B), Coral (#FF7F50), Navy (#001F3F)",
-            targetAudience: "Ocean lovers, beach enthusiasts",
-            designElements: "Whale, waves, seashells, bubbles",
-            mood: "Dreamy, peaceful, magical",
-            aiPrompt: "Dreamy watercolor T-shirt design featuring a majestic whale swimming through stylized waves. Include scattered bubbles and small fish. Use teal (#008B8B), coral (#FF7F50) and navy (#001F3F) palette. Soft watercolor texture with flowing lines. Centered composition, print-ready on transparent background."
+            style: "Synthwave",
+            colorScheme: "Orange, Pink, Purple",
+            targetAudience: "Retrowave fans",
+            designElements: "Palm trees, sunset, grid",
+            mood: "Nostalgic",
+            aiPrompt: "Synthwave retro T-shirt design, sunset stripes, palm trees, perspective grid. 80s aesthetic."
         },
         {
             title: "Urban Graffiti",
-            theme: "Street art culture",
-            style: "Bold graffiti",
-            colorScheme: "Yellow (#FFE135), Magenta (#FF00FF), Cyan (#00FFFF)",
-            targetAudience: "Street art fans, hip-hop culture",
-            designElements: "Spray paint effects, drips, bold letters",
-            mood: "Edgy, rebellious, creative",
-            aiPrompt: "Bold graffiti-style T-shirt design with abstract spray paint elements and dripping effects. Use vibrant yellow (#FFE135), magenta (#FF00FF), and cyan (#00FFFF). Include paint splatter textures. Urban street art aesthetic, dynamic composition. Print-ready on transparent background."
+            theme: "Street art",
+            style: "Graffiti",
+            colorScheme: "Yellow, Magenta, Cyan",
+            targetAudience: "Street culture",
+            designElements: "Spray paint, drips",
+            mood: "Edgy",
+            aiPrompt: "Urban graffiti T-shirt design, bold lettering, spray paint drips, vibrant colors."
         },
         {
-            title: "Forest Spirit",
-            theme: "Mystical nature",
-            style: "Illustrated fantasy",
-            colorScheme: "Forest green (#228B22), Brown (#8B4513), Gold accents",
-            targetAudience: "Fantasy lovers, nature enthusiasts",
-            designElements: "Deer with antlers, forest silhouette, mystical elements",
-            mood: "Magical, serene, enchanting",
-            aiPrompt: "Fantasy illustration T-shirt design featuring a majestic deer with flowering antlers. Forest tree silhouettes in background with tiny glowing fireflies. Use forest green (#228B22) and brown (#8B4513) with gold accents. Mystical atmosphere, centered composition. Print-ready on transparent background."
+            title: "Nature Spirit",
+            theme: "Nature",
+            style: "Line Art",
+            colorScheme: "Earth tones",
+            targetAudience: "Nature lovers",
+            designElements: "Leaves, mountain",
+            mood: "Peaceful",
+            aiPrompt: "Line art T-shirt design, mountain range with leaves, earth tones, minimalist."
         },
         {
-            title: "Positive Energy",
-            theme: "Happiness and motivation",
-            style: "Bold typography",
-            colorScheme: "Sunshine yellow (#FFDD00), Orange (#FF8C00), Coral",
-            targetAudience: "Optimists, motivational seekers",
-            designElements: "Uplifting quote, sun rays, positive symbols",
-            mood: "Happy, energizing, uplifting",
-            aiPrompt: "Bold typography T-shirt design with the phrase 'Choose Joy' in chunky modern font. Include radiating sun rays and small decorative elements like stars and hearts. Use sunshine yellow (#FFDD00) to orange (#FF8C00) gradient. Cheerful and bold, centered composition. Print-ready on transparent background."
+            title: "Geometric Wolf",
+            theme: "Animals",
+            style: "Geometric Low Poly",
+            colorScheme: "Blue, White, Grey",
+            targetAudience: "Animal lovers",
+            designElements: "Wolf head, triangles",
+            mood: "Strong",
+            aiPrompt: "Geometric low poly wolf head T-shirt design, blue and white color palette, sharp angles."
         }
     ];
 
-    // Generate 10 sample ideas
-    const ideas = sampleIdeas.slice(0, 10).map((idea, index) => ({
-        id: index + 1,
-        inspirationSource: 'Sample Design Library',
-        ...idea
-    }));
-
-    // Save ideas
-    if (!fs.existsSync(DATA_DIR)) {
-        fs.mkdirSync(DATA_DIR, { recursive: true });
+    // Duplicate to fill 10
+    const ideas = [];
+    for (let i = 0; i < 10; i++) {
+        const template = sampleIdeas[i % sampleIdeas.length];
+        ideas.push({
+            id: i + 1,
+            inspirationSource: 'Sample Library',
+            ...template,
+            title: `${template.title} ${Math.ceil((i + 1) / 5)}`
+        });
     }
 
+    // Save ideas
+    if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
     const ideasPath = path.join(DATA_DIR, 'ideas.json');
     fs.writeFileSync(ideasPath, JSON.stringify(ideas, null, 2));
 
     console.log(`\n✅ Generated ${ideas.length} sample design ideas!`);
-    console.log(`   📄 Ideas saved to: ${ideasPath}`);
-
     return ideas;
-}
-
-/**
- * Generate a single sample idea
- */
-function generateSingleSampleIdea(id) {
-    const themes = ['Space', 'Nature', 'Urban', 'Retro', 'Minimal', 'Abstract', 'Cute', 'Bold', 'Elegant', 'Fun'];
-    const styles = ['Minimalist', 'Watercolor', 'Vector', 'Hand-drawn', 'Geometric', 'Vintage', 'Modern', 'Grunge'];
-
-    return {
-        id,
-        inspirationSource: 'Auto-generated',
-        title: `Creative Design ${id}`,
-        theme: themes[id % themes.length],
-        style: styles[id % styles.length],
-        colorScheme: 'Vibrant mixed palette',
-        targetAudience: 'General audience',
-        designElements: 'Abstract shapes, typography, decorative elements',
-        mood: 'Inspiring and contemporary',
-        aiPrompt: `Create a unique T-shirt design with ${themes[id % themes.length].toLowerCase()} theme in ${styles[id % styles.length].toLowerCase()} style. Use vibrant colors, centered composition, print-ready on transparent background.`
-    };
 }
 
 /**
@@ -443,26 +394,15 @@ function generateSingleSampleIdea(id) {
 export function formatIdeasForEmail(ideas) {
     let text = '🎨 T-SHIRT DESIGN IDEAS\n';
     text += '='.repeat(50) + '\n\n';
-    text += `Generated: ${new Date().toLocaleString()}\n`;
-    text += `Total Ideas: ${ideas.length}\n\n`;
-
     ideas.forEach((idea, index) => {
-        text += `${'─'.repeat(50)}\n`;
         text += `IDEA #${index + 1}: ${idea.title}\n`;
-        text += `${'─'.repeat(50)}\n\n`;
-        text += `📌 Theme: ${idea.theme}\n`;
-        text += `🎨 Style: ${idea.style}\n`;
-        text += `🌈 Colors: ${idea.colorScheme}\n`;
-        text += `👥 Target: ${idea.targetAudience}\n`;
-        text += `✨ Elements: ${idea.designElements}\n`;
-        text += `💭 Mood: ${idea.mood}\n`;
-        text += `\n📝 AI Generation Prompt:\n${idea.aiPrompt}\n\n`;
+        text += `Style: ${idea.style} | Mood: ${idea.mood}\n`;
+        text += `Prompt: ${idea.aiPrompt}\n\n`;
     });
-
     return text;
 }
 
-// Run directly if executed as main module
+// Run directly
 if (process.argv[1] === fileURLToPath(import.meta.url)) {
     analyzeAndGenerateIdeas().catch(console.error);
 }
