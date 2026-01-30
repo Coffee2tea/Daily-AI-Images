@@ -149,7 +149,13 @@ app.get('/api/images', (req, res) => {
     if (fs.existsSync(manifestPath)) {
       try {
         const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
-        if (manifest.images) {
+
+        // Check if manifest is fresh (within last 10 minutes)
+        const manifestTime = new Date(manifest.generatedAt).getTime();
+        const now = Date.now();
+        const tenMinutes = 10 * 60 * 1000;
+
+        if (now - manifestTime < tenMinutes && manifest.images) {
           manifest.images.forEach(img => currentRunIds.add(img.id));
         }
       } catch (e) {

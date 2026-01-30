@@ -21,6 +21,20 @@ async function main() {
     console.log('='.repeat(60));
 
     try {
+        // Clear previous run data
+        const fs = await import('fs');
+        const path = await import('path');
+        const rootDir = process.cwd();
+        const manifestPath = path.join(rootDir, 'data', 'manifest.json');
+        if (fs.existsSync(manifestPath)) {
+            try {
+                fs.unlinkSync(manifestPath);
+                console.log('   🧹 Cleared previous run manifest.');
+            } catch (e) {
+                console.log('   ⚠️ Failed to clear manifest:', e.message);
+            }
+        }
+
         // Step 1: Search for Design Trends
         console.log('\n📌 STEP 1: Searching for Fashion & Design Trends...');
         const trends = await scrapeDesignTrends();
