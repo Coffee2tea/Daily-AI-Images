@@ -195,35 +195,44 @@ export async function scrapeGoogleImages() {
             throw new Error('No images returned by Search API');
         }
 
-        console.log(`   📷 Found ${images.length} candidates. Downloading...`);
+        console.log(`   📷 Found ${images.length} candidates. Downloading (Parallel)...`);
 
-        let count = 0;
-        for (let i = 0; i < images.length && count < MAX_IMAGES; i++) {
-            const item = images[i];
-            // Expect item.url or item.src
+        const downloadTasks = images.slice(0, MAX_IMAGES + 5).map(async (item, index) => {
             const imageUrl = item.url || item.src;
+            if (!imageUrl) return null;
 
-            if (!imageUrl) continue;
+            const tempCount = index + 1; // Temporary ID for logging
+            const filename = `google_design_${String(tempCount).padStart(2, '0')}.jpg`;
+            const filepath = path.join(OUTPUT_DIR, filename);
 
             try {
-                const filename = `google_design_${String(count + 1).padStart(2, '0')}.jpg`;
-                const filepath = path.join(OUTPUT_DIR, filename);
-
-                console.log(`   ⬇️ Downloading image ${count + 1}...`);
+                // console.log(`   ⬇️ Downloading image ${tempCount}...`);
                 await downloadImage(imageUrl, filepath);
-
-                results.push({
-                    id: count + 1,
-                    title: item.title || item.description || `Design #${count + 1}`,
+                return {
+                    id: tempCount,
+                    title: item.title || item.description || `Design #${tempCount}`,
                     imageUrl: `/downloaded_images/${filename}`,
                     localPath: filepath,
                     source: 'api-search',
                     originalLink: item.source_url || imageUrl
-                });
-                count++;
+                };
             } catch (err) {
-                console.log(`   ⚠️ Failed to download image ${count + 1}: ${err.message}`);
+                // console.log(`   ⚠️ Failed to download image ${tempCount}: ${err.message}`);
+                return null;
             }
+        });
+
+        const downloadResults = await Promise.all(downloadTasks);
+
+        // Filter out failures and re-assign IDs to be sequential
+        results.push(...downloadResults.filter(r => r !== null));
+
+        // Re-number IDs
+        results.forEach((r, i) => r.id = i + 1);
+
+        // Trim to MAX_IMAGES
+        if (results.length > MAX_IMAGES) {
+            results.length = MAX_IMAGES;
         }
 
         if (results.length === 0) {
