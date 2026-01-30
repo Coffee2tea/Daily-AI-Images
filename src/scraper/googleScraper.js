@@ -204,7 +204,7 @@ export async function scrapeDesignTrends() {
         console.log(`   📝 Found ${textResults.length} trend articles/snippets.`);
 
         // Process results
-        textResults.slice(0, 10).forEach((item, index) => {
+        textResults.slice(0, MAX_IMAGES).forEach((item, index) => {
             results.push({
                 id: index + 1,
                 title: item.title,
