@@ -1,5 +1,85 @@
 [
   {
+    "id": "1769827416088_1",
+    "title": "GHOST-UTILITY: Future Relic Tee",
+    "description": "Oversized streetwear meets deconstructed DIY and Y2K nostalgia, filtered through minimalist, techwear-minded sustainability.",
+    "style": "Boxy, drop-shoulder heavyweight tee with trompe-l'oeil patchwork seams, utility blueprint graphics, and a modular, repair-forward aesthetic.",
+    "imagePath": "/generated_images/design_1769827416088_01.png",
+    "timestamp": 1769827416088
+  },
+  {
+    "id": "1769827416088_2",
+    "title": "GHOST-LAYER // ECOSYS V2K",
+    "description": "Future-nostalgia: deconstructed DIY meets techwear utility and Y2K chrome on a minimalist sustainable canvas.",
+    "style": "Oversized dropped-shoulder heavyweight tee with trompe-l'il layering, printed visible stitch lines, chrome typography, blueprint overlays, and subtle reflective hits.",
+    "imagePath": "/generated_images/design_1769827416088_02.png",
+    "timestamp": 1769827416088
+  },
+  {
+    "id": "1769827416088_3",
+    "title": "Inside-Out Glitch Layer Tee",
+    "description": "Deconstructed Y2K tech-minimalism with sustainable street utility",
+    "style": "Oversized dropped-shoulder heavyweight tee mixing DIY patchwork, trompe-l'oeil layering, and techwear micro-utility graphics",
+    "imagePath": "/generated_images/design_1769827416088_03.png",
+    "timestamp": 1769827416088
+  },
+  {
+    "id": "1769827416088_4",
+    "title": "Holo-Utility Glitchlayer Tee",
+    "description": "Post-Y2K nostalgia meets minimalist techwear and deconstructed DIY, executed with sustainable materials",
+    "style": "Oversized, drop-shoulder, heavyweight boxy tee with faux-layered hem, exposed overlock seams, and a detachable micro-utility pocket",
+    "imagePath": "/generated_images/design_1769827416088_04.png",
+    "timestamp": 1769827416088
+  },
+  {
+    "id": "1769827416088_5",
+    "title": "PATCH/SIGNAL_25",
+    "description": "Deconstructed Y2K techwear minimalism with sustainable DIY customization",
+    "style": "Oversized heavyweight, boxy drop-shoulder tee blending raw-edged, visible-seam aesthetics with modular techwear details and subtle Y2K chrome accents",
+    "imagePath": "/generated_images/design_1769827416088_05.png",
+    "timestamp": 1769827416088
+  },
+  {
+    "id": "1769827176446_1",
+    "title": "Cosmic Wanderer 1",
+    "description": "Space exploration",
+    "style": "Minimalist",
+    "imagePath": "/generated_images/design_1769827176446_01.png",
+    "timestamp": 1769827176446
+  },
+  {
+    "id": "1769827176446_2",
+    "title": "Retro Sunset 1",
+    "description": "80s nostalgia",
+    "style": "Synthwave",
+    "imagePath": "/generated_images/design_1769827176446_02.png",
+    "timestamp": 1769827176446
+  },
+  {
+    "id": "1769827176446_3",
+    "title": "Urban Graffiti 1",
+    "description": "Street art",
+    "style": "Graffiti",
+    "imagePath": "/generated_images/design_1769827176446_03.png",
+    "timestamp": 1769827176446
+  },
+  {
+    "id": "1769827176446_4",
+    "title": "Nature Spirit 1",
+    "description": "Nature",
+    "style": "Line Art",
+    "imagePath": "/generated_images/design_1769827176446_04.png",
+    "timestamp": 1769827176446
+  },
+  {
+    "id": "1769827176446_5",
+    "title": "Geometric Wolf 1",
+    "description": "Animals",
+    "style": "Geometric Low Poly",
+    "imagePath": "/generated_images/design_1769827176446_05.png",
+    "timestamp": 1769827176446
+  },
+  {
     "id": "1769825403950_1",
     "title": "Chrome Garden Tiger  Deconstructed Polo Tee",
     "description": "Retro-futurist Y2K meets nature-as-geometry with DIY deconstruction and street-layering illusions",

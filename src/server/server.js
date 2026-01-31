@@ -17,7 +17,7 @@ const rootDir = path.join(__dirname, '..', '..');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const APP_VERSION = '1.6.1'; // Trend Workflow Fix
+const APP_VERSION = '1.6.2'; // 5-Image Batch Update
 
 // --- In-Memory Log Buffer for Debugging ---
 const LOG_BUFFER_SIZE = 200;

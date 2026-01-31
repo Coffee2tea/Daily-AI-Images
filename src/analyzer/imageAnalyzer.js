@@ -127,7 +127,7 @@ async function analyzeAndGenerateIdeasInternal() {
             return generateSampleIdeas();
         }
 
-        console.log(`   🧠 Analyzing top 3 trends to generate 1 idea...`);
+        console.log(`   🧠 Analyzing top 3 trends to generate 5 unique ideas...`);
 
         // Prepare Context string
         // Truncate to top 3 trends to avoid token limits/issues
@@ -148,46 +148,50 @@ async function analyzeAndGenerateIdeasInternal() {
   ]
 }`;
 
-        const messages = [
-            {
-                role: "system",
-                content: "You are a visionary Creative Director. Your goal is to synthesize multiple fashion trends into unique, avant-garde T-shirt designs. Do not just copy the trends; mix and match them to create something fresh and unexpected. Output valid JSON only."
-            },
-            {
-                role: "user",
-                content: `Here are 10 diverse trending topics for 2024/2025:\n\n${context}\n\nSynthesize these inputs. Combine contrasting elements (e.g., retro + futuristic, nature + geometry) to generate 1 highly creative and distinct T-shirt design idea. \n\nIMPORTANT: Return ONLY a valid JSON object matching this structure. Do not wrap in markdown.\n${jsonStructure}`
-            }
-        ];
-
-        // Call API once for all ideas (faster/cheaper)
-        const responseText = await callChatApi(messages);
-
-        // Try to find JSON object
-        let jsonMatch = responseText.match(/\{[\s\S]*\}/);
-
-        // If no match, try to wrap content? No, just log it.
-        if (!jsonMatch) {
-            console.log("Raw response (no JSON found):", responseText);
-        }
-
-        let generatedIdeas = [];
-        if (jsonMatch) {
+        // Create an array of 5 promises to generate ideas in parallel
+        const ideaPromises = Array(5).fill(null).map(async (_, index) => {
             try {
-                const parsed = JSON.parse(jsonMatch[0]);
-                generatedIdeas = parsed.ideas || [];
+                // Call API for a single idea
+                // Randomize temperature slightly to ensure variety
+                const messages = [
+                    {
+                        role: "system",
+                        content: "You are a visionary Creative Director. Your goal is to synthesize multiple fashion trends into a unique, avant-garde T-shirt design. Mix and match trends to create something fresh. Output valid JSON only."
+                    },
+                    {
+                        role: "user",
+                        content: `Here are 10 diverse trending topics for 2024/2025:\n\n${context}\n\nSynthesize these inputs to generate 1 highly creative and distinct T-shirt design idea. \n\nIMPORTANT: Return ONLY a valid JSON object matching this structure. Do not wrap in markdown.\n${jsonStructure}`
+                    }
+                ];
+
+                const responseText = await callChatApi(messages);
+                let jsonMatch = responseText.match(/\{[\s\S]*\}/);
+
+                if (jsonMatch) {
+                    const parsed = JSON.parse(jsonMatch[0]);
+                    // Handle both { ideas: [...] } and { ...idea } formats
+                    let idea = parsed.ideas ? parsed.ideas[0] : parsed;
+                    if (idea) return idea;
+                }
+                throw new Error("Invalid structure");
             } catch (e) {
-                console.log("JSON Parse Error:", e);
-                // Try aggressive repair if needed?
+                console.log(`   ⚠️ Idea generation ${index + 1} failed: ${e.message}`);
+                return null;
             }
-        }
+        });
+
+        console.log(`   🚀 Generating 5 ideas in parallel...`);
+        const results = await Promise.all(ideaPromises);
+
+        // Filter out failures
+        let generatedIdeas = results.filter(i => i !== null);
 
         if (generatedIdeas.length === 0) {
-            throw new Error("Failed to generate ideas from LLM response");
+            throw new Error("Failed to generate any ideas");
         }
 
         // Format results
-        // Format results and ensure only 1 idea is processed
-        generatedIdeas = generatedIdeas.slice(0, 1).map((idea, i) => ({
+        generatedIdeas = generatedIdeas.map((idea, i) => ({
             id: i + 1,
             inspirationSource: 'Trend Analysis',
             ...idea
@@ -220,6 +224,9 @@ async function analyzeAndGenerateIdeasInternal() {
         });
 
         console.log(`   ✨ Generated ${generatedIdeas.length} design ideas from trends!`);
+
+        // If we have fewer than 5, maybe fill with samples? 
+        // For now, just return what we have (or duplicated if needed, but let's stick to valid ones)
 
         // Save to file
         const ideasPath = path.join(DATA_DIR, 'ideas.json');
