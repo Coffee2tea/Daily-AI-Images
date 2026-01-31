@@ -53,11 +53,11 @@ async function callChatApi(messages, jsonMode = true) {
 
     return new Promise((resolve, reject) => {
         const data = JSON.stringify({
-            model: "gpt-4o", // Using high capability model for vision/analysis
+            model: "gpt-5", // Using 'gpt-5' alias from spec
             messages: messages,
             temperature: 0.7,
-            max_tokens: 1000,
-            response_format: jsonMode ? { type: "json_object" } : undefined
+            max_tokens: 4096, // Increased to avoid 'length' cut-off
+            response_format: { type: "json_object" }
         });
 
         const url = new URL(`${API_BASE_URL}/backend/v1/chat/completions`);
@@ -77,12 +77,13 @@ async function callChatApi(messages, jsonMode = true) {
             res.on('end', () => {
                 if (res.statusCode >= 200 && res.statusCode < 300) {
                     try {
+                        console.log('DEBUG API RAW BODY:', body.substring(0, 500)); // Log first 500 chars
                         const json = JSON.parse(body);
                         const content = json.choices?.[0]?.message?.content;
                         if (!content) throw new Error("No content in API response");
                         resolve(content);
                     } catch (e) {
-                        reject(new Error(`Failed to parse API response: ${e.message}`));
+                        reject(new Error(`Failed to parse API response: ${e.message}. Body: ${body.substring(0, 200)}...`));
                     }
                 } else {
                     reject(new Error(`API Error ${res.statusCode}: ${body}`));
@@ -126,10 +127,11 @@ async function analyzeAndGenerateIdeasInternal() {
             return generateSampleIdeas();
         }
 
-        console.log(`   🧠 Analyzing ${trendsData.length} trends to generate 1 idea...`);
+        console.log(`   🧠 Analyzing top 3 trends to generate 1 idea...`);
 
         // Prepare Context string
-        const context = trendsData.map(t => `- ${t.title}: ${t.content}`).join('\n');
+        // Truncate to top 3 trends to avoid token limits/issues
+        const context = trendsData.slice(0, 3).map(t => `- ${t.title}: ${t.content}`).join('\n');
 
         const jsonStructure = `
 {
@@ -149,22 +151,34 @@ async function analyzeAndGenerateIdeasInternal() {
         const messages = [
             {
                 role: "system",
-                content: "You are a visionary Creative Director. Your goal is to synthesize multiple fashion trends into unique, avant-garde T-shirt designs. Do not just copy the trends; mix and match them to create something fresh and unexpected."
+                content: "You are a visionary Creative Director. Your goal is to synthesize multiple fashion trends into unique, avant-garde T-shirt designs. Do not just copy the trends; mix and match them to create something fresh and unexpected. Output valid JSON only."
             },
             {
                 role: "user",
-                content: `Here are 10 diverse trending topics for 2024/2025:\n\n${context}\n\nSynthesize these inputs. Combine contrasting elements (e.g., retro + futuristic, nature + geometry) to generate 1 highly creative and distinct T-shirt design idea. Return strict JSON structure: ${jsonStructure}`
+                content: `Here are 10 diverse trending topics for 2024/2025:\n\n${context}\n\nSynthesize these inputs. Combine contrasting elements (e.g., retro + futuristic, nature + geometry) to generate 1 highly creative and distinct T-shirt design idea. \n\nIMPORTANT: Return ONLY a valid JSON object matching this structure. Do not wrap in markdown.\n${jsonStructure}`
             }
         ];
 
         // Call API once for all ideas (faster/cheaper)
         const responseText = await callChatApi(messages);
-        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+
+        // Try to find JSON object
+        let jsonMatch = responseText.match(/\{[\s\S]*\}/);
+
+        // If no match, try to wrap content? No, just log it.
+        if (!jsonMatch) {
+            console.log("Raw response (no JSON found):", responseText);
+        }
 
         let generatedIdeas = [];
         if (jsonMatch) {
-            const parsed = JSON.parse(jsonMatch[0]);
-            generatedIdeas = parsed.ideas || [];
+            try {
+                const parsed = JSON.parse(jsonMatch[0]);
+                generatedIdeas = parsed.ideas || [];
+            } catch (e) {
+                console.log("JSON Parse Error:", e);
+                // Try aggressive repair if needed?
+            }
         }
 
         if (generatedIdeas.length === 0) {
@@ -172,19 +186,46 @@ async function analyzeAndGenerateIdeasInternal() {
         }
 
         // Format results
-        const results = generatedIdeas.slice(0, 1).map((idea, i) => ({
+        // Format results and ensure only 1 idea is processed
+        generatedIdeas = generatedIdeas.slice(0, 1).map((idea, i) => ({
             id: i + 1,
             inspirationSource: 'Trend Analysis',
             ...idea
         }));
 
-        // Save ideas
+        if (generatedIdeas.length === 0) {
+            console.log("   ⚠️ No ideas found in response. Using samples.");
+            return generateSampleIdeas();
+        }
+
+        // Sanitize ideas to remove smart quotes/non-ASCII that might break downstream APIs
+        generatedIdeas = generatedIdeas.map(idea => {
+            const clean = (str) => {
+                if (typeof str !== 'string') return str;
+                return str
+                    .replace(/[\u2018\u2019]/g, "'") // Smart quotes
+                    .replace(/[\u201C\u201D]/g, '"') // Smart double quotes
+                    .replace(/[^\x20-\x7E]/g, '');   // Strip non-printable/non-ASCII
+            };
+            return {
+                ...idea,
+                title: clean(idea.title),
+                theme: clean(idea.theme),
+                style: clean(idea.style),
+                colorScheme: clean(idea.colorScheme),
+                designElements: clean(idea.designElements),
+                mood: clean(idea.mood),
+                aiPrompt: clean(idea.aiPrompt)
+            };
+        });
+
+        console.log(`   ✨ Generated ${generatedIdeas.length} design ideas from trends!`);
+
+        // Save to file
         const ideasPath = path.join(DATA_DIR, 'ideas.json');
-        fs.writeFileSync(ideasPath, JSON.stringify(results, null, 2));
+        fs.writeFileSync(ideasPath, JSON.stringify(generatedIdeas, null, 2));
 
-        console.log(`\n✅ Generated ${results.length} design ideas from trends!`);
-        return results;
-
+        return generatedIdeas;
     } catch (fatalError) {
         console.log(`\n❌ Fatal error in Analyzer: ${fatalError.message}`);
         console.log(`   ⚠️ Switching to fallback: Generating sample ideas...`);

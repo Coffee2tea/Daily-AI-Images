@@ -1,30 +1,64 @@
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
-import dotenv from 'dotenv';
-dotenv.config();
+import https from 'https';
 
-async function testSvgGen() {
-    console.log("Testing SVG Generation with Gemini 2.0 Flash...");
-    try {
-        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-        const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash-exp' });
+const API_BASE_URL = "https://space.ai-builders.com";
+const API_TOKEN = "sk_e954e069_055cfe5e1e0e13a0e5cd1aaa141412afb110"; // Hardcoded for test script only
 
-        console.log("Sending request...");
-        const result = await model.generateContent("Generate an SVG string for a cute retro robot t-shirt design. Return only the SVG code.");
+async function callImageApi(prompt) {
+    return new Promise((resolve, reject) => {
+        const data = JSON.stringify({
+            prompt: prompt,
+            n: 1,
+            size: "1024x1024"
+        });
 
-        console.log("Response received.");
-        const text = result.response.text();
-        console.log("Preview:", text.substring(0, 200));
+        const url = new URL(`${API_BASE_URL}/backend/v1/images/generations`);
+        const options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${API_TOKEN}`,
+                'Content-Length': data.length
+            },
+            rejectUnauthorized: false
+        };
 
-        if (text.includes("<svg")) {
-            console.log("Success! SVG generated.");
-        } else {
-            console.log("No SVG found.");
-        }
+        console.log(`Sending request for prompt: "${prompt}"...`);
+        const startTime = Date.now();
 
-    } catch (error) {
-        console.error("SVG Gen Error:", error);
-    }
+        const req = https.request(url, options, (res) => {
+            let body = '';
+            res.on('data', chunk => body += chunk);
+            res.on('end', () => {
+                const duration = (Date.now() - startTime) / 1000;
+                console.log(`Response received in ${duration.toFixed(2)}s`);
+
+                if (res.statusCode >= 200 && res.statusCode < 300) {
+                    try {
+                        const json = JSON.parse(body);
+                        console.log("Success:", JSON.stringify(json).substring(0, 100) + "...");
+                        resolve(json);
+                    } catch (e) {
+                        reject(new Error(`Failed to parse API response: ${e.message}`));
+                    }
+                } else {
+                    reject(new Error(`API Error ${res.statusCode}: ${body}`));
+                }
+            });
+        });
+
+        req.on('error', (e) => reject(e));
+        req.write(data);
+        req.end();
+    });
 }
 
-testSvgGen();
+(async () => {
+    console.log("🚀 Testing Image Generation Latency...");
+    try {
+        await callImageApi("A cute robot t-shirt design");
+        console.log("✅ Test Complete");
+    } catch (e) {
+        console.error("❌ Test Failed:", e.message);
+    }
+})();

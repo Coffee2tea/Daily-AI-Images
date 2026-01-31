@@ -1,75 +1,13 @@
 {
-  "generatedAt": "2026-01-30T14:35:39.634Z",
+  "generatedAt": "2026-01-31T02:10:03.950Z",
   "images": [
     {
-      "id": 1,
-      "title": "Cyberpunk Lucky Cat Glitch",
-      "description": "Cyberpunk, Japanese Culture, Glitch Art",
-      "style": "Modern, Edgy, Graphic",
-      "imagePath": "/generated_images/design_01.png"
-    },
-    {
-      "id": 2,
-      "title": "Cyberpunk Skull Glitch",
-      "description": "Cyberpunk, glitch art, skull",
-      "style": "Modern, futuristic, edgy",
-      "imagePath": "/generated_images/design_02.png"
-    },
-    {
-      "id": 3,
-      "title": "Astral Jellyfish",
-      "description": "Underwater Exploration",
-      "style": "Illustration with gradient effect",
-      "imagePath": "/generated_images/design_03.png"
-    },
-    {
-      "id": 4,
-      "title": "OFFLINE (Rebooting)",
-      "description": "Digital Detox, Technology Humor",
-      "style": "Minimalist with a glitch art influence",
-      "imagePath": "/generated_images/design_04.png"
-    },
-    {
-      "id": 5,
-      "title": "Celestial Peaks",
-      "description": "Mountains & Night Sky",
-      "style": "Illustrative, Vintage",
-      "imagePath": "/generated_images/design_05.png"
-    },
-    {
-      "id": 6,
-      "title": "Retro Gaming Legends",
-      "description": "Classic Video Games",
-      "style": "Retro, Graphic, Nostalgic",
-      "imagePath": "/generated_images/design_06.png"
-    },
-    {
-      "id": 7,
-      "title": "Retro Anime Ramen",
-      "description": "Food, Anime, Japanese Culture",
-      "style": "Vintage Anime, Graphic",
-      "imagePath": "/generated_images/design_07.png"
-    },
-    {
-      "id": 8,
-      "title": "Growth Through Darkness",
-      "description": "Resilience, Personal Growth, Overcoming Obstacles",
-      "style": "Edgy, Dark, Minimalist",
-      "imagePath": "/generated_images/design_08.png"
-    },
-    {
-      "id": 9,
-      "title": "Retro Sunset Surfer Van",
-      "description": "Surfing, Road Trip, Sunset",
-      "style": "Vintage, Graphic",
-      "imagePath": "/generated_images/design_09.png"
-    },
-    {
-      "id": 10,
-      "title": "Fractured Terrain",
-      "description": "Geological, Nature-inspired",
-      "style": "Abstract, Textured, Urban",
-      "imagePath": "/generated_images/design_10.png"
+      "id": "1769825403950_1",
+      "title": "Chrome Garden Tiger  Deconstructed Polo Tee",
+      "description": "Retro-futurist Y2K meets nature-as-geometry with DIY deconstruction and street-layering illusions",
+      "style": "Oversized, boxy silhouette with deconstructed patchwork illusion; Y2K chrome accents; botanical filigree fused with vector wireframes; DIY visible seams",
+      "imagePath": "/generated_images/design_1769825403950_01.png",
+      "timestamp": 1769825403950
     }
   ]
 }
