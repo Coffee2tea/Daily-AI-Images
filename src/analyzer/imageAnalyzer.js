@@ -127,11 +127,11 @@ async function analyzeAndGenerateIdeasInternal() {
             return generateSampleIdeas();
         }
 
-        console.log(`   🧠 Analyzing top 3 trends to generate 5 unique ideas...`);
+        console.log(`   🧠 Analyzing ALL trends to generate 5 unique ideas...`);
 
         // Prepare Context string
-        // Truncate to top 3 trends to avoid token limits/issues
-        const context = trendsData.slice(0, 3).map(t => `- ${t.title}: ${t.content}`).join('\n');
+        // Use ALL trends for maximum context
+        const context = trendsData.map(t => `- ${t.title}: ${t.content}`).join('\n');
 
         const jsonStructure = `
 {
@@ -148,43 +148,44 @@ async function analyzeAndGenerateIdeasInternal() {
   ]
 }`;
 
-        // Create an array of 5 promises to generate ideas in parallel
-        const ideaPromises = Array(5).fill(null).map(async (_, index) => {
-            try {
-                // Call API for a single idea
-                // Randomize temperature slightly to ensure variety
-                const messages = [
-                    {
-                        role: "system",
-                        content: "You are a visionary Creative Director. Your goal is to synthesize multiple fashion trends into a unique, avant-garde T-shirt design. Mix and match trends to create something fresh. Output valid JSON only."
-                    },
-                    {
-                        role: "user",
-                        content: `Here are 10 diverse trending topics for 2024/2025:\n\n${context}\n\nSynthesize these inputs to generate 1 highly creative and distinct T-shirt design idea. \n\nIMPORTANT: Return ONLY a valid JSON object matching this structure. Do not wrap in markdown.\n${jsonStructure}`
-                    }
-                ];
+        // Single API call to generate all 5 ideas at once for better coherence and diversity
+        console.log(`   🧠 Sending trend context to AI for batch generation...`);
 
-                const responseText = await callChatApi(messages);
-                let jsonMatch = responseText.match(/\{[\s\S]*\}/);
-
-                if (jsonMatch) {
-                    const parsed = JSON.parse(jsonMatch[0]);
-                    // Handle both { ideas: [...] } and { ...idea } formats
-                    let idea = parsed.ideas ? parsed.ideas[0] : parsed;
-                    if (idea) return idea;
-                }
-                throw new Error("Invalid structure");
-            } catch (e) {
-                console.log(`   ⚠️ Idea generation ${index + 1} failed: ${e.message}`);
-                return null;
+        const messages = [
+            {
+                role: "system",
+                content: "You are a visionary Creative Director. Your goal is to synthesize multiple fashion trends into 5 UNIQUE and DISTINCT avant-garde T-shirt designs. Mix and match different trends for each idea. Avoid repetition. Output valid JSON only."
+            },
+            {
+                role: "user",
+                content: `Here are diverse trending topics for 2024/2025:\n\n${context}\n\nSynthesize these inputs to generate 5 highly creative and distinct T-shirt design ideas. \n\nIMPORTANT requirements:\n1. Each idea must be significantly different from the others (different styles, moods, color palettes).\n2. Mix different trends together creatively.\n3. Return ONLY a valid JSON object matching this structure under the 'ideas' key.\n${jsonStructure}`
             }
-        });
+        ];
 
-        console.log(`   🚀 Generating 5 ideas in parallel...`);
-        const results = await Promise.all(ideaPromises);
+        let generatedIdeas = [];
+        try {
+            const responseText = await callChatApi(messages);
+            let jsonMatch = responseText.match(/\{[\s\S]*\}/);
 
-        // Filter out failures
-        let generatedIdeas = results.filter(i => i !== null);
+            if (jsonMatch) {
+                const parsed = JSON.parse(jsonMatch[0]);
+                if (parsed.ideas && Array.isArray(parsed.ideas)) {
+                    generatedIdeas = parsed.ideas;
+                } else {
+                    throw new Error("Invalid structure: missing 'ideas' array");
+                }
+            } else {
+                throw new Error("No JSON found in response");
+            }
+        } catch (e) {
+            console.log(`   ⚠️ Batch idea generation failed: ${e.message}`);
+            throw e;
+        }
+
+        // Validate we have 5 ideas
+        if (generatedIdeas.length < 5) {
+            console.log(`   ⚠️ Only generated ${generatedIdeas.length} ideas. Filling with samples/duplicates if needed (not implemented yet).`);
+        }
 
         if (generatedIdeas.length === 0) {
             throw new Error("Failed to generate any ideas");

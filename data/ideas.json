@@ -2,56 +2,56 @@
   {
     "id": 1,
     "inspirationSource": "Trend Analysis",
-    "title": "GHOST-UTILITY: Future Relic Tee",
-    "theme": "Oversized streetwear meets deconstructed DIY and Y2K nostalgia, filtered through minimalist, techwear-minded sustainability.",
-    "style": "Boxy, drop-shoulder heavyweight tee with trompe-l'oeil patchwork seams, utility blueprint graphics, and a modular, repair-forward aesthetic.",
-    "colorScheme": "Matte ash black base with charcoal and bone grayscale, oil-slick iridescent accents, micro hits of safety lime, subtle reflective silver.",
-    "designElements": "Front: blueprint-style grid framing a deconstructed patchwork illusion with visible zigzag stitch prints, reflective arc strips, and a ghosted utility pocket outline; detachable recycled-nylon micro-pouch at the right hem (Velcro/snap), labeled with tiny 'repair points' dots and numeric callouts. Back: oversized barcode-maze with pixel glitch shards and a negative-space cargo pocket silhouette; micro-typography about reuse and repair in safety lime along the spine. Sleeves: one faux cargo pocket outline in reflective ink, the other with contrast stitch print. Finishes: garment-dyed ash black, raw-look side hem notch with woven pull tab, pre-shrunk 280320gsm organic cotton.",
-    "mood": "Tactical calm meets rebellious future-nostalgia; engineered, artisanal, and subversively clean.",
-    "aiPrompt": "Design a front-and-back graphic for an oversized drop-shoulder streetwear T-shirt on a matte ash-black base: deconstructed DIY patchwork illusion with visible white zigzag stitches; technical blueprint grid lines; Y2K chrome gradient highlights and iridescent oil-slick accents; reflective tape arcs; glitch pixel shards; minimal micro-typography about repair and reuse; ghosted utility pocket outlines; back features a large barcode-maze motif. Keep strong negative space and high contrast. Intended for screenprint with puff ink plus reflective heat-transfer details. No logos, no brands. Ultra-clean, editorial presentation, high-resolution vector clarity."
+    "title": "Silent Cargo Signal",
+    "theme": "Minimalist Techwear x Oversized Utility x Sustainability",
+    "style": "Monochrome modular utility with clean lines and engineered function",
+    "colorScheme": "matte black, charcoal, ash grey with a micro-accent of volt green",
+    "designElements": "drop-shoulder heavyweight organic cotton; tonal ripstop chest and side panels; asymmetrical envelope cargo pocket with hidden magnets; laser-cut mesh vents at back yoke; reflective stitch mapping of the oversized silhouette; removable D-ring tabs; micro data-glyph at hem; double-layer illusion hem print for subtle layering effect",
+    "mood": "precise, futuristic, calm",
+    "aiPrompt": "oversized techwear t-shirt, charcoal organic cotton with tonal ripstop panels, asymmetrical magnetic cargo pocket, laser-cut back ventilation slits, reflective piping accents, tiny volt green tab, minimalist barcode-style glyph near hem, soft studio lighting, front and back flat lay, ultra-detailed textures"
   },
   {
     "id": 2,
     "inspirationSource": "Trend Analysis",
-    "title": "GHOST-LAYER // ECOSYS V2K",
-    "theme": "Future-nostalgia: deconstructed DIY meets techwear utility and Y2K chrome on a minimalist sustainable canvas.",
-    "style": "Oversized dropped-shoulder heavyweight tee with trompe-l'il layering, printed visible stitch lines, chrome typography, blueprint overlays, and subtle reflective hits.",
-    "colorScheme": "Matte charcoal base with bio-lime neon, bone, reflective silver, and oil-slick iridescent highlights.",
-    "designElements": "Front: a ghosted 'layered jacket' silhouette built from printed raw-edge seams, patchwork stitch paths, and utility-pocket blueprints; central chrome Y2K wordmark ECOSYS_2.5 with pixel-flames morphing into ivy; behind it, a soft airbrushed heat-map orb and thin grid. Micro-details: upcycle icon, QR-style block labeled REMAKE // REV A_2025, and tiny repair notes. Sleeves: partial seam maps that wrap over cuffs. Back: large modular grid framing a circuit-vine recycling emblem with sparse microtype and coordinates-style numerals, plus a vertical barcode line suggesting detachable modular panels.",
-    "mood": "Future-optimistic and rebellious, utilitarian calm with handcrafted authenticity.",
-    "aiPrompt": "Design a print-ready vector t-shirt graphic titled 'GHOST-LAYER // ECOSYS V2K'; front: central chrome Y2K wordmark ECOSYS_2.5 with pixel flames morphing into ivy leaves, overlaid with thin technical blueprint lines mapping phantom cargo pockets and layered panels; printed raw-edge stitch paths and patchwork seams forming a ghost jacket silhouette; add tiny upcycle icon, QR-style block, and 'REMAKE // REV A_2025'; gradient-mesh heat-map orb behind text; maintain generous negative space around chest. Back: full modular grid with a large eco-tech emblem (circuit vines + recycling arrows), sparse microtype and assembly notes. Style blend: deconstructed DIY, techwear utility, minimalist restraint, Y2K chrome accents. Color palette: matte charcoal background, accents in neon bio-lime, bone, reflective silver, oil-slick iridescent; crisp vector lines, halftone airbrush orbs, subtle glitch, no brand logos."
+    "title": "Bubble Chrome Pastel Rodeo",
+    "theme": "Y2K Glam Revival x Denim All-Over x Retro Hip-Hop Graphics",
+    "style": "Maximalist trompe-l'oeil denim layered with liquid chrome and rhinestone constellations",
+    "colorScheme": "pistachio, sky blue, washed pink gradient with liquid chrome silver and white highlights",
+    "designElements": "photoreal denim seam map and pocket shadows printed all-over; faux crease and whisker highlights; oversized chrome bubble-letter centerpiece in foil; micro rhinestone clusters forming star charts; printed satin piping along edges; mock care-label collage as a back graphic; double-hem shadow print to simulate layering",
+    "mood": "flashy, playful, celebratory",
+    "aiPrompt": "avant-garde y2k streetwear t-shirt, pastel gradient pistachio sky blue washed pink, trompe-l'oeil denim jacket seams and pocket shadows, liquid chrome bubble letters in the center, scattered crystal-like rhinestone constellations, glossy highlights, oversized silhouette, studio white background, high gloss finish"
   },
   {
     "id": 3,
     "inspirationSource": "Trend Analysis",
-    "title": "Inside-Out Glitch Layer Tee",
-    "theme": "Deconstructed Y2K tech-minimalism with sustainable street utility",
-    "style": "Oversized dropped-shoulder heavyweight tee mixing DIY patchwork, trompe-l'oeil layering, and techwear micro-utility graphics",
-    "colorScheme": "Base carbon black #0F0F10; contrast bone white #EAE7E2; metallic gray #A9B0B8; accents safety orange #FF6A00; iridescent gradient violet to teal #7A5CFF to #20E3B2",
-    "designElements": "Front: trompe-l'oeil inside-out hoodie silhouette mapped in bone white seam lines with faux overlock stitches and ghosted care-tag typography; asymmetrical recycled-jersey patch strips at left shoulder and right hem with raw-edge topstitch graphics; techwear pocket outlines and strap anchor icons with microtype that reads Repair Reuse Recode; pinpoint hits of safety orange on bar-tack markers. Back: oversized Y2K chrome butterfly-circuit hybrid emblem with soft starburst glints and subtle halftone, centered high; below, a minimalist utility grid in metallic gray for balance. Sleeves: one micro cargo-tab print on right sleeve, one deconstructed patch print on left. Hem: printed tear-away cue and zigzag stitch motif to nod to DIY. Materials callout embedded in art to signal recycled cotton and water-based inks.",
-    "mood": "Future nostalgic, utilitarian, rebellious, handcrafted yet refined",
-    "aiPrompt": "Flat front and back vector mockup of an oversized dropped-shoulder heavyweight T-shirt in carbon black (#0F0F10). Front shows trompe-l'oeil layered hoodie silhouette rendered as bone white (#EAE7E2) seam mapping, exposed overlock stitch graphics, ghosted inside-out care tags, and utility pocket outlines. Add asymmetrical textured patch shapes at left shoulder and right hem to simulate recycled jersey with raw edges, indicated by zigzag topstitch lines. Integrate techwear micro-utility icons and micro-typography reading Repair Reuse Recode, with micro hits of safety orange (#FF6A00). Use iridescent gradient accents from violet (#7A5CFF) to teal (#20E3B2). Back features a large Y2K chrome butterfly merged with circuit board traces, with subtle halftone and starburst glints, plus a minimalist metallic gray (#A9B0B8) utility grid below. Keep layout minimalist with generous negative space, water-based ink texture, studio lighting, high detail."
+    "title": "Garden of Unfinished Threads",
+    "theme": "Deconstructed DIY x Fine Florals x Animal Filigree x Upcycling",
+    "style": "Artisanal patchwork with exposed construction and layered botanical linework",
+    "colorScheme": "earth khaki, sand, off-white with plum, magenta, and coral stitches",
+    "designElements": "mismatched deadstock jersey panels with raw edges; external overlock seams in contrasting colors; hand-drawn fine-line flora crawling across seams; translucent ghost leopard dots in pale pigment; sashiko-inspired reinforcement embroidery; contrast basting left intentionally visible; printed care-poem at neck about repair and reuse",
+    "mood": "intimate, rebellious, handcrafted",
+    "aiPrompt": "deconstructed patchwork t-shirt, earth-tone panels khaki sand off-white, exposed overlock stitching in plum magenta coral, hand-inked botanical linework wrapping seams, subtle pale animal print underlayer, sashiko reinforcement stitches, raw edges and texture focus, macro detail studio lighting"
   },
   {
     "id": 4,
     "inspirationSource": "Trend Analysis",
-    "title": "Holo-Utility Glitchlayer Tee",
-    "theme": "Post-Y2K nostalgia meets minimalist techwear and deconstructed DIY, executed with sustainable materials",
-    "style": "Oversized, drop-shoulder, heavyweight boxy tee with faux-layered hem, exposed overlock seams, and a detachable micro-utility pocket",
-    "colorScheme": "Blackened charcoal base with optic white and graphite graphics, holographic silver foil hits, acid-lime stitch accents",
-    "designElements": "Front: central glitch-tribal graphic (an abstracted Y2K chrome motif broken into a pixel grid) in white and graphite with selective holographic foil shimmer; left chest detachable translucent recycled-ripstop pocket with reflective piping and matte black snap; exposed zigzag topstitch tracing an offset 'ghost layer' panel line that mimics a second tee underneath; acid-lime bartacks at stress points. Back: asymmetrical grayscale patchwork print simulating raw-edged panels with visible seam artwork; vertical tech data strip (care, fiber %, recycle iconography) rendered as a QR-style typographic column; subtle 'REC0DE' wordmark in pixel-bubble lettering; side seam grosgrain loop to clip chains/crossbody; internal tagless print, water-based inks, pre-shrunk organic cotton.",
-    "mood": "Nostalgic-future calm, utilitarian, subversively refined",
-    "aiPrompt": "Photoreal studio render of an oversized drop-shoulder unisex heavyweight T-shirt (240260 gsm) in blackened charcoal. Front view: central glitch-tribal graphic derived from Y2K chrome, broken into a pixel grid, printed in optic white and graphite with selective holographic silver foil gleam; exposed overlock seams and zigzag topstitch tracing an offset faux-layer panel; small detachable translucent recycled ripstop pocket at left chest with matte black snap and thin reflective piping; acid-lime bartacks at anchor points. Back view: asymmetrical grayscale patchwork print that imitates raw edges and visible seams, vertical tech-spec column resembling a QR/data strip, subtle 'REC0DE' pixel-bubble wordmark; side seam grosgrain utility loop. Materials: organic cotton jersey, deadstock nylon ripstop, water-based inks, reflective accents. Lighting: soft diffused daylight, color accurate, high detail, 8k, neutral gray backdrop, ghost mannequin and flat-lay close-ups of pocket, seams, and foil finish."
+    "title": "Orbit Rugby 2.0",
+    "theme": "90s Sports Revival x Polo Hybrid x Minimalist Precision",
+    "style": "Oversized rugby stripes refined with performance cues and clean typography",
+    "colorScheme": "navy and white stripes with safety orange and cool grey accents",
+    "designElements": "knit polo collar integrated into tee body; half snap placket; wide vertical rugby stripes interrupted by thin orange circuit-like data lines; side seam zippers for layering; jacquard patch in abstract shield silhouette; cool grey micro-perforated underarm panels; numberless block '00' created as negative space on back",
+    "mood": "disciplined, kinetic, urbane",
+    "aiPrompt": "oversized t-shirt with knit polo collar, bold navy and white rugby stripes, thin safety orange pinstripes like circuits, half snap placket, side seam zips, abstract shield patch without logos, cool grey micro-perforated underarm panels, clean studio front and back view"
   },
   {
     "id": 5,
     "inspirationSource": "Trend Analysis",
-    "title": "PATCH/SIGNAL_25",
-    "theme": "Deconstructed Y2K techwear minimalism with sustainable DIY customization",
-    "style": "Oversized heavyweight, boxy drop-shoulder tee blending raw-edged, visible-seam aesthetics with modular techwear details and subtle Y2K chrome accents",
-    "colorScheme": "Base: washed charcoal black. Prints: bone white and matte ink-black with spot-gloss black overlays. Accents: chrome-silver with iridescent teallilac gradient and micro hits of neon chartreuse.",
-    "designElements": "Front: an offset 'phantom' chest pocket suggested by dashed seam graphics, printed bar-tacks, and a matte-on-gloss rectangle; tiny chrome-foil orb-antenna icon with faint scan lines and microtype '20002025'; two chartreuse bar-tack embroideries at corners. Left hem: snap-on upcycled ripstop mini-pocket panel (detachable) with zig-zag topstitch and D-ring loop (techwear nod). Sleeves: printed faux overlock seams and perforated guide dots inviting DIY stitch additions. Back: large deconstructed patchwork grid of torn-edge rectangles sampling textures (denim weave, circuit traces, velour grain), overlaid with topographic/utility linework and a sweeping Y2K chrome ripple shape; subtle black-on-black gloss layers create depth; dashed 'layer lines' double as customization guides. Neck: exterior collage label from deadstock webbing with frayed edge. Materials/process: 260gsm organic cotton, garment-dyed charcoal; water-based inks, recycled ripstop for the pocket; repair-friendly construction.",
-    "mood": "Urban utilitarian meets nostalgic-future; experimental, DIY-forward, confident, and collectible",
-    "aiPrompt": "Create a flat-lay, print-ready front and back graphic for an oversized heavyweight black T-shirt. Aesthetic: minimalist techwear meets Y2K nostalgia with deconstructed/DIY energy. Front: asymmetrical phantom chest pocket defined by dashed seam lines, printed bar-tacks, and a matte-on-gloss black rectangle; small chrome-silver orb/antenna icon with faint scan lines near pocket corner; minimal microtype reading \"20002025\"; tiny neon chartreuse stitch accents. Add a detachable-looking mini ripstop pocket panel at the left hem with zig-zag stitching and a small D-ring (drawn as a graphic). Sleeves: subtle printed faux overlock seams and micro perforation dots as DIY guides. Back: bold deconstructed patchwork grid of torn-edge rectangles showing textures (circuit board traces, denim weave, velour grain) with topographic/utility linework overlaid; a sweeping iridescent chrome ripple curve cuts across the grid; layered black-on-black gloss shapes for depth. Palette: charcoal black base, bone white and matte black inks, chrome-silver with iridescent teallilac gradient accents, tiny neon chartreuse details. Style: high-contrast vector, clean lines, precise alignment, screenprint-friendly layers, no brand logos, no model, neutral background."
+    "title": "Heatmap Beast",
+    "theme": "Gothic Streetwear x Tech Aesthetics x Reactive Animal Pattern",
+    "style": "Dark cyber-animal motif with thermochromic overlays and IR grid precision",
+    "colorScheme": "matte black base shifting to neon magma gradient: infrared oranges, hot pinks, toxic yellows",
+    "designElements": "thermo-reactive ink stripes morphing from black to neon heatmap; puff-print ridges tracing muscular contours; gloss-black infrared gridlines; micro-manifesto microtext along spine; scalloped split hem and elongated sleeves; stealth side-seam pocket; subtle matte black emblem at chest",
+    "mood": "feral, mysterious, high-tech",
+    "aiPrompt": "black avant-garde streetwear t-shirt, thermochromic heatmap zebra-tiger stripes that shift to neon oranges pinks yellows with warmth, gloss-black infrared grid overlay, subtle puff-print ribbed contours, split scalloped hem, elongated sleeves, moody low-key lighting, texture close-up"
   }
 ]
