@@ -289,6 +289,157 @@ app.post('/api/send-email', async (req, res) => {
   }
 });
 
+// --- Cloud Etsy OAuth2 PKCE Routes ---
+// Stores the PKCE code_verifier in memory between /start and /callback
+const etsyOAuthState = new Map(); // state -> { codeVerifier, createdAt }
+
+function generateCodeVerifier() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-._~';
+  let v = '';
+  for (let i = 0; i < 64; i++) v += chars.charAt(Math.floor(Math.random() * chars.length));
+  return v;
+}
+
+async function sha256Base64url(str) {
+  const { createHash } = await import('crypto');
+  return createHash('sha256').update(str).digest('base64url');
+}
+
+async function exchangeEtsyCode(code, codeVerifier, redirectUri) {
+  const https = await import('https');
+  return new Promise((resolve, reject) => {
+    const body = new URLSearchParams({
+      grant_type: 'authorization_code',
+      client_id: process.env.ETSY_API_KEY,
+      redirect_uri: redirectUri,
+      code,
+      code_verifier: codeVerifier
+    }).toString();
+
+    const req = https.default.request({
+      hostname: 'api.etsy.com',
+      path: '/v3/public/oauth/token',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Content-Length': Buffer.byteLength(body)
+      }
+    }, (res) => {
+      let data = '';
+      res.on('data', c => data += c);
+      res.on('end', () => { try { resolve(JSON.parse(data)); } catch (e) { reject(e); } });
+    });
+    req.on('error', reject);
+    req.write(body);
+    req.end();
+  });
+}
+
+// Step 1: Redirect user to Etsy authorization page
+app.get('/auth/etsy/start', async (req, res) => {
+  if (!process.env.ETSY_API_KEY) {
+    return res.status(400).send('<h2>❌ ETSY_API_KEY not set in environment variables.</h2>');
+  }
+
+  const codeVerifier = generateCodeVerifier();
+  const codeChallenge = await sha256Base64url(codeVerifier);
+  const state = Math.random().toString(36).substring(2) + Date.now();
+
+  // Store verifier (expires after 10 min)
+  etsyOAuthState.set(state, { codeVerifier, createdAt: Date.now() });
+  // Cleanup old states
+  for (const [k, v] of etsyOAuthState) {
+    if (Date.now() - v.createdAt > 10 * 60 * 1000) etsyOAuthState.delete(k);
+  }
+
+  const baseUrl = process.env.BASE_URL || `http://localhost:${PORT}`;
+  const redirectUri = `${baseUrl}/auth/etsy/callback`;
+
+  const authUrl = new URL('https://www.etsy.com/oauth/connect');
+  authUrl.searchParams.set('response_type', 'code');
+  authUrl.searchParams.set('redirect_uri', redirectUri);
+  authUrl.searchParams.set('scope', 'listings_r listings_w listings_d shops_r');
+  authUrl.searchParams.set('client_id', process.env.ETSY_API_KEY);
+  authUrl.searchParams.set('state', state);
+  authUrl.searchParams.set('code_challenge', codeChallenge);
+  authUrl.searchParams.set('code_challenge_method', 'S256');
+
+  res.redirect(authUrl.toString());
+});
+
+// Step 2: Etsy redirects back here with the auth code
+app.get('/auth/etsy/callback', async (req, res) => {
+  const { code, state, error } = req.query;
+
+  if (error) {
+    return res.status(400).send(`<h2>❌ Etsy denied authorization: ${error}</h2>`);
+  }
+
+  const stored = etsyOAuthState.get(state);
+  if (!code || !stored) {
+    return res.status(400).send('<h2>❌ Invalid or expired OAuth state. Please <a href="/auth/etsy/start">try again</a>.</h2>');
+  }
+
+  etsyOAuthState.delete(state);
+
+  try {
+    const baseUrl = process.env.BASE_URL || `http://localhost:${PORT}`;
+    const redirectUri = `${baseUrl}/auth/etsy/callback`;
+    const tokens = await exchangeEtsyCode(code, stored.codeVerifier, redirectUri);
+
+    if (!tokens.access_token) {
+      throw new Error(`No access_token in response: ${JSON.stringify(tokens)}`);
+    }
+
+    console.log('✅ Etsy OAuth successful! Tokens obtained.');
+
+    // Display tokens on screen — user copies them to deploy-config.json
+    res.send(`<!DOCTYPE html>
+<html>
+<head>
+  <title>Etsy Connected!</title>
+  <style>
+    body { font-family: sans-serif; max-width: 700px; margin: 60px auto; padding: 0 20px; }
+    h1 { color: #f1641e; }
+    .token-box { background: #1f2937; color: #86efac; border-radius: 8px; padding: 16px; font-family: monospace; font-size: 13px; word-break: break-all; margin: 12px 0; }
+    .step { background: #f9fafb; border-left: 4px solid #f1641e; padding: 12px 16px; margin: 16px 0; border-radius: 4px; }
+    button { background: #f1641e; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 14px; margin-top: 6px; }
+  </style>
+</head>
+<body>
+  <h1>✅ Etsy Connected!</h1>
+  <p>Copy these values into your <strong>deploy-config.json</strong> → <code>env_vars</code>, then redeploy.</p>
+
+  <div class="step">
+    <strong>ETSY_ACCESS_TOKEN</strong>
+    <div class="token-box" id="at">${tokens.access_token}</div>
+    <button onclick="navigator.clipboard.writeText('${tokens.access_token}')">Copy</button>
+  </div>
+
+  ${tokens.refresh_token ? `
+  <div class="step">
+    <strong>ETSY_REFRESH_TOKEN</strong>
+    <div class="token-box" id="rt">${tokens.refresh_token}</div>
+    <button onclick="navigator.clipboard.writeText('${tokens.refresh_token}')">Copy</button>
+  </div>` : ''}
+
+  <div class="step">
+    <strong>Next steps:</strong>
+    <ol>
+      <li>Add <code>ETSY_ACCESS_TOKEN</code> (and optionally <code>ETSY_REFRESH_TOKEN</code>) to <code>deploy-config.json</code></li>
+      <li>Run <code>python deploy_script.py</code> to redeploy</li>
+      <li>The workflow will now auto-upload designs to your Etsy shop as draft listings</li>
+    </ol>
+  </div>
+</body>
+</html>`);
+
+  } catch (err) {
+    console.error('Etsy OAuth callback error:', err);
+    res.status(500).send(`<h2>❌ Token exchange failed</h2><pre>${err.message}</pre><p><a href="/auth/etsy/start">Try again</a></p>`);
+  }
+});
+
 // --- Etsy API Routes ---
 
 // API: Get Etsy shop info
