@@ -434,17 +434,16 @@ async function runBackgroundWorkflow(jobId) {
         }
 
         let uploaded = 0;
-        for (let i = 0; i < images.length; i++) {
-          const img = images[i];
+        // ✅ Parallel upload using Promise.allSettled for speed
+        const uploadTasks = images.map(async (img, i) => {
           const idea = ideas[i] || { title: img.title || `Design ${i + 1}` };
           const absoluteImagePath = path.join(rootDir, img.imagePath ? img.imagePath.replace(/^\//, '').split('?')[0] : `generated_images/design_${String(i + 1).padStart(2, '0')}.png`);
-          try {
-            await createDraftListing(idea, absoluteImagePath);
-            uploaded++;
-          } catch (e) {
-            console.error(`Etsy upload failed for image ${i + 1}: ${e.message}`);
-          }
-        }
+          await createDraftListing(idea, absoluteImagePath);
+        });
+        const results = await Promise.allSettled(uploadTasks);
+        uploaded = results.filter(r => r.status === 'fulfilled').length;
+        const failed = results.filter(r => r.status === 'rejected');
+        failed.forEach((r, i) => console.error(`Etsy upload failed for image ${i + 1}: ${r.reason?.message}`));
         updateJob(4, `✅ Uploaded ${uploaded} draft listing(s) to Etsy`, 'success');
       } catch (e) {
         updateJob(4, `⚠️ Etsy upload skipped: ${e.message}`, 'warning');
@@ -487,6 +486,12 @@ app.post('/api/jobs/start', (req, res) => {
 
   // Start processing in background (FIRE AND FORGET)
   runBackgroundWorkflow(jobId);
+
+  // Cleanup: keep only the 20 most recent jobs to avoid memory leak
+  if (jobs.size > 20) {
+    const oldestKey = jobs.keys().next().value;
+    jobs.delete(oldestKey);
+  }
 
   res.json({ success: true, jobId, message: 'Workflow started in background' });
 });

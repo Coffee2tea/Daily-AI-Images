@@ -40,9 +40,24 @@ function getFallbackTrends() {
     ];
 }
 
-// ── Step 1: Search the web for trend articles ──────────────────────────────────
-async function searchTrendsApi(query) {
+// ── Step 1: Search the web for trend articles (with 1 retry) ──────────────────
+async function searchTrendsApi(query, attempt = 1) {
     if (!API_TOKEN) throw new Error("AI_BUILDER_TOKEN missing");
+    try {
+        return await searchTrendsApiOnce(query);
+    } catch (e) {
+        // Retry once on timeout or network error (not on auth/API key errors)
+        const isRetryable = e.message.includes('timeout') || e.message.includes('ECONNRESET') || e.message.includes('ETIMEDOUT');
+        if (attempt === 1 && isRetryable) {
+            console.log(`   ♻️ Search API timeout/error — retrying in 3s... (${e.message})`);
+            await new Promise(r => setTimeout(r, 3000));
+            return searchTrendsApi(query, 2);
+        }
+        throw e;
+    }
+}
+
+async function searchTrendsApiOnce(query) {
 
     console.log(`   📡 Sending search query: "${query}"`);
 

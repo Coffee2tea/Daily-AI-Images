@@ -54,22 +54,18 @@ async function main() {
         // Step 4: Auto-upload to Etsy as draft listings
         console.log('\n📌 STEP 4: Uploading designs to Etsy...');
         if (process.env.ETSY_ACCESS_TOKEN && process.env.ETSY_SHOP_ID) {
-            const fs2 = await import('fs');
             const path2 = await import('path');
-            const historyPath = path2.join(process.cwd(), 'data', 'history.json');
 
-            let imagesToUpload = ideas; // default: pair ideas with generated images
-            let uploaded = 0;
-            for (let i = 0; i < ideas.length; i++) {
-                const idea = ideas[i];
+            // ✅ Parallel upload — all designs at once instead of serial for-loop
+            const uploadTasks = ideas.map(async (idea, i) => {
                 const imgFile = path2.join(process.cwd(), 'generated_images', `design_${String(i + 1).padStart(2, '0')}.png`);
-                try {
-                    await createDraftListing(idea, imgFile);
-                    uploaded++;
-                } catch (e) {
-                    console.log(`   ⚠️ Etsy upload failed for design ${i + 1}: ${e.message}`);
-                }
-            }
+                await createDraftListing(idea, imgFile);
+            });
+            const results = await Promise.allSettled(uploadTasks);
+            const uploaded = results.filter(r => r.status === 'fulfilled').length;
+            results.filter(r => r.status === 'rejected').forEach((r, i) =>
+                console.log(`   ⚠️ Etsy upload failed for design ${i + 1}: ${r.reason?.message}`)
+            );
             console.log(`   🛍️ Uploaded ${uploaded}/${ideas.length} designs to Etsy as draft listings`);
         } else {
             // Fallback to email if Etsy not configured

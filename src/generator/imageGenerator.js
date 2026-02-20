@@ -141,15 +141,41 @@ async function generateSingleImage(idea, index, timestamp) {
         };
 
     } catch (e) {
-        console.log(`   ⚠️ Generation failed for #${index + 1}: ${e.message}`);
-        createPngPlaceholder(idea, filepath, index + 1);
-        return {
-            id: index + 1,
-            title: idea.title,
-            description: "Generation Failed",
-            style: idea.style,
-            imagePath: `/generated_images/${filename}`
-        };
+        console.log(`   ⚠️ Generation failed for #${index} (attempt 1): ${e.message}. Retrying in 2s...`);
+        // One auto-retry after 2 second delay
+        await new Promise(r => setTimeout(r, 2000));
+        try {
+            const prompt = `T-shirt design, ${idea.title}. ${idea.theme}. ${idea.style}. ${idea.colorScheme}. Vector art, high quality, isolated on white background.`;
+            const apiResponse = await callImageApi(prompt);
+            const imageObj = apiResponse.data?.[0];
+            if (imageObj?.b64_json) {
+                fs.writeFileSync(filepath, Buffer.from(imageObj.b64_json, 'base64'));
+                console.log(`   ✅ Retry succeeded: ${filename}`);
+            } else if (imageObj?.url) {
+                await downloadImage(imageObj.url, filepath);
+                console.log(`   ✅ Retry succeeded (URL): ${filename}`);
+            } else {
+                throw new Error('No image data on retry');
+            }
+            return {
+                id: `${timestamp}_${index}`,
+                title: idea.title,
+                description: idea.theme,
+                style: idea.style,
+                imagePath: `/generated_images/${filename}`,
+                timestamp: timestamp
+            };
+        } catch (retryErr) {
+            console.log(`   ❌ Retry also failed for #${index}: ${retryErr.message}. Using placeholder.`);
+            createPngPlaceholder(idea, filepath, index);
+            return {
+                id: `${timestamp}_${index}`,
+                title: idea.title,
+                description: 'Generation Failed',
+                style: idea.style,
+                imagePath: `/generated_images/${filename}`
+            };
+        }
     }
 }
 
@@ -169,7 +195,7 @@ async function callImageApi(prompt) {
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${API_TOKEN}`,
-                'Content-Length': data.length
+                'Content-Length': Buffer.byteLength(data)  // ✅ fixed: use byte length not char length
             },
             rejectUnauthorized: false
         };

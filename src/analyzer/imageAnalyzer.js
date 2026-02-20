@@ -77,7 +77,6 @@ async function callChatApi(messages, jsonMode = true) {
             res.on('end', () => {
                 if (res.statusCode >= 200 && res.statusCode < 300) {
                     try {
-                        console.log('DEBUG API RAW BODY:', body.substring(0, 500)); // Log first 500 chars
                         const json = JSON.parse(body);
                         const content = json.choices?.[0]?.message?.content;
                         if (!content) throw new Error("No content in API response");
