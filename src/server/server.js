@@ -17,7 +17,7 @@ const rootDir = path.join(__dirname, '..', '..');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-const APP_VERSION = '1.6.3'; // UI Updates
+const APP_VERSION = '2.0.0'; // Etsy Auto-Publish
 
 // --- In-Memory Log Buffer for Debugging ---
 const LOG_BUFFER_SIZE = 200;
@@ -264,7 +264,7 @@ app.get('/api/inspirations', (req, res) => {
   }
 });
 
-// API: Send email with designs
+// API: Send email with designs (kept for backward compat)
 app.post('/api/send-email', async (req, res) => {
   try {
     const { recipient } = req.body;
@@ -285,6 +285,65 @@ app.post('/api/send-email', async (req, res) => {
     }
   } catch (error) {
     console.error('Error sending email:', error);
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// --- Etsy API Routes ---
+
+// API: Get Etsy shop info
+app.get('/api/etsy/shop', async (req, res) => {
+  try {
+    const shopId = process.env.ETSY_SHOP_ID;
+    if (!shopId) return res.json({ success: false, error: 'ETSY_SHOP_ID not set in .env' });
+    if (!process.env.ETSY_API_KEY) return res.json({ success: false, error: 'ETSY_API_KEY not set in .env' });
+    const { getShopInfo } = await import('../etsy/etsyClient.js');
+    const shop = await getShopInfo(shopId);
+    res.json({ success: true, shop });
+  } catch (error) {
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// API: Get active Etsy listings
+app.get('/api/etsy/listings', async (req, res) => {
+  try {
+    const shopId = process.env.ETSY_SHOP_ID;
+    if (!shopId) return res.json({ success: false, error: 'ETSY_SHOP_ID not set in .env' });
+    if (!process.env.ETSY_API_KEY) return res.json({ success: false, error: 'ETSY_API_KEY not set in .env' });
+    const limit = parseInt(req.query.limit) || 10;
+    const { getActiveListings } = await import('../etsy/etsyClient.js');
+    const data = await getActiveListings(shopId, limit);
+    res.json({ success: true, count: data.count, listings: data.results });
+  } catch (error) {
+    res.json({ success: false, error: error.message });
+  }
+});
+
+// API: Upload a generated image as a draft Etsy listing
+app.post('/api/etsy/upload', async (req, res) => {
+  try {
+    const { imageId, imagePath: relPath, title, theme, style, colorScheme, designElements, mood } = req.body;
+    if (!process.env.ETSY_ACCESS_TOKEN) {
+      return res.json({ success: false, error: 'Etsy not authorized. Add ETSY_ACCESS_TOKEN to .env first.' });
+    }
+    if (!process.env.ETSY_SHOP_ID) {
+      return res.json({ success: false, error: 'ETSY_SHOP_ID not set in .env' });
+    }
+
+    // Resolve absolute path from relative `/generated_images/...`
+    const absoluteImagePath = relPath
+      ? path.join(rootDir, relPath.replace(/^\//, ''))
+      : null;
+
+    const idea = { title, theme, style, colorScheme, designElements, mood };
+
+    const { createDraftListing } = await import('../etsy/etsyUploader.js');
+    const result = await createDraftListing(idea, absoluteImagePath);
+
+    res.json(result);
+  } catch (error) {
+    console.error('Etsy upload error:', error);
     res.json({ success: false, error: error.message });
   }
 });
@@ -349,10 +408,55 @@ async function runBackgroundWorkflow(jobId) {
       throw new Error(`Generation failed: ${e.message}`);
     }
 
+    // Step 4: Auto-upload to Etsy (if configured)
+    if (process.env.ETSY_ACCESS_TOKEN && process.env.ETSY_SHOP_ID) {
+      updateJob(4, '🛍️ Uploading designs to Etsy as draft listings...');
+      try {
+        const ideasPath = path.join(rootDir, 'data', 'ideas.json');
+        const historyPath = path.join(rootDir, 'data', 'history.json');
+        const { createDraftListing } = await import('../etsy/etsyUploader.js');
+
+        let ideas = [];
+        if (fs.existsSync(ideasPath)) {
+          ideas = JSON.parse(fs.readFileSync(ideasPath, 'utf-8'));
+        }
+        let images = [];
+        if (fs.existsSync(historyPath)) {
+          const history = JSON.parse(fs.readFileSync(historyPath, 'utf-8'));
+          // Only upload images from this run (marked as new via manifest)
+          const manifestPath = path.join(rootDir, 'data', 'manifest.json');
+          let newIds = new Set();
+          if (fs.existsSync(manifestPath)) {
+            const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf-8'));
+            (manifest.images || []).forEach(img => newIds.add(img.id));
+          }
+          images = history.filter(img => newIds.size === 0 || newIds.has(img.id));
+        }
+
+        let uploaded = 0;
+        for (let i = 0; i < images.length; i++) {
+          const img = images[i];
+          const idea = ideas[i] || { title: img.title || `Design ${i + 1}` };
+          const absoluteImagePath = path.join(rootDir, img.imagePath ? img.imagePath.replace(/^\//, '').split('?')[0] : `generated_images/design_${String(i + 1).padStart(2, '0')}.png`);
+          try {
+            await createDraftListing(idea, absoluteImagePath);
+            uploaded++;
+          } catch (e) {
+            console.error(`Etsy upload failed for image ${i + 1}: ${e.message}`);
+          }
+        }
+        updateJob(4, `✅ Uploaded ${uploaded} draft listing(s) to Etsy`, 'success');
+      } catch (e) {
+        updateJob(4, `⚠️ Etsy upload skipped: ${e.message}`, 'warning');
+      }
+    } else {
+      updateJob(4, '⏭️ Etsy upload skipped (ETSY_ACCESS_TOKEN not set)', 'info');
+    }
+
     // Complete
     job.status = 'completed';
     job.progress = 100;
-    updateJob(3, '🎉 Workflow Completed!', 'success');
+    updateJob(4, '🎉 Workflow Completed!', 'success');
 
   } catch (error) {
     job.status = 'failed';

@@ -1,16 +1,18 @@
 {
   "name": "daily-ai-images",
-  "version": "1.6.3",
+  "version": "2.0.0",
   "description": "T-Shirt Design App - Agentic workflow for design inspiration and generation",
   "main": "src/main.js",
   "type": "module",
   "scripts": {
-    "start": "node src/main.js",
+    "start": "node src/server/server.js",
+    "workflow": "node src/main.js",
     "simple": "node src/runSimple.js",
     "server": "node src/server/server.js",
     "scrape": "node src/scraper/googleScraper.js",
     "analyze": "node src/analyzer/imageAnalyzer.js",
     "generate": "node src/generator/imageGenerator.js",
+    "etsy-auth": "node src/etsy/etsyAuth.js",
     "share": "ngrok http 3000"
   },
   "keywords": [
