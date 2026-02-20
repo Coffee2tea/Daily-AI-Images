@@ -34,7 +34,7 @@
                 <div style="display: flex; justify-content: center; gap: 2rem; flex-wrap: wrap;">
                     <div class="status-item">
                         <div id="step1-icon" class="status-icon material-symbols-outlined">pause_circle</div>
-                        <div class="status-label">Scrape Online Images</div>
+                        <div class="status-label">搜索当前流行 Ideas</div>
                     </div>
                     <div class="status-item">
                         <div id="step2-icon" class="status-icon material-symbols-outlined">pause_circle</div>
@@ -229,9 +229,10 @@
                     if (job.status === 'running') {
                         btn.innerHTML = '<span class="material-symbols-outlined spin-icon">sync</span><span>Working in Background...</span>';
 
-                        if (job.currentStep === 1) { pct = 33; text = "Scraping Images..."; }
-                        else if (job.currentStep === 2) { pct = 66; text = "Analyzing & Generating Ideas..."; }
-                        else if (job.currentStep === 3) { pct = 90; text = "Generating AI Images (Takes 3-5 minutes)..."; }
+                        if (job.currentStep === 1) { pct = 25; text = "搜索当前流行 Ideas..."; }
+                        else if (job.currentStep === 2) { pct = 60; text = "AI Analyzing & Generating Ideas..."; }
+                        else if (job.currentStep === 3) { pct = 85; text = "Generating AI Images (Takes 3-5 minutes)..."; }
+                        else if (job.currentStep === 4) { pct = 95; text = "Uploading to Etsy..."; }
 
                     } else if (job.status === 'completed') {
                         pct = 100;
