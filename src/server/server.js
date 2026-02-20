@@ -188,7 +188,7 @@ app.get('/api/images', (req, res) => {
 
       images = files.map((file, index) => ({
         id: index + 1,
-        title: ideas[index]?.title || `设计 ${String(index + 1).padStart(2, '0')}`,
+        title: ideas[index]?.title || `Design ${String(index + 1).padStart(2, '0')}`,
         description: ideas[index]?.theme || 'AI Generated T-Shirt Design',
         imagePath: `/generated_images/${file}?v=${Date.now()}`,
         style: ideas[index]?.style || 'Modern',
