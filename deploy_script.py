@@ -37,9 +37,8 @@ except Exception as e:
 try:
     response = s.post(url, json=data, headers=headers, timeout=120, verify=False)
     print(f"Status: {response.status_code}")
-    try:
-        print("Response:", response.text)
-    except UnicodeEncodeError:
-         print("Response:", response.text.encode('utf-8', errors='ignore').decode('utf-8', errors='ignore'))
+    import sys
+    safe_text = response.text.encode('utf-8', errors='replace').decode(sys.stdout.encoding or 'utf-8', errors='replace')
+    print("Response:", safe_text)
 except Exception as e:
     print(f"Error: {e}")
